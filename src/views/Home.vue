@@ -6,39 +6,64 @@
         <div class="hero-grid"></div>
       </div>
       <div class="container hero-content">
-        <div class="hero-label reveal">JAVA BACKEND · IOT · SMART CARE</div>
-        <h1 class="hero-title reveal reveal-delay-1">
-          <span class="line">你好，我是</span>
-          <span class="line accent">目送</span>
-        </h1>
-        <p class="hero-desc reveal reveal-delay-2">
-          我是
-          <TypedText :strings="typedStrings" :type-speed="70" :delete-speed="35" :pause-time="2500" />
-          <br />
-          专注 Spring Boot、Redis、WebSocket、MQTT 与 Vue，用代码连接设备、数据与真实生活场景。
-        </p>
-        <div class="hero-actions reveal reveal-delay-3">
-          <router-link to="/projects" class="btn btn-primary btn-glow" @click="ripple">
-            <span>查看项目</span>
-            <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M3 8h10M9 4l4 4-4 4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
-          </router-link>
-          <router-link to="/blog" class="btn btn-secondary" @click="ripple">阅读文章</router-link>
-          <router-link to="/about" class="btn btn-secondary" @click="ripple">在线简历</router-link>
-        </div>
-        <div class="hero-stats reveal reveal-delay-4">
-          <div class="stat-item">
-            <CountUp :end="3" suffix="+" />
-            <span class="stat-text">个项目</span>
+        <div class="hero-main">
+          <div class="hero-copy">
+            <div class="hero-label reveal">JAVA BACKEND · IOT · REAL-TIME SYSTEM</div>
+            <h1 class="hero-title reveal reveal-delay-1">
+              <span class="line">用 Java 后端</span>
+              <span class="line accent">连接真实世界的数据</span>
+            </h1>
+            <p class="hero-desc reveal reveal-delay-2">
+              我是
+              <TypedText :strings="typedStrings" :type-speed="70" :delete-speed="35" :pause-time="2500" />
+              <br />
+              聚焦 Spring Boot、Redis、WebSocket、MQTT 与 Vue，构建智慧养老、智能盲杖、社区管理等完整项目闭环。
+            </p>
+            <div class="hero-actions reveal reveal-delay-3">
+              <router-link to="/projects" class="btn btn-primary btn-glow" @click="ripple">
+                <span>查看项目作品集</span>
+                <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M3 8h10M9 4l4 4-4 4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+              </router-link>
+              <router-link to="/blog" class="btn btn-secondary" @click="ripple">阅读技术文章</router-link>
+              <router-link to="/about" class="btn btn-secondary" @click="ripple">在线简历</router-link>
+            </div>
+            <div class="hero-stats reveal reveal-delay-4">
+              <div class="stat-item">
+                <CountUp :end="3" suffix="+" />
+                <span class="stat-text">代表项目</span>
+              </div>
+              <div class="stat-divider"></div>
+              <div class="stat-item">
+                <CountUp :end="store.publishedArticles.length" suffix="" />
+                <span class="stat-text">技术文章</span>
+              </div>
+              <div class="stat-divider"></div>
+              <div class="stat-item">
+                <CountUp :end="20" suffix="+" />
+                <span class="stat-text">技术栈</span>
+              </div>
+            </div>
           </div>
-          <div class="stat-divider"></div>
-          <div class="stat-item">
-            <CountUp :end="store.publishedArticles.length" suffix="" />
-            <span class="stat-text">篇文章</span>
-          </div>
-          <div class="stat-divider"></div>
-          <div class="stat-item">
-            <CountUp :end="15" suffix="+" />
-            <span class="stat-text">项技术栈</span>
+          <div class="hero-panel reveal reveal-delay-2">
+            <div class="panel-header">
+              <span class="panel-dot"></span>
+              <span>SmartCareSystem.java</span>
+            </div>
+            <div class="system-flow">
+              <div v-for="item in systemFlow" :key="item.name" class="flow-node">
+                <div class="flow-icon">{{ item.icon }}</div>
+                <div>
+                  <h3>{{ item.name }}</h3>
+                  <p>{{ item.desc }}</p>
+                </div>
+              </div>
+            </div>
+            <div class="panel-footer">
+              <span>MQTT</span>
+              <span>Redis</span>
+              <span>WebSocket</span>
+              <span>Spring Boot</span>
+            </div>
           </div>
         </div>
       </div>
@@ -52,12 +77,12 @@
 
     <section class="section container">
       <div class="section-header reveal">
-        <div class="section-label">FEATURED ARTICLES</div>
-        <h2 class="section-title">精选文章</h2>
-        <p class="section-subtitle">记录开发过程中的思考、踩坑与收获</p>
+        <div class="section-label">DEEP INSIGHTS</div>
+        <h2 class="section-title">精选技术文章</h2>
+        <p class="section-subtitle">围绕 Java 后端、物联网通信、实时告警和智能硬件，沉淀可展示的项目实践</p>
       </div>
       <div class="article-grid">
-        <div v-for="(article, i) in store.featuredArticles.slice(0, 3)" :key="article.id" class="reveal" :class="'reveal-delay-' + (i + 1)">
+        <div v-for="(article, i) in store.publishedArticles.slice(0, 5)" :key="article.id" class="reveal" :class="'reveal-delay-' + (i % 3 + 1)">
           <ArticleCard :article="article" />
         </div>
       </div>
@@ -90,9 +115,24 @@
 
     <section class="section container">
       <div class="section-header reveal">
+        <div class="section-label">CORE VALUE</div>
+        <h2 class="section-title">我的求职亮点</h2>
+        <p class="section-subtitle">不是只会写页面，而是能把后端接口、实时通信、缓存优化和设备数据接入串成完整系统</p>
+      </div>
+      <div class="value-grid">
+        <div v-for="(value, i) in coreValues" :key="value.title" class="value-card reveal" :class="'reveal-delay-' + (i + 1)">
+          <div class="value-index">0{{ i + 1 }}</div>
+          <h3>{{ value.title }}</h3>
+          <p>{{ value.desc }}</p>
+        </div>
+      </div>
+    </section>
+
+    <section class="section container">
+      <div class="section-header reveal">
         <div class="section-label">TECH STACK</div>
-        <h2 class="section-title">技术栈全景</h2>
-        <p class="section-subtitle">全链路技术能力覆盖，从硬件通信到云端服务再到前端交互</p>
+        <h2 class="section-title">技术武器库</h2>
+        <p class="section-subtitle">支撑智慧养老、智能盲杖和社区平台的后端、前端、通信与部署能力</p>
       </div>
       <div class="tech-showcase reveal">
         <div class="tech-category" v-for="cat in techCategories" :key="cat.name">
@@ -134,8 +174,8 @@
       <div class="container reveal">
         <blockquote class="quote-block">
           <div class="quote-mark">"</div>
-          <p class="quote-text">我慢慢地、慢慢地了解到，所谓父女母子一场，只不过意味着，你和他的缘分就是今生今世不断地在目送他的背影渐行渐远。</p>
-          <footer class="quote-author">— 龙应台《目送》</footer>
+          <p class="quote-text">我希望自己的项目不只是能运行，而是能解决真实场景里的问题：让设备数据被看见，让异常告警被及时处理，让技术真正落到生活里。</p>
+          <footer class="quote-author">— 目送的开发理念</footer>
         </blockquote>
       </div>
     </section>
@@ -143,8 +183,8 @@
     <section class="cta-section">
       <div class="container cta-inner reveal">
         <div class="cta-glow"></div>
-        <h2 class="cta-title">让我们一起探索技术的边界</h2>
-        <p class="cta-desc">如果你对我的项目感兴趣，或者有任何合作想法，欢迎随时联系我。</p>
+        <h2 class="cta-title">正在寻找 Java 后端 / 物联网方向机会</h2>
+        <p class="cta-desc">如果你想了解我的项目、代码能力或实习求职信息，欢迎查看项目作品集或直接联系我。</p>
         <div class="cta-actions">
           <router-link to="/about" class="btn btn-primary btn-glow" @click="ripple">了解更多</router-link>
           <router-link to="/blog" class="btn btn-secondary" @click="ripple">阅读博客</router-link>
@@ -176,6 +216,20 @@ const typedStrings = [
   '一个 Java 后端开发者',
   '一个智慧养老实践者',
   '一个实时告警系统实践者'
+]
+
+const systemFlow = [
+  { name: '设备接入', desc: '传感器、GPS、三轴加速度通过 MQTT / HTTP 上报数据', icon: '📡' },
+  { name: '后端处理', desc: 'Spring Boot 负责解析、校验、落库和异常规则判断', icon: '⚙️' },
+  { name: '状态缓存', desc: 'Redis 缓存设备状态、告警统计和 Dashboard 数据', icon: '⚡' },
+  { name: '实时推送', desc: 'WebSocket 将告警和统计变化推送到前端页面', icon: '🚨' }
+]
+
+const coreValues = [
+  { title: 'Java 后端业务闭环', desc: '能完成从实体建模、接口设计、业务 Service 到数据库持久化的完整后端流程。' },
+  { title: '实时通信项目经验', desc: '在告警系统中使用 WebSocket 处理新告警、状态更新和统计数据实时刷新。' },
+  { title: '物联网设备接入', desc: '理解 MQTT Topic 设计、设备数据上报、指令下发、离线检测和异常告警链路。' },
+  { title: '可展示的作品集', desc: '有线上博客、GitHub 仓库和多个围绕智慧养老、智能硬件的项目案例。' }
 ]
 
 const projects = [
@@ -302,6 +356,17 @@ const timeline = [
   z-index: 1;
 }
 
+.hero-main {
+  display: grid;
+  grid-template-columns: minmax(0, 1.08fr) minmax(360px, 0.92fr);
+  align-items: center;
+  gap: 56px;
+}
+
+.hero-copy {
+  min-width: 0;
+}
+
 .hero-label {
   font-size: 12px;
   font-weight: 600;
@@ -381,6 +446,106 @@ const timeline = [
   background: var(--border);
 }
 
+.hero-panel {
+  background:
+    linear-gradient(135deg, rgba(99, 102, 241, 0.12), rgba(6, 182, 212, 0.04)),
+    var(--bg-card);
+  border: 1px solid var(--border-light);
+  border-radius: var(--radius-lg);
+  padding: 24px;
+  box-shadow: var(--shadow-lg);
+  position: relative;
+  overflow: hidden;
+}
+
+.hero-panel::before {
+  content: '';
+  position: absolute;
+  inset: -1px;
+  background: radial-gradient(circle at 20% 0%, rgba(99, 102, 241, 0.18), transparent 35%);
+  pointer-events: none;
+}
+
+.panel-header,
+.panel-footer,
+.system-flow {
+  position: relative;
+}
+
+.panel-header {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding-bottom: 18px;
+  margin-bottom: 18px;
+  border-bottom: 1px solid var(--border);
+  color: var(--text-muted);
+  font-size: 13px;
+  font-family: var(--font-mono);
+}
+
+.panel-dot {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  background: #22c55e;
+  box-shadow: 0 0 12px rgba(34, 197, 94, 0.65);
+}
+
+.system-flow {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.flow-node {
+  display: grid;
+  grid-template-columns: 42px 1fr;
+  gap: 14px;
+  padding: 16px;
+  border: 1px solid rgba(255, 255, 255, 0.06);
+  border-radius: 16px;
+  background: rgba(255, 255, 255, 0.03);
+}
+
+.flow-icon {
+  width: 42px;
+  height: 42px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 14px;
+  background: rgba(99, 102, 241, 0.14);
+}
+
+.flow-node h3 {
+  font-size: 15px;
+  margin-bottom: 6px;
+}
+
+.flow-node p {
+  font-size: 13px;
+  line-height: 1.7;
+  color: var(--text-muted);
+}
+
+.panel-footer {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-top: 20px;
+}
+
+.panel-footer span {
+  padding: 6px 10px;
+  border: 1px solid var(--border);
+  border-radius: 999px;
+  color: var(--accent-light);
+  background: rgba(99, 102, 241, 0.08);
+  font-size: 12px;
+  font-family: var(--font-mono);
+}
+
 .scroll-hint {
   position: absolute;
   bottom: 36px;
@@ -442,6 +607,48 @@ const timeline = [
   display: grid;
   grid-template-columns: repeat(3, 1fr);
   gap: 20px;
+}
+
+.value-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 20px;
+}
+
+.value-card {
+  min-height: 220px;
+  padding: 28px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  background:
+    linear-gradient(180deg, rgba(99, 102, 241, 0.08), transparent),
+    var(--bg-card);
+  transition: all var(--transition);
+}
+
+.value-card:hover {
+  transform: translateY(-4px);
+  border-color: var(--border-light);
+  box-shadow: var(--shadow);
+}
+
+.value-index {
+  font-size: 13px;
+  font-weight: 700;
+  font-family: var(--font-mono);
+  color: var(--accent);
+  margin-bottom: 28px;
+}
+
+.value-card h3 {
+  font-size: 18px;
+  margin-bottom: 12px;
+}
+
+.value-card p {
+  font-size: 14px;
+  line-height: 1.8;
+  color: var(--text-muted);
 }
 
 .view-more {
@@ -680,6 +887,12 @@ const timeline = [
 }
 
 @media (max-width: 768px) {
+  .hero-main {
+    grid-template-columns: 1fr;
+    gap: 36px;
+    padding-top: 72px;
+  }
+
   .hero-title {
     font-size: 38px;
   }
@@ -700,8 +913,13 @@ const timeline = [
 
   .article-grid,
   .project-grid,
+  .value-grid,
   .tech-showcase {
     grid-template-columns: 1fr;
+  }
+
+  .hero-panel {
+    padding: 18px;
   }
 
   .timeline::before {
