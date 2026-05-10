@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://melodic-cactus-78f6a1.netlify.app/sitemap.xml

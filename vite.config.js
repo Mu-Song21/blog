@@ -8,13 +8,6 @@ export default defineConfig({
     port: 3000
   },
   build: {
-    rollupOptions: {
-      output: {
-        manualChunks: {
-          vue: ['vue', 'vue-router', 'pinia']
-        }
-      }
-    },
     chunkSizeWarningLimit: 1000
   }
 })

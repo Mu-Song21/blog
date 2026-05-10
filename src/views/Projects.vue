@@ -4,7 +4,7 @@
       <div class="container">
         <div class="section-label reveal">PROJECTS</div>
         <h1 class="projects-hero-title reveal reveal-delay-1">项目展示</h1>
-        <p class="projects-hero-desc reveal reveal-delay-2">每一个项目都是一段探索的旅程，从需求分析到技术选型，从架构设计到功能落地。</p>
+        <p class="projects-hero-desc reveal reveal-delay-2">围绕 Java 后端、物联网通信、实时告警和智慧民生场景，记录从需求分析到系统落地的完整实践。</p>
       </div>
     </section>
 
@@ -54,64 +54,64 @@ const projects = [
   {
     name: 'ElderGuard 独居老人居家守护终端',
     category: '物联网 · 智慧养老',
-    description: '基于 Spring Boot + MQTT + Redis 构建的实时健康监测与异常报警系统',
-    detail: '通过传感器采集环境数据，MQTT 协议传输，Redis 缓存实时数据，WebSocket 推送告警到微信小程序，实现对独居老人居家安全的全方位守护。',
+    description: '基于 Spring Boot + Redis + WebSocket + MQTT 构建的智慧养老监护系统',
+    detail: '围绕独居老人居家安全场景，实现老人档案、设备管理、心跳检测、异常告警、告警闭环、通知中心和数据看板等能力，后端负责设备数据接入、状态分析、告警生成和实时推送。',
     icon: '🛡️',
     gradient: 'linear-gradient(135deg, #f59e0b33, #f9731633)',
-    tech: ['Spring Boot', 'MQTT', 'Redis', 'WebSocket', '微信小程序'],
+    tech: ['Spring Boot', 'JPA', 'MySQL', 'Redis', 'MQTT', 'WebSocket', 'Vue 3'],
     features: [
-      '多传感器实时数据采集',
-      'MQTT 消息可靠传输与重试',
-      '多级告警（提示/警告/紧急）',
-      '微信小程序实时监控与推送',
-      '设备在线状态管理'
+      '老人、设备、告警和通知中心分层接口设计',
+      '设备心跳检测与离线告警生成',
+      '告警处理闭环、处理记录和通知家属流程',
+      'Redis 缓存异常状态与 Dashboard 统计数据',
+      'WebSocket 实时推送告警和统计刷新'
     ],
     highlights: [
-      { value: '12+', label: '传感器类型' },
-      { value: '<1s', label: '告警延迟' },
-      { value: 'QoS 1', label: '消息可靠性' }
+      { value: '闭环', label: '告警处理' },
+      { value: '实时', label: '数据推送' },
+      { value: '缓存', label: '统计优化' }
     ]
   },
   {
     name: '安隅智能社区管理平台',
     category: '企业应用 · 智慧社区',
-    description: '以若依框架为基座，Spring Boot + Vue 2 构建的社区综合管理平台',
-    detail: '涵盖住户管理、报修投诉、物业缴费、公告通知、访客预约等核心模块，基于 ECharts 构建数据可视化大屏，助力社区数字化转型。',
+    description: '基于若依框架二次开发的智慧社区综合管理平台',
+    detail: '围绕物业数字化管理场景，扩展社区、房屋、费用、预约、投诉、访客、公告等业务模块，后端基于若依多模块架构完成权限控制、分页查询、数据维护和 Excel 导出等通用后台能力。',
     icon: '🏘️',
     gradient: 'linear-gradient(135deg, #3b82f633, #6366f133)',
-    tech: ['若依框架', 'Spring Boot', 'Vue 2', 'Element UI', 'MyBatis-Plus', 'ECharts'],
+    tech: ['若依框架', 'Spring Boot', 'Spring Security', 'JWT', 'Redis', 'MyBatis-Plus', 'Quartz'],
     features: [
-      '楼栋-单元-房屋三级管理',
-      '报修工单全流程跟踪',
-      '在线缴费与统计报表',
-      '富文本公告编辑与推送',
-      '数据可视化大屏'
+      '若依多模块架构下的业务模块扩展',
+      'Spring Security + JWT 认证鉴权',
+      '角色、菜单和按钮级权限控制',
+      'PageHelper 分页与多条件查询',
+      'Quartz 定时任务与 POI 数据导出'
     ],
     highlights: [
       { value: '8+', label: '核心模块' },
       { value: 'RBAC', label: '权限体系' },
-      { value: 'ECharts', label: '数据大屏' }
+      { value: '多模块', label: '工程结构' }
     ]
   },
   {
     name: '智能盲杖辅助导航系统',
     category: 'AI + IoT · 无障碍',
-    description: '融合 AI、高德地图、百度语音技术的视障辅助出行系统',
-    detail: '提供 GPS 实时定位、电子围栏、轨迹回放、AI 语音助手、路径导航和紧急求助功能，基于 uni-app 一套代码适配 H5 和微信小程序。',
+    description: '面向视障人士的智能盲杖设备管理与安全预警系统',
+    detail: '系统通过智能盲杖上报障碍物距离、三轴加速度、GPS、温湿度和电量等数据，后端完成传感器数据存储、跌倒判断、电子围栏越界判断、轨迹回放和告警推送，支撑管理后台和小程序端协同使用。',
     icon: '🦯',
     gradient: 'linear-gradient(135deg, #8b5cf633, #a78bfa33)',
-    tech: ['Spring Boot', 'AI 大模型', '高德地图', '百度语音', 'Vue 3', 'TypeScript', 'uni-app'],
+    tech: ['Spring Boot', 'MyBatis', 'MySQL', 'WebSocket', 'GPS', '高德地图', 'uni-app'],
     features: [
-      'GPS 实时定位与轨迹回放',
-      '电子围栏安全区域监控',
-      'AI 智能语音对话交互',
-      '无障碍路径导航',
-      '一键 SOS 紧急求助'
+      '传感器数据上报、存储和最新数据查询',
+      '基于三轴加速度的跌倒置信度计算',
+      'GPS 轨迹回放与电子围栏越界判断',
+      'WebSocket 推送告警、围栏状态和 AI 唤醒事件',
+      '设备测试模拟与多端数据联调'
     ],
     highlights: [
-      { value: 'AI', label: '语音交互' },
-      { value: '跨端', label: 'H5 + 小程序' },
-      { value: 'LBS', label: '位置服务' }
+      { value: 'IoT', label: '硬件接入' },
+      { value: 'LBS', label: '位置服务' },
+      { value: '实时', label: '告警推送' }
     ]
   }
 ]

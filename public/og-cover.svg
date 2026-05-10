@@ -1,0 +1,33 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="630" viewBox="0 0 1200 630">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#0a0a0f"/>
+      <stop offset="0.5" stop-color="#111827"/>
+      <stop offset="1" stop-color="#312e81"/>
+    </linearGradient>
+    <radialGradient id="glow" cx="50%" cy="20%" r="70%">
+      <stop offset="0" stop-color="#6366f1" stop-opacity="0.5"/>
+      <stop offset="1" stop-color="#6366f1" stop-opacity="0"/>
+    </radialGradient>
+  </defs>
+  <rect width="1200" height="630" fill="url(#bg)"/>
+  <rect width="1200" height="630" fill="url(#glow)"/>
+  <g opacity="0.12" stroke="#ffffff">
+    <path d="M120 120H1080"/>
+    <path d="M120 220H1080"/>
+    <path d="M120 320H1080"/>
+    <path d="M120 420H1080"/>
+    <path d="M120 520H1080"/>
+    <path d="M180 80V560"/>
+    <path d="M380 80V560"/>
+    <path d="M580 80V560"/>
+    <path d="M780 80V560"/>
+    <path d="M980 80V560"/>
+  </g>
+  <text x="96" y="180" fill="#a5b4fc" font-family="Arial, 'Microsoft YaHei', sans-serif" font-size="30" font-weight="700" letter-spacing="6">PERSONAL TECH BLOG</text>
+  <text x="96" y="285" fill="#ffffff" font-family="Arial, 'Microsoft YaHei', sans-serif" font-size="82" font-weight="800">目送</text>
+  <text x="96" y="370" fill="#e5e7eb" font-family="Arial, 'Microsoft YaHei', sans-serif" font-size="42" font-weight="700">Java 后端开发 · 物联网实践</text>
+  <text x="96" y="440" fill="#cbd5e1" font-family="Arial, 'Microsoft YaHei', sans-serif" font-size="28">Spring Boot / Redis / WebSocket / MQTT / 智慧养老</text>
+  <rect x="96" y="496" width="530" height="54" rx="27" fill="#6366f1" opacity="0.9"/>
+  <text x="126" y="532" fill="#ffffff" font-family="Arial, 'Microsoft YaHei', sans-serif" font-size="24" font-weight="700">用代码连接设备、数据与真实生活</text>
+</svg>

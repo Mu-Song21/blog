@@ -6,7 +6,7 @@
         <div class="hero-grid"></div>
       </div>
       <div class="container hero-content">
-        <div class="hero-label reveal">PERSONAL TECH BLOG</div>
+        <div class="hero-label reveal">JAVA BACKEND · IOT · SMART CARE</div>
         <h1 class="hero-title reveal reveal-delay-1">
           <span class="line">你好，我是</span>
           <span class="line accent">目送</span>
@@ -15,7 +15,7 @@
           我是
           <TypedText :strings="typedStrings" :type-speed="70" :delete-speed="35" :pause-time="2500" />
           <br />
-          用代码守护生活，用技术温暖世界。
+          专注 Spring Boot、Redis、WebSocket、MQTT 与 Vue，用代码连接设备、数据与真实生活场景。
         </p>
         <div class="hero-actions reveal reveal-delay-3">
           <router-link to="/projects" class="btn btn-primary btn-glow" @click="ripple">
@@ -23,6 +23,7 @@
             <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M3 8h10M9 4l4 4-4 4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
           </router-link>
           <router-link to="/blog" class="btn btn-secondary" @click="ripple">阅读文章</router-link>
+          <router-link to="/about" class="btn btn-secondary" @click="ripple">在线简历</router-link>
         </div>
         <div class="hero-stats reveal reveal-delay-4">
           <div class="stat-item">
@@ -172,29 +173,29 @@ function ripple(e) {
 
 const typedStrings = [
   '一个物联网探索者',
-  '一个全栈开发者',
+  '一个 Java 后端开发者',
   '一个智慧养老实践者',
-  '一个技术向善信仰者'
+  '一个实时告警系统实践者'
 ]
 
 const projects = [
   {
     name: 'ElderGuard 独居老人守护终端',
-    description: '基于 Spring Boot + MQTT + Redis 的实时健康监测与异常报警系统，融合传感器数据采集、WebSocket 实时推送与微信小程序交互。',
+    description: '基于 Spring Boot + Redis + WebSocket + MQTT 的智慧养老监护系统，覆盖老人档案、设备管理、异常告警、告警闭环和通知中心。',
     icon: '🛡️',
     gradient: 'linear-gradient(135deg, #f59e0b22, #f9731622)',
-    tech: ['Spring Boot', 'MQTT', 'Redis', 'WebSocket', '微信小程序'],
+    tech: ['Spring Boot', 'JPA', 'Redis', 'MQTT', 'WebSocket'],
     stats: [
-      { value: '12+', label: '传感器类型' },
-      { value: '<1s', label: '报警延迟' }
+      { value: '闭环', label: '告警处理' },
+      { value: '实时', label: '数据推送' }
     ]
   },
   {
     name: '安隅智能社区',
-    description: '基于若依框架的智慧社区综合管理平台，涵盖住户管理、报修投诉、物业缴费、公告通知等核心模块。',
+    description: '基于若依框架二次开发的智慧社区管理平台，涵盖住户、房屋、费用、预约、投诉、访客和公告等物业业务。',
     icon: '🏘️',
     gradient: 'linear-gradient(135deg, #3b82f622, #6366f122)',
-    tech: ['若依', 'Spring Boot', 'Vue 2', 'Element UI'],
+    tech: ['若依', 'Spring Security', 'JWT', 'Redis', 'MyBatis-Plus'],
     stats: [
       { value: '8+', label: '核心模块' },
       { value: 'RBAC', label: '权限体系' }
@@ -202,10 +203,10 @@ const projects = [
   },
   {
     name: '智能盲杖辅助系统',
-    description: '融合 AI 对话、高德地图与百度语音技术，为视障人士打造 GPS 定位、电子围栏、智能语音交互的辅助出行系统。',
+    description: '面向视障人士的智能硬件管理平台，支持传感器数据上报、跌倒检测、电子围栏、轨迹回放和 AI 按键唤醒。',
     icon: '🦯',
     gradient: 'linear-gradient(135deg, #8b5cf622, #a78bfa22)',
-    tech: ['Spring Boot', 'AI', '高德地图', 'uni-app'],
+    tech: ['Spring Boot', 'MyBatis', 'WebSocket', 'GPS', 'uni-app'],
     stats: [
       { value: 'AI', label: '语音交互' },
       { value: '跨端', label: 'H5 + 小程序' }
