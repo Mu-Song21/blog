@@ -151,9 +151,10 @@ watch(() => route.params.id, () => {
   highlightCode()
 })
 
-watch(renderedContent, () => {
+// 当文章 HTML 内容变化时（包括首次加载），重新高亮代码块
+watch(renderedHtml, () => {
   highlightCode()
-})
+}, { immediate: true })
 </script>
 
 <style scoped>
