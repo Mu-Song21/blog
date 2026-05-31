@@ -4,8 +4,7 @@
       <div class="footer-top">
         <div class="footer-brand">
           <div class="footer-logo">
-            <span class="logo-icon">▸</span>
-            <span class="logo-text">目送</span>
+            <span class="logo-mark">目送</span>
           </div>
           <p class="muse-quote">目送你远去，也目送自己成长</p>
         </div>
@@ -24,7 +23,7 @@
       </div>
       <div class="footer-bottom">
         <span class="copyright">© {{ new Date().getFullYear() }} 目送. All rights reserved.</span>
-        <span class="built-with">使用 Vue 3 + Vite 构建</span>
+        <span class="built-with">Vue 3 + Vite</span>
       </div>
     </div>
   </footer>
@@ -41,7 +40,7 @@
   display: flex;
   justify-content: space-between;
   gap: 48px;
-  padding: 48px 0 32px;
+  padding: 56px 0 40px;
 }
 
 .footer-brand {
@@ -49,42 +48,38 @@
 }
 
 .footer-logo {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  margin-bottom: 12px;
+  margin-bottom: 16px;
 }
 
-.logo-icon {
-  color: var(--accent);
-  font-size: 16px;
-}
-
-.logo-text {
-  font-size: 20px;
-  font-weight: 700;
+.logo-mark {
+  font-family: var(--font-display);
+  font-size: 28px;
   color: var(--text-primary);
+  letter-spacing: 2px;
 }
 
 .muse-quote {
   font-size: 14px;
   color: var(--text-muted);
-  line-height: 1.6;
+  line-height: 1.7;
+  font-family: var(--font-display);
+  font-style: italic;
 }
 
 .footer-nav {
   display: flex;
   flex-direction: column;
-  gap: 10px;
+  gap: 12px;
 }
 
 .footer-nav-title {
-  font-size: 13px;
+  font-size: 11px;
   font-weight: 600;
   color: var(--text-secondary);
   text-transform: uppercase;
-  letter-spacing: 1px;
+  letter-spacing: 2px;
   margin-bottom: 4px;
+  font-family: var(--font-mono);
 }
 
 .footer-link {
@@ -101,7 +96,7 @@
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: 20px 0;
+  padding: 24px 0;
   border-top: 1px solid var(--border);
 }
 
@@ -111,9 +106,11 @@
 }
 
 .built-with {
-  font-size: 12px;
+  font-size: 11px;
   color: var(--text-muted);
-  opacity: 0.6;
+  opacity: 0.5;
+  font-family: var(--font-mono);
+  letter-spacing: 1px;
 }
 
 @media (max-width: 768px) {
@@ -127,10 +124,6 @@
   .footer-brand {
     max-width: 100%;
     text-align: center;
-  }
-
-  .footer-logo {
-    justify-content: center;
   }
 
   .footer-nav {

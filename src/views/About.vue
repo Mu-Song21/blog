@@ -160,7 +160,7 @@ const interests = [
 
 <style scoped>
 .about-hero {
-  padding: 80px 0 40px;
+  padding: 100px 0 48px;
   position: relative;
 }
 
@@ -168,7 +168,7 @@ const interests = [
   content: '';
   position: absolute;
   inset: 0;
-  background: radial-gradient(ellipse 50% 80% at 50% 0%, var(--accent-glow) 0%, transparent 70%);
+  background: radial-gradient(ellipse 50% 80% at 50% 0%, rgba(245, 158, 11, 0.06) 0%, transparent 70%);
   pointer-events: none;
 }
 
@@ -177,29 +177,30 @@ const interests = [
 }
 
 .about-title {
-  font-size: 48px;
-  font-weight: 700;
-  margin-bottom: 12px;
+  font-size: 52px;
+  font-weight: 400;
+  font-family: var(--font-display);
+  margin-bottom: 16px;
   letter-spacing: -0.5px;
 }
 
 .about-subtitle {
-  font-size: 18px;
+  font-size: 17px;
   color: var(--text-muted);
 }
 
 .about-layout {
   display: grid;
   grid-template-columns: 1fr 320px;
-  gap: 48px;
+  gap: 56px;
   align-items: start;
 }
 
 .about-content p {
   font-size: 16px;
   color: var(--text-secondary);
-  line-height: 1.9;
-  margin-bottom: 16px;
+  line-height: 2;
+  margin-bottom: 20px;
 }
 
 .about-content strong {
@@ -207,13 +208,14 @@ const interests = [
 }
 
 .philosophy-section {
-  margin-top: 48px;
+  margin-top: 56px;
 }
 
 .sub-title {
-  font-size: 22px;
-  font-weight: 600;
-  margin-bottom: 24px;
+  font-size: 24px;
+  font-weight: 400;
+  font-family: var(--font-display);
+  margin-bottom: 28px;
 }
 
 .philosophy-grid {
@@ -226,36 +228,36 @@ const interests = [
   background: var(--bg-card);
   border: 1px solid var(--border);
   border-radius: var(--radius);
-  padding: 24px;
+  padding: 28px;
   transition: all var(--transition);
 }
 
 .philosophy-card:hover {
-  border-color: var(--border-light);
-  transform: translateY(-2px);
-  box-shadow: var(--shadow);
+  border-color: rgba(245, 158, 11, 0.2);
+  transform: translateY(-3px);
+  box-shadow: 0 8px 32px rgba(245, 158, 11, 0.06);
 }
 
 .phil-icon {
   font-size: 28px;
   display: block;
-  margin-bottom: 12px;
+  margin-bottom: 16px;
 }
 
 .philosophy-card h3 {
   font-size: 16px;
   font-weight: 600;
-  margin-bottom: 8px;
+  margin-bottom: 10px;
 }
 
 .philosophy-card p {
   font-size: 13px;
   color: var(--text-muted);
-  line-height: 1.6;
+  line-height: 1.7;
 }
 
 .skills-section {
-  margin-top: 48px;
+  margin-top: 56px;
 }
 
 .skill-groups {
@@ -265,10 +267,13 @@ const interests = [
 }
 
 .group-label {
-  font-size: 14px;
+  font-size: 13px;
   font-weight: 500;
   color: var(--text-muted);
   margin-bottom: 12px;
+  font-family: var(--font-mono);
+  letter-spacing: 1px;
+  text-transform: uppercase;
 }
 
 .skill-list {
@@ -278,12 +283,13 @@ const interests = [
 }
 
 .skill-tag {
-  padding: 6px 16px;
+  padding: 8px 18px;
   background: var(--bg-card);
   border: 1px solid var(--border);
-  border-radius: 6px;
+  border-radius: 4px;
   font-size: 13px;
   color: var(--text-secondary);
+  font-family: var(--font-mono);
   transition: all var(--transition);
 }
 
@@ -295,7 +301,7 @@ const interests = [
 }
 
 .interests-section {
-  margin-top: 48px;
+  margin-top: 56px;
 }
 
 .interests-list {
@@ -308,7 +314,7 @@ const interests = [
   display: flex;
   align-items: flex-start;
   gap: 16px;
-  padding: 16px 20px;
+  padding: 20px 24px;
   background: var(--bg-card);
   border: 1px solid var(--border);
   border-radius: var(--radius-sm);
@@ -328,7 +334,7 @@ const interests = [
 .interest-item h4 {
   font-size: 15px;
   font-weight: 600;
-  margin-bottom: 4px;
+  margin-bottom: 6px;
 }
 
 .interest-item p {
@@ -349,15 +355,15 @@ const interests = [
 }
 
 .avatar-placeholder {
-  width: 80px;
-  height: 80px;
+  width: 88px;
+  height: 88px;
   border-radius: 50%;
   background: var(--bg-secondary);
   border: 2px solid var(--border);
   display: flex;
   align-items: center;
   justify-content: center;
-  margin: 0 auto 16px;
+  margin: 0 auto 20px;
   overflow: hidden;
   position: relative;
   transition: all var(--transition);
@@ -365,7 +371,7 @@ const interests = [
 
 .avatar-placeholder:hover {
   border-color: var(--accent);
-  box-shadow: 0 0 24px var(--accent-glow);
+  box-shadow: 0 0 28px var(--accent-glow);
   transform: translateY(-2px);
 }
 
@@ -376,15 +382,16 @@ const interests = [
 }
 
 .sidebar-name {
-  font-size: 20px;
-  font-weight: 600;
+  font-size: 22px;
+  font-weight: 400;
+  font-family: var(--font-display);
   margin-bottom: 4px;
 }
 
 .sidebar-role {
   font-size: 14px;
   color: var(--text-muted);
-  margin-bottom: 16px;
+  margin-bottom: 20px;
 }
 
 .sidebar-links {
@@ -397,10 +404,10 @@ const interests = [
   display: inline-flex;
   align-items: center;
   gap: 6px;
-  font-size: 14px;
+  font-size: 13px;
   color: var(--text-secondary);
-  padding: 8px 16px;
-  border-radius: 6px;
+  padding: 8px 18px;
+  border-radius: 4px;
   border: 1px solid var(--border);
   background: transparent;
   cursor: pointer;
@@ -423,7 +430,7 @@ const interests = [
 .sidebar-card-title {
   font-size: 16px;
   font-weight: 600;
-  margin-bottom: 8px;
+  margin-bottom: 10px;
   text-align: left;
 }
 
@@ -432,6 +439,7 @@ const interests = [
   color: var(--text-muted);
   text-align: left;
   margin-bottom: 16px;
+  line-height: 1.7;
 }
 
 .tech-stack-mini {
@@ -442,39 +450,42 @@ const interests = [
 
 .mini-tag {
   font-size: 11px;
-  padding: 3px 10px;
+  padding: 4px 10px;
   background: var(--bg-secondary);
   border: 1px solid var(--border);
   border-radius: 4px;
   color: var(--text-muted);
+  font-family: var(--font-mono);
 }
 
 .sidebar-quote {
   text-align: left;
-  padding: 24px;
+  padding: 28px;
 }
 
 .mini-quote-mark {
-  font-size: 40px;
-  font-weight: 700;
+  font-size: 48px;
+  font-family: var(--font-display);
   color: var(--accent);
-  opacity: 0.3;
+  opacity: 0.2;
   line-height: 1;
   margin-bottom: 4px;
 }
 
 .mini-quote-text {
-  font-size: 13px;
+  font-size: 14px;
   color: var(--text-muted);
-  line-height: 1.8;
+  line-height: 1.9;
   font-style: italic;
-  margin-bottom: 12px;
+  font-family: var(--font-display);
+  margin-bottom: 16px;
 }
 
 .mini-quote-author {
   font-size: 12px;
   color: var(--text-muted);
-  opacity: 0.7;
+  opacity: 0.6;
+  font-family: var(--font-mono);
 }
 
 @media (max-width: 768px) {
@@ -483,7 +494,7 @@ const interests = [
   }
 
   .about-title {
-    font-size: 32px;
+    font-size: 36px;
   }
 
   .about-sidebar {

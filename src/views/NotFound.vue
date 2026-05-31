@@ -45,14 +45,11 @@ function ripple(e) { createRipple(e) }
 
 .glitch-text {
   font-size: 140px;
-  font-weight: 800;
-  font-family: var(--font-mono);
-  background: var(--gradient-1);
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-  background-clip: text;
+  font-weight: 400;
+  font-family: var(--font-display);
+  color: var(--accent);
   line-height: 1;
-  margin-bottom: 24px;
+  margin-bottom: 28px;
   position: relative;
   animation: glitch 3s infinite;
 }
@@ -64,10 +61,7 @@ function ripple(e) { createRipple(e) }
   left: 0;
   top: 0;
   width: 100%;
-  background: var(--gradient-1);
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-  background-clip: text;
+  color: var(--accent);
 }
 
 .glitch-text::before {
@@ -106,15 +100,16 @@ function ripple(e) { createRipple(e) }
 }
 
 .not-found-title {
-  font-size: 28px;
-  font-weight: 600;
-  margin-bottom: 12px;
+  font-size: 32px;
+  font-weight: 400;
+  font-family: var(--font-display);
+  margin-bottom: 16px;
 }
 
 .not-found-desc {
   font-size: 16px;
   color: var(--text-muted);
-  margin-bottom: 36px;
+  margin-bottom: 40px;
   max-width: 400px;
 }
 
@@ -125,7 +120,7 @@ function ripple(e) { createRipple(e) }
 }
 
 .btn-glow {
-  box-shadow: 0 0 20px var(--accent-glow), 0 4px 15px rgba(99, 102, 241, 0.2);
+  box-shadow: 0 0 24px var(--accent-glow), 0 4px 16px rgba(245, 158, 11, 0.15);
 }
 
 .not-found-bg {
@@ -141,7 +136,7 @@ function ripple(e) { createRipple(e) }
   position: absolute;
   border-radius: 50%;
   border: 1px solid var(--border);
-  opacity: 0.15;
+  opacity: 0.1;
 }
 
 .orbit-1 {
@@ -174,7 +169,7 @@ function ripple(e) { createRipple(e) }
   }
 
   .not-found-title {
-    font-size: 22px;
+    font-size: 24px;
   }
 
   .not-found-actions {

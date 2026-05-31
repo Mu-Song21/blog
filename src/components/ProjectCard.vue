@@ -48,7 +48,7 @@ defineProps({
 .card-desc {
   font-size: 14px;
   color: var(--text-secondary);
-  line-height: 1.6;
+  line-height: 1.7;
 }
 
 .card-tech {

@@ -78,7 +78,7 @@ const projects = [
     description: '基于若依框架二次开发的智慧社区综合管理平台',
     detail: '围绕物业数字化管理场景，扩展社区、房屋、费用、预约、投诉、访客、公告等业务模块，后端基于若依多模块架构完成权限控制、分页查询、数据维护和 Excel 导出等通用后台能力。',
     icon: '🏘️',
-    gradient: 'linear-gradient(135deg, #3b82f633, #6366f133)',
+    gradient: 'linear-gradient(135deg, #06b6d433, #0891b233)',
     tech: ['若依框架', 'Spring Boot', 'Spring Security', 'JWT', 'Redis', 'MyBatis-Plus', 'Quartz'],
     features: [
       '若依多模块架构下的业务模块扩展',
@@ -99,7 +99,7 @@ const projects = [
     description: '面向视障人士的智能盲杖设备管理与安全预警系统',
     detail: '系统通过智能盲杖上报障碍物距离、三轴加速度、GPS、温湿度和电量等数据，后端完成传感器数据存储、跌倒判断、电子围栏越界判断、轨迹回放和告警推送，支撑管理后台和小程序端协同使用。',
     icon: '🦯',
-    gradient: 'linear-gradient(135deg, #8b5cf633, #a78bfa33)',
+    gradient: 'linear-gradient(135deg, #f59e0b22, #d9770622)',
     tech: ['Spring Boot', 'MyBatis', 'MySQL', 'WebSocket', 'GPS', '高德地图', 'uni-app'],
     features: [
       '传感器数据上报、存储和最新数据查询',
@@ -119,7 +119,7 @@ const projects = [
 
 <style scoped>
 .projects-hero {
-  padding: 80px 0 40px;
+  padding: 100px 0 48px;
   position: relative;
 }
 
@@ -127,7 +127,7 @@ const projects = [
   content: '';
   position: absolute;
   inset: 0;
-  background: radial-gradient(ellipse 50% 80% at 50% 0%, var(--accent-glow) 0%, transparent 70%);
+  background: radial-gradient(ellipse 50% 80% at 50% 0%, rgba(245, 158, 11, 0.06) 0%, transparent 70%);
   pointer-events: none;
 }
 
@@ -136,14 +136,15 @@ const projects = [
 }
 
 .projects-hero-title {
-  font-size: 48px;
-  font-weight: 700;
-  margin-bottom: 12px;
+  font-size: 52px;
+  font-weight: 400;
+  font-family: var(--font-display);
+  margin-bottom: 16px;
   letter-spacing: -0.5px;
 }
 
 .projects-hero-desc {
-  font-size: 18px;
+  font-size: 17px;
   color: var(--text-muted);
   max-width: 600px;
 }
@@ -160,14 +161,14 @@ const projects = [
   background: var(--bg-card);
   border: 1px solid var(--border);
   border-radius: var(--radius-lg);
-  padding: 36px;
+  padding: 40px;
   transition: all var(--transition);
 }
 
 .project-item:hover {
   border-color: var(--border-light);
   box-shadow: var(--shadow);
-  transform: translateY(-2px);
+  transform: translateY(-3px);
 }
 
 .project-left {
@@ -179,10 +180,11 @@ const projects = [
 }
 
 .project-index {
-  font-size: 13px;
+  font-size: 12px;
   font-weight: 600;
   color: var(--text-muted);
   font-family: var(--font-mono);
+  letter-spacing: 2px;
 }
 
 .project-icon {
@@ -199,7 +201,7 @@ const projects = [
   flex: 1;
   display: flex;
   flex-direction: column;
-  gap: 12px;
+  gap: 14px;
 }
 
 .project-header {
@@ -211,15 +213,18 @@ const projects = [
 }
 
 .project-name {
-  font-size: 22px;
-  font-weight: 600;
+  font-size: 24px;
+  font-weight: 400;
+  font-family: var(--font-display);
 }
 
 .project-category {
-  font-size: 12px;
+  font-size: 11px;
   color: var(--accent);
   font-weight: 500;
-  letter-spacing: 1px;
+  letter-spacing: 2px;
+  font-family: var(--font-mono);
+  text-transform: uppercase;
 }
 
 .project-desc {
@@ -231,7 +236,7 @@ const projects = [
 .project-detail {
   font-size: 14px;
   color: var(--text-muted);
-  line-height: 1.7;
+  line-height: 1.8;
 }
 
 .project-tech {
@@ -257,8 +262,8 @@ const projects = [
 
 .project-highlights {
   display: flex;
-  gap: 24px;
-  padding-top: 16px;
+  gap: 32px;
+  padding-top: 20px;
   margin-top: 8px;
   border-top: 1px solid var(--border);
 }
@@ -266,7 +271,7 @@ const projects = [
 .highlight {
   display: flex;
   flex-direction: column;
-  gap: 2px;
+  gap: 4px;
 }
 
 .highlight-value {
@@ -277,19 +282,21 @@ const projects = [
 }
 
 .highlight-label {
-  font-size: 12px;
+  font-size: 11px;
   color: var(--text-muted);
+  font-family: var(--font-mono);
+  letter-spacing: 1px;
 }
 
 @media (max-width: 768px) {
   .projects-hero-title {
-    font-size: 32px;
+    font-size: 36px;
   }
 
   .project-item {
     flex-direction: column;
     gap: 20px;
-    padding: 24px;
+    padding: 28px;
   }
 
   .project-left {

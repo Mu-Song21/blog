@@ -2,8 +2,8 @@
   <div class="admin-page">
     <aside class="admin-sidebar">
       <div class="sidebar-brand">
-        <span class="logo-icon">▸</span>
-        <span>目送后台</span>
+        <span class="brand-mark">目送</span>
+        <span class="brand-sub">后台</span>
       </div>
       <nav class="sidebar-nav">
         <button :class="{ active: tab === 'articles' }" @click="tab = 'articles'">
@@ -278,14 +278,21 @@ function handleLogout() {
   align-items: center;
   gap: 8px;
   padding: 20px 24px;
-  font-size: 16px;
-  font-weight: 600;
   border-bottom: 1px solid var(--border);
 }
 
-.logo-icon {
-  color: var(--accent);
-  font-size: 14px;
+.brand-mark {
+  font-family: var(--font-display);
+  font-size: 22px;
+  color: var(--text-primary);
+  letter-spacing: 2px;
+}
+
+.brand-sub {
+  font-size: 13px;
+  color: var(--text-muted);
+  font-family: var(--font-mono);
+  letter-spacing: 1px;
 }
 
 .sidebar-nav {
@@ -370,7 +377,8 @@ function handleLogout() {
 
 .admin-header h1 {
   font-size: 24px;
-  font-weight: 600;
+  font-weight: 400;
+  font-family: var(--font-display);
 }
 
 .articles-table {
@@ -414,7 +422,7 @@ function handleLogout() {
 }
 
 .sort-btn.active {
-  background: rgba(99, 102, 241, 0.1);
+  background: var(--accent-glow);
   border-color: var(--accent);
   color: var(--accent-light);
 }

@@ -58,6 +58,7 @@ onUnmounted(() => clearTimeout(timer))
 
 .typed-text {
   color: var(--accent-light);
+  font-weight: 500;
 }
 
 .typed-cursor {

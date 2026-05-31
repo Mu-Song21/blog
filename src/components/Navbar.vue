@@ -2,8 +2,7 @@
   <nav class="navbar" :class="{ scrolled: isScrolled }">
     <div class="nav-inner container">
       <router-link to="/" class="logo">
-        <span class="logo-icon">▸</span>
-        <span class="logo-text">目送</span>
+        <span class="logo-mark">目送</span>
       </router-link>
       <div class="nav-links" :class="{ open: menuOpen }">
         <router-link to="/" @click="onNavClick" class="nav-link-item">首页</router-link>
@@ -51,11 +50,11 @@ onUnmounted(() => { window.removeEventListener('scroll', onScroll) })
 }
 
 .navbar.scrolled {
-  background: rgba(22, 22, 31, 0.85);
-  backdrop-filter: blur(16px);
-  -webkit-backdrop-filter: blur(16px);
+  background: rgba(11, 11, 15, 0.9);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
   border-bottom-color: var(--border);
-  box-shadow: 0 1px 20px rgba(0, 0, 0, 0.2);
+  box-shadow: 0 1px 24px rgba(0, 0, 0, 0.3);
 }
 
 .nav-inner {
@@ -68,30 +67,32 @@ onUnmounted(() => { window.removeEventListener('scroll', onScroll) })
 .logo {
   display: flex;
   align-items: center;
-  gap: 8px;
-  font-size: 20px;
-  font-weight: 700;
-  color: var(--text-primary);
+  text-decoration: none;
 }
 
 .logo:hover {
-  color: var(--text-primary);
+  opacity: 0.8;
 }
 
-.logo-icon {
-  color: var(--accent);
-  font-size: 16px;
+.logo-mark {
+  font-family: var(--font-display);
+  font-size: 24px;
+  font-weight: 400;
+  color: var(--text-primary);
+  letter-spacing: 2px;
 }
 
 .nav-links {
   display: flex;
-  gap: 32px;
+  gap: 40px;
 }
 
 .nav-links a {
-  font-size: 14px;
+  font-size: 13px;
   font-weight: 500;
-  color: var(--text-secondary);
+  color: var(--text-muted);
+  letter-spacing: 1px;
+  text-transform: uppercase;
   position: relative;
   padding: 4px 0;
 }
@@ -99,18 +100,17 @@ onUnmounted(() => { window.removeEventListener('scroll', onScroll) })
 .nav-links a::after {
   content: '';
   position: absolute;
-  bottom: -2px;
+  bottom: -4px;
   left: 0;
   width: 0;
-  height: 2px;
-  background: var(--gradient-1);
-  border-radius: 1px;
+  height: 1px;
+  background: var(--accent);
   transition: width var(--transition);
 }
 
 .nav-links a:hover,
 .nav-links a.router-link-active {
-  color: var(--text-primary);
+  color: var(--accent-light);
 }
 
 .nav-links a.router-link-active::after {
@@ -132,7 +132,7 @@ onUnmounted(() => { window.removeEventListener('scroll', onScroll) })
 .menu-toggle span::after {
   display: block;
   width: 100%;
-  height: 2px;
+  height: 1.5px;
   background: var(--text-primary);
   border-radius: 1px;
   transition: all var(--transition);
@@ -177,12 +177,12 @@ onUnmounted(() => { window.removeEventListener('scroll', onScroll) })
     left: 0;
     right: 0;
     flex-direction: column;
-    background: rgba(22, 22, 31, 0.95);
-    backdrop-filter: blur(16px);
-    -webkit-backdrop-filter: blur(16px);
+    background: rgba(11, 11, 15, 0.95);
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
     border-bottom: 1px solid var(--border);
-    padding: 24px;
-    gap: 20px;
+    padding: 32px 24px;
+    gap: 24px;
     transform: translateY(-100%);
     opacity: 0;
     pointer-events: none;
@@ -196,7 +196,7 @@ onUnmounted(() => { window.removeEventListener('scroll', onScroll) })
   }
 
   .nav-links a {
-    font-size: 16px;
+    font-size: 15px;
   }
 }
 </style>

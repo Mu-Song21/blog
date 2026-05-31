@@ -37,7 +37,7 @@ const readTime = computed(() => {
 .article-card {
   display: flex;
   flex-direction: column;
-  gap: 12px;
+  gap: 14px;
   cursor: pointer;
   text-decoration: none;
   color: inherit;
@@ -50,11 +50,12 @@ const readTime = computed(() => {
 }
 
 .category {
-  font-size: 12px;
+  font-size: 11px;
   font-weight: 600;
   color: var(--accent);
+  letter-spacing: 2px;
   text-transform: uppercase;
-  letter-spacing: 1px;
+  font-family: var(--font-mono);
 }
 
 .card-meta {
@@ -78,16 +79,21 @@ const readTime = computed(() => {
 }
 
 .card-title {
-  font-size: 18px;
+  font-size: 19px;
   font-weight: 600;
   line-height: 1.4;
   color: var(--text-primary);
+  transition: color var(--transition);
+}
+
+.article-card:hover .card-title {
+  color: var(--accent-light);
 }
 
 .card-excerpt {
   font-size: 14px;
   color: var(--text-secondary);
-  line-height: 1.6;
+  line-height: 1.7;
   display: -webkit-box;
   -webkit-line-clamp: 2;
   -webkit-box-orient: vertical;

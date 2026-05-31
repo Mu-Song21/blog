@@ -2,8 +2,7 @@
   <div class="login-page">
     <div class="login-container">
       <div class="login-brand">
-        <span class="logo-icon">▸</span>
-        <span class="logo-text">目送</span>
+        <span class="brand-mark">目送</span>
         <span class="brand-divider">·</span>
         <span class="brand-sub">后台管理</span>
       </div>
@@ -39,17 +38,21 @@ const password = ref('')
 const error = ref('')
 const loading = ref(false)
 
-function handleLogin() {
+async function handleLogin() {
   error.value = ''
   loading.value = true
-  setTimeout(() => {
-    if (store.login(password.value)) {
+  try {
+    const ok = await store.login(password.value)
+    if (ok) {
       router.push('/admin')
     } else {
       error.value = '密码错误'
     }
+  } catch {
+    error.value = '登录失败，请重试'
+  } finally {
     loading.value = false
-  }, 500)
+  }
 }
 </script>
 
@@ -74,18 +77,14 @@ function handleLogin() {
   justify-content: center;
   gap: 8px;
   margin-bottom: 32px;
-  font-size: 18px;
   color: var(--text-secondary);
 }
 
-.logo-icon {
-  color: var(--accent);
-  font-size: 14px;
-}
-
-.logo-text {
-  font-weight: 700;
+.brand-mark {
+  font-family: var(--font-display);
+  font-size: 28px;
   color: var(--text-primary);
+  letter-spacing: 2px;
 }
 
 .brand-divider {
@@ -105,7 +104,8 @@ function handleLogin() {
 
 .form-title {
   font-size: 22px;
-  font-weight: 600;
+  font-weight: 400;
+  font-family: var(--font-display);
   text-align: center;
 }
 

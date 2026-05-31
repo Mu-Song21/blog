@@ -68,10 +68,8 @@
         </div>
       </div>
       <div class="scroll-hint">
-        <div class="scroll-mouse">
-          <div class="scroll-dot"></div>
-        </div>
-        <span>向下滚动</span>
+        <div class="scroll-line"></div>
+        <span>SCROLL</span>
       </div>
     </section>
 
@@ -248,7 +246,7 @@ const projects = [
     name: '安隅智能社区',
     description: '基于若依框架二次开发的智慧社区管理平台，涵盖住户、房屋、费用、预约、投诉、访客和公告等物业业务。',
     icon: '🏘️',
-    gradient: 'linear-gradient(135deg, #3b82f622, #6366f122)',
+    gradient: 'linear-gradient(135deg, #06b6d422, #0891b222)',
     tech: ['若依', 'Spring Security', 'JWT', 'Redis', 'MyBatis-Plus'],
     stats: [
       { value: '8+', label: '核心模块' },
@@ -259,7 +257,7 @@ const projects = [
     name: '智能盲杖辅助系统',
     description: '面向视障人士的智能硬件管理平台，支持传感器数据上报、跌倒检测、电子围栏、轨迹回放和 AI 按键唤醒。',
     icon: '🦯',
-    gradient: 'linear-gradient(135deg, #8b5cf622, #a78bfa22)',
+    gradient: 'linear-gradient(135deg, #f59e0b11, #d9770611)',
     tech: ['Spring Boot', 'MyBatis', 'WebSocket', 'GPS', 'uni-app'],
     stats: [
       { value: 'AI', label: '语音交互' },
@@ -298,7 +296,7 @@ const techCategories = [
     name: 'AI & 云服务',
     icon: '🤖',
     items: [
-      { name: 'AI 大模型 API', color: '#8b5cf6' },
+      { name: 'AI 大模型 API', color: '#f59e0b' },
       { name: '高德地图', color: '#0090ff' },
       { name: '百度语音', color: '#2932e1' },
       { name: '若依框架', color: '#e74c3c' },
@@ -309,10 +307,10 @@ const techCategories = [
 
 const timeline = [
   { date: '2024', title: '初识编程', desc: '第一次接触 Java，写下了 Hello World。从此打开了新世界的大门。', color: '#f59e0b' },
-  { date: '2025 上', title: '第一个完整项目', desc: '独立完成安隅智能社区平台，从需求分析到架构设计，理解了企业级开发的全貌。', color: '#3b82f6' },
-  { date: '2025 下', title: '物联网探索', desc: '搭建 ElderGuard 独居老人守护终端，打通传感器 → MQTT → 云端 → 小程序的完整链路。', color: '#6366f1' },
-  { date: '2026', title: 'AI 赋能无障碍', desc: '开发智能盲杖系统，融合 AI 对话与地图导航，践行"技术向善"的理念。', color: '#8b5cf6' },
-  { date: '现在', title: '持续精进', desc: '深耕全栈技术，探索 AI 更多落地场景。目送每一个项目远去，也目送自己不断成长。', color: '#a78bfa' },
+  { date: '2025 上', title: '第一个完整项目', desc: '独立完成安隅智能社区平台，从需求分析到架构设计，理解了企业级开发的全貌。', color: '#06b6d4' },
+  { date: '2025 下', title: '物联网探索', desc: '搭建 ElderGuard 独居老人守护终端，打通传感器 → MQTT → 云端 → 小程序的完整链路。', color: '#f59e0b' },
+  { date: '2026', title: 'AI 赋能无障碍', desc: '开发智能盲杖系统，融合 AI 对话与地图导航，践行"技术向善"的理念。', color: '#06b6d4' },
+  { date: '现在', title: '持续精进', desc: '深耕全栈技术，探索 AI 更多落地场景。目送每一个项目远去，也目送自己不断成长。', color: '#fbbf24' },
 ]
 </script>
 
@@ -335,18 +333,18 @@ const timeline = [
   position: absolute;
   inset: 0;
   background:
-    radial-gradient(ellipse 60% 50% at 50% 0%, var(--accent-glow) 0%, transparent 60%),
-    radial-gradient(ellipse 40% 40% at 80% 20%, rgba(139, 92, 246, 0.08) 0%, transparent 60%),
-    radial-gradient(ellipse 30% 30% at 20% 60%, rgba(6, 182, 212, 0.05) 0%, transparent 60%);
+    radial-gradient(ellipse 60% 50% at 50% 0%, rgba(245, 158, 11, 0.08) 0%, transparent 60%),
+    radial-gradient(ellipse 40% 40% at 80% 20%, rgba(6, 182, 212, 0.05) 0%, transparent 60%),
+    radial-gradient(ellipse 30% 30% at 20% 60%, rgba(245, 158, 11, 0.03) 0%, transparent 60%);
 }
 
 .hero-grid {
   position: absolute;
   inset: 0;
   background-image:
-    linear-gradient(rgba(99, 102, 241, 0.03) 1px, transparent 1px),
-    linear-gradient(90deg, rgba(99, 102, 241, 0.03) 1px, transparent 1px);
-  background-size: 60px 60px;
+    linear-gradient(rgba(245, 158, 11, 0.02) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(245, 158, 11, 0.02) 1px, transparent 1px);
+  background-size: 80px 80px;
   mask-image: radial-gradient(ellipse 70% 60% at 50% 30%, black 0%, transparent 80%);
   -webkit-mask-image: radial-gradient(ellipse 70% 60% at 50% 30%, black 0%, transparent 80%);
 }
@@ -360,7 +358,7 @@ const timeline = [
   display: grid;
   grid-template-columns: minmax(0, 1.08fr) minmax(360px, 0.92fr);
   align-items: center;
-  gap: 56px;
+  gap: 64px;
 }
 
 .hero-copy {
@@ -368,20 +366,21 @@ const timeline = [
 }
 
 .hero-label {
-  font-size: 12px;
+  font-size: 11px;
   font-weight: 600;
-  letter-spacing: 3px;
+  letter-spacing: 4px;
   color: var(--accent);
-  margin-bottom: 24px;
+  margin-bottom: 28px;
   font-family: var(--font-mono);
 }
 
 .hero-title {
-  font-size: 60px;
-  font-weight: 700;
+  font-size: 64px;
+  font-weight: 400;
+  font-family: var(--font-display);
   line-height: 1.15;
-  letter-spacing: -1.5px;
-  margin-bottom: 28px;
+  letter-spacing: -1px;
+  margin-bottom: 32px;
 }
 
 .hero-title .line {
@@ -389,18 +388,16 @@ const timeline = [
 }
 
 .hero-title .accent {
-  background: var(--gradient-1);
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-  background-clip: text;
+  color: var(--accent);
+  font-style: italic;
 }
 
 .hero-desc {
-  font-size: 18px;
+  font-size: 17px;
   color: var(--text-secondary);
   line-height: 2;
   max-width: 560px;
-  margin-bottom: 40px;
+  margin-bottom: 44px;
 }
 
 .hero-actions {
@@ -410,11 +407,11 @@ const timeline = [
 }
 
 .btn-glow {
-  box-shadow: 0 0 20px var(--accent-glow), 0 4px 15px rgba(99, 102, 241, 0.2);
+  box-shadow: 0 0 24px var(--accent-glow), 0 4px 16px rgba(245, 158, 11, 0.15);
 }
 
 .btn-glow:hover {
-  box-shadow: 0 0 30px var(--accent-glow-strong), 0 8px 25px rgba(99, 102, 241, 0.3);
+  box-shadow: 0 0 36px var(--accent-glow-strong), 0 8px 28px rgba(245, 158, 11, 0.2);
 }
 
 .hero-stats {
@@ -434,7 +431,7 @@ const timeline = [
 }
 
 .stat-text {
-  font-size: 14px;
+  font-size: 13px;
   font-weight: 400;
   color: var(--text-muted);
   font-family: var(--font-sans);
@@ -448,9 +445,9 @@ const timeline = [
 
 .hero-panel {
   background:
-    linear-gradient(135deg, rgba(99, 102, 241, 0.12), rgba(6, 182, 212, 0.04)),
+    linear-gradient(135deg, rgba(245, 158, 11, 0.06), rgba(6, 182, 212, 0.02)),
     var(--bg-card);
-  border: 1px solid var(--border-light);
+  border: 1px solid var(--border);
   border-radius: var(--radius-lg);
   padding: 24px;
   box-shadow: var(--shadow-lg);
@@ -462,7 +459,7 @@ const timeline = [
   content: '';
   position: absolute;
   inset: -1px;
-  background: radial-gradient(circle at 20% 0%, rgba(99, 102, 241, 0.18), transparent 35%);
+  background: radial-gradient(circle at 20% 0%, rgba(245, 158, 11, 0.1), transparent 35%);
   pointer-events: none;
 }
 
@@ -488,8 +485,8 @@ const timeline = [
   width: 10px;
   height: 10px;
   border-radius: 50%;
-  background: #22c55e;
-  box-shadow: 0 0 12px rgba(34, 197, 94, 0.65);
+  background: var(--accent);
+  box-shadow: 0 0 12px var(--accent-glow-strong);
 }
 
 .system-flow {
@@ -503,9 +500,15 @@ const timeline = [
   grid-template-columns: 42px 1fr;
   gap: 14px;
   padding: 16px;
-  border: 1px solid rgba(255, 255, 255, 0.06);
+  border: 1px solid rgba(255, 255, 255, 0.04);
   border-radius: 16px;
-  background: rgba(255, 255, 255, 0.03);
+  background: rgba(255, 255, 255, 0.02);
+  transition: all var(--transition);
+}
+
+.flow-node:hover {
+  border-color: rgba(245, 158, 11, 0.15);
+  background: rgba(245, 158, 11, 0.03);
 }
 
 .flow-icon {
@@ -514,12 +517,13 @@ const timeline = [
   display: flex;
   align-items: center;
   justify-content: center;
-  border-radius: 14px;
-  background: rgba(99, 102, 241, 0.14);
+  border-radius: 12px;
+  background: rgba(245, 158, 11, 0.1);
 }
 
 .flow-node h3 {
   font-size: 15px;
+  font-weight: 600;
   margin-bottom: 6px;
 }
 
@@ -537,61 +541,45 @@ const timeline = [
 }
 
 .panel-footer span {
-  padding: 6px 10px;
+  padding: 6px 12px;
   border: 1px solid var(--border);
-  border-radius: 999px;
+  border-radius: 4px;
   color: var(--accent-light);
-  background: rgba(99, 102, 241, 0.08);
-  font-size: 12px;
+  background: rgba(245, 158, 11, 0.06);
+  font-size: 11px;
   font-family: var(--font-mono);
+  letter-spacing: 0.5px;
 }
 
 .scroll-hint {
   position: absolute;
-  bottom: 36px;
+  bottom: 40px;
   left: 50%;
   transform: translateX(-50%);
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 8px;
+  gap: 12px;
   color: var(--text-muted);
-  font-size: 12px;
-  animation: float 2.5s ease-in-out infinite;
+  font-size: 10px;
+  font-family: var(--font-mono);
+  letter-spacing: 3px;
 }
 
-.scroll-mouse {
-  width: 22px;
-  height: 34px;
-  border: 2px solid var(--border-light);
-  border-radius: 11px;
-  position: relative;
+.scroll-line {
+  width: 1px;
+  height: 48px;
+  background: linear-gradient(to bottom, var(--accent), transparent);
+  animation: scrollPulse 2s ease-in-out infinite;
 }
 
-.scroll-dot {
-  width: 3px;
-  height: 8px;
-  background: var(--accent);
-  border-radius: 2px;
-  position: absolute;
-  top: 6px;
-  left: 50%;
-  transform: translateX(-50%);
-  animation: scrollDot 2s ease-in-out infinite;
-}
-
-@keyframes scrollDot {
-  0%, 100% { opacity: 1; top: 6px; }
-  50% { opacity: 0.3; top: 18px; }
-}
-
-@keyframes float {
-  0%, 100% { transform: translateX(-50%) translateY(0); }
-  50% { transform: translateX(-50%) translateY(-6px); }
+@keyframes scrollPulse {
+  0%, 100% { opacity: 1; transform: scaleY(1); }
+  50% { opacity: 0.3; transform: scaleY(0.6); }
 }
 
 .section-subtitle {
-  margin-top: 12px;
+  margin-top: 16px;
   font-size: 16px;
   color: var(--text-muted);
   max-width: 560px;
@@ -621,27 +609,29 @@ const timeline = [
   border: 1px solid var(--border);
   border-radius: var(--radius);
   background:
-    linear-gradient(180deg, rgba(99, 102, 241, 0.08), transparent),
+    linear-gradient(180deg, rgba(245, 158, 11, 0.04), transparent),
     var(--bg-card);
   transition: all var(--transition);
 }
 
 .value-card:hover {
   transform: translateY(-4px);
-  border-color: var(--border-light);
-  box-shadow: var(--shadow);
+  border-color: rgba(245, 158, 11, 0.2);
+  box-shadow: 0 8px 32px rgba(245, 158, 11, 0.08);
 }
 
 .value-index {
-  font-size: 13px;
-  font-weight: 700;
+  font-size: 12px;
+  font-weight: 600;
   font-family: var(--font-mono);
   color: var(--accent);
   margin-bottom: 28px;
+  letter-spacing: 2px;
 }
 
 .value-card h3 {
   font-size: 18px;
+  font-weight: 600;
   margin-bottom: 12px;
 }
 
@@ -653,7 +643,7 @@ const timeline = [
 
 .view-more {
   text-align: center;
-  margin-top: 40px;
+  margin-top: 48px;
 }
 
 .tech-showcase {
@@ -734,8 +724,8 @@ const timeline = [
   left: 50%;
   top: 0;
   bottom: 0;
-  width: 2px;
-  background: linear-gradient(to bottom, transparent, var(--accent), var(--accent-light), transparent);
+  width: 1px;
+  background: linear-gradient(to bottom, transparent, var(--accent-dim), var(--accent), var(--accent-dim), transparent);
   transform: translateX(-50%);
 }
 
@@ -758,20 +748,20 @@ const timeline = [
 .timeline-dot {
   position: absolute;
   top: 8px;
-  width: 14px;
-  height: 14px;
+  width: 12px;
+  height: 12px;
   border-radius: 50%;
-  border: 3px solid var(--bg-primary);
-  box-shadow: 0 0 12px currentColor;
+  border: 2px solid var(--bg-primary);
+  box-shadow: 0 0 16px currentColor;
   z-index: 1;
 }
 
 .timeline-item.left .timeline-dot {
-  right: -7px;
+  right: -6px;
 }
 
 .timeline-item.right .timeline-dot {
-  left: -7px;
+  left: -6px;
 }
 
 .timeline-card {
@@ -781,23 +771,23 @@ const timeline = [
 }
 
 .timeline-date {
-  font-size: 12px;
+  font-size: 11px;
   font-weight: 600;
   font-family: var(--font-mono);
   color: var(--accent);
-  letter-spacing: 1px;
+  letter-spacing: 2px;
 }
 
 .timeline-title {
   font-size: 18px;
   font-weight: 600;
-  margin: 6px 0 8px;
+  margin: 8px 0 10px;
 }
 
 .timeline-desc {
   font-size: 14px;
   color: var(--text-muted);
-  line-height: 1.6;
+  line-height: 1.7;
 }
 
 .quote-section {
@@ -808,7 +798,7 @@ const timeline = [
   text-align: center;
   max-width: 700px;
   margin: 0 auto;
-  padding: 48px 40px;
+  padding: 56px 48px;
   background: var(--bg-card);
   border: 1px solid var(--border);
   border-radius: var(--radius-lg);
@@ -817,17 +807,18 @@ const timeline = [
 
 .quote-mark {
   font-size: 80px;
-  font-weight: 700;
+  font-family: var(--font-display);
   color: var(--accent);
-  opacity: 0.2;
+  opacity: 0.15;
   line-height: 1;
   position: absolute;
-  top: 12px;
-  left: 24px;
+  top: 16px;
+  left: 28px;
 }
 
 .quote-text {
   font-size: 18px;
+  font-family: var(--font-display);
   line-height: 2;
   color: var(--text-secondary);
   font-style: italic;
@@ -835,10 +826,12 @@ const timeline = [
 }
 
 .quote-author {
-  margin-top: 20px;
-  font-size: 14px;
+  margin-top: 24px;
+  font-size: 13px;
   color: var(--text-muted);
   font-style: normal;
+  font-family: var(--font-mono);
+  letter-spacing: 1px;
 }
 
 .cta-section {
@@ -847,7 +840,7 @@ const timeline = [
 
 .cta-inner {
   text-align: center;
-  padding: 72px 40px;
+  padding: 80px 48px;
   background: var(--bg-card);
   border: 1px solid var(--border);
   border-radius: var(--radius-lg);
@@ -859,15 +852,16 @@ const timeline = [
   position: absolute;
   inset: 0;
   background:
-    radial-gradient(ellipse 50% 50% at 50% 0%, var(--accent-glow) 0%, transparent 70%),
-    radial-gradient(ellipse 30% 30% at 20% 80%, rgba(139, 92, 246, 0.06) 0%, transparent 70%),
-    radial-gradient(ellipse 30% 30% at 80% 80%, rgba(6, 182, 212, 0.06) 0%, transparent 70%);
+    radial-gradient(ellipse 50% 50% at 50% 0%, rgba(245, 158, 11, 0.08) 0%, transparent 70%),
+    radial-gradient(ellipse 30% 30% at 20% 80%, rgba(6, 182, 212, 0.04) 0%, transparent 70%),
+    radial-gradient(ellipse 30% 30% at 80% 80%, rgba(245, 158, 11, 0.04) 0%, transparent 70%);
   pointer-events: none;
 }
 
 .cta-title {
   font-size: 32px;
-  font-weight: 700;
+  font-family: var(--font-display);
+  font-weight: 400;
   margin-bottom: 16px;
   position: relative;
 }
@@ -875,7 +869,7 @@ const timeline = [
 .cta-desc {
   font-size: 16px;
   color: var(--text-secondary);
-  margin-bottom: 36px;
+  margin-bottom: 40px;
   position: relative;
 }
 
@@ -889,12 +883,12 @@ const timeline = [
 @media (max-width: 768px) {
   .hero-main {
     grid-template-columns: 1fr;
-    gap: 36px;
-    padding-top: 72px;
+    gap: 40px;
+    padding-top: 80px;
   }
 
   .hero-title {
-    font-size: 38px;
+    font-size: 40px;
   }
 
   .hero-desc {
@@ -938,7 +932,7 @@ const timeline = [
 
   .timeline-item.left .timeline-dot,
   .timeline-item.right .timeline-dot {
-    left: 13px;
+    left: 14px;
     right: auto;
   }
 
@@ -948,7 +942,7 @@ const timeline = [
   }
 
   .quote-block {
-    padding: 36px 24px;
+    padding: 40px 28px;
   }
 
   .quote-text {

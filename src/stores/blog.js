@@ -1025,8 +1025,13 @@ export const useBlogStore = defineStore('blog', () => {
     return articles.value.find(a => a.id === Number(id))
   }
 
-  function login(password) {
-    if (password === 'musong2026') {
+  async function login(password) {
+    const encoder = new TextEncoder()
+    const data = encoder.encode(password)
+    const hashBuffer = await crypto.subtle.digest('SHA-256', data)
+    const hashArray = Array.from(new Uint8Array(hashBuffer))
+    const hashHex = hashArray.map(b => b.toString(16).padStart(2, '0')).join('')
+    if (hashHex === '359b2a5906204e976dd382c2efdcbdcb5ffc8bac3cc7477f7885ffd95a6047ab') {
       const token = 'admin_' + Date.now()
       adminToken.value = token
       localStorage.setItem('blog_admin_token', token)

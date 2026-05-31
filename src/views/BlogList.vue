@@ -95,7 +95,7 @@ function setFilter(cat, e) {
 
 <style scoped>
 .blog-hero {
-  padding: 80px 0 40px;
+  padding: 100px 0 48px;
   position: relative;
 }
 
@@ -103,7 +103,7 @@ function setFilter(cat, e) {
   content: '';
   position: absolute;
   inset: 0;
-  background: radial-gradient(ellipse 50% 80% at 50% 0%, var(--accent-glow) 0%, transparent 70%);
+  background: radial-gradient(ellipse 50% 80% at 50% 0%, rgba(245, 158, 11, 0.06) 0%, transparent 70%);
   pointer-events: none;
 }
 
@@ -112,14 +112,15 @@ function setFilter(cat, e) {
 }
 
 .blog-hero-title {
-  font-size: 48px;
-  font-weight: 700;
-  margin-bottom: 12px;
+  font-size: 52px;
+  font-weight: 400;
+  font-family: var(--font-display);
+  margin-bottom: 16px;
   letter-spacing: -0.5px;
 }
 
 .blog-hero-desc {
-  font-size: 18px;
+  font-size: 17px;
   color: var(--text-muted);
 }
 
@@ -145,7 +146,7 @@ function setFilter(cat, e) {
 
 .search-input {
   width: 100%;
-  padding: 12px 40px 12px 40px;
+  padding: 14px 40px 14px 42px;
   background: var(--bg-card);
   border: 1px solid var(--border);
   border-radius: var(--radius-sm);
@@ -186,15 +187,16 @@ function setFilter(cat, e) {
   display: flex;
   flex-wrap: wrap;
   gap: 10px;
-  margin-bottom: 32px;
+  margin-bottom: 40px;
 }
 
 .filter-btn {
   padding: 8px 20px;
-  border-radius: 20px;
-  font-size: 13px;
+  border-radius: 4px;
+  font-size: 12px;
   font-weight: 500;
-  font-family: var(--font-sans);
+  font-family: var(--font-mono);
+  letter-spacing: 0.5px;
   cursor: pointer;
   border: 1px solid var(--border);
   background: transparent;
@@ -251,7 +253,7 @@ function setFilter(cat, e) {
 
 @media (max-width: 768px) {
   .blog-hero-title {
-    font-size: 32px;
+    font-size: 36px;
   }
 
   .article-grid {

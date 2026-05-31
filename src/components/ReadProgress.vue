@@ -26,6 +26,6 @@ onUnmounted(() => { window.removeEventListener('scroll', onScroll) })
   background: var(--gradient-1);
   z-index: 10000;
   transition: width 0.05s linear;
-  box-shadow: 0 0 8px var(--accent-glow-strong);
+  box-shadow: 0 0 12px var(--accent-glow-strong);
 }
 </style>

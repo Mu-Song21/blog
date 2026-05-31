@@ -12,7 +12,7 @@ function escapeHtml(str) {
 
 function parseInline(text) {
   let result = escapeHtml(text)
-  result = result.replace(/!\[([^\]]*)\]\(([^)]+)\)/g, '<img src="$2" alt="$1" />')
+  result = result.replace(/!\[([^\]]*)\]\(([^)]+)\)/g, '<img src="$2" alt="$1" loading="lazy" />')
   result = result.replace(/\[([^\]]+)\]\(([^)]+)\)/g, '<a href="$2" target="_blank" rel="noopener">$1</a>')
   result = result.replace(/`([^`]+)`/g, '<code class="inline-code">$1</code>')
   result = result.replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>')
@@ -29,9 +29,9 @@ export function renderMarkdown(md) {
   let codeContent = ''
   let codeLang = ''
   let inTable = false
-  let tableHeaders = []
   let inBlockquote = false
   let blockquoteContent = ''
+  let listType = null // 'ul' or 'ol'
 
   function closeBlockquote() {
     if (inBlockquote && blockquoteContent) {
@@ -45,7 +45,13 @@ export function renderMarkdown(md) {
     if (inTable) {
       html += '</tbody></table></div>'
       inTable = false
-      tableHeaders = []
+    }
+  }
+
+  function closeList() {
+    if (listType) {
+      html += `</${listType}>`
+      listType = null
     }
   }
 
@@ -56,13 +62,15 @@ export function renderMarkdown(md) {
       if (!inCodeBlock) {
         closeBlockquote()
         closeTable()
+        closeList()
         inCodeBlock = true
         codeLang = line.trim().slice(3).trim()
         codeContent = ''
         continue
       } else {
+        const langClass = codeLang ? ` class="language-${escapeHtml(codeLang)}"` : ''
         const langAttr = codeLang ? ` data-lang="${escapeHtml(codeLang)}"` : ''
-        html += `<div class="code-block"${langAttr}><pre><code>${escapeHtml(codeContent)}</code></pre></div>`
+        html += `<div class="code-block"${langAttr}><pre><code${langClass}>${escapeHtml(codeContent)}</code></pre></div>`
         inCodeBlock = false
         codeContent = ''
         codeLang = ''
@@ -78,11 +86,13 @@ export function renderMarkdown(md) {
     if (line.trim() === '') {
       closeBlockquote()
       closeTable()
+      closeList()
       continue
     }
 
     if (line.trim().startsWith('> ')) {
       closeTable()
+      closeList()
       if (!inBlockquote) {
         inBlockquote = true
         blockquoteContent = ''
@@ -100,9 +110,8 @@ export function renderMarkdown(md) {
       const cells = line.trim().slice(1, -1).split('|').map(c => c.trim())
 
       if (!inTable && i + 1 < lines.length && /^[\s|:-]+$/.test(lines[i + 1].trim())) {
-        closeTable()
+        closeList()
         inTable = true
-        tableHeaders = cells
         html += '<div class="table-wrapper"><table><thead><tr>'
         cells.forEach(c => { html += `<th>${parseInline(c)}</th>` })
         html += '</tr></thead><tbody>'
@@ -122,6 +131,7 @@ export function renderMarkdown(md) {
 
     const headingMatch = line.match(/^(#{1,6})\s+(.+)$/)
     if (headingMatch) {
+      closeList()
       const level = headingMatch[1].length
       html += `<h${level}>${parseInline(headingMatch[2])}</h${level}>`
       continue
@@ -129,32 +139,41 @@ export function renderMarkdown(md) {
 
     const ulMatch = line.match(/^(\s*)[-*+]\s+(.+)$/)
     if (ulMatch) {
+      if (listType !== 'ul') {
+        closeList()
+        html += '<ul>'
+        listType = 'ul'
+      }
       html += `<li>${parseInline(ulMatch[2])}</li>`
       continue
     }
 
     const olMatch = line.match(/^(\s*)\d+\.\s+(.+)$/)
     if (olMatch) {
+      if (listType !== 'ol') {
+        closeList()
+        html += '<ol>'
+        listType = 'ol'
+      }
       html += `<li>${parseInline(olMatch[2])}</li>`
       continue
     }
 
     if (line.trim().startsWith('---') || line.trim().startsWith('***') || line.trim().startsWith('___')) {
       if (line.trim().replace(/[-*_]/g, '').trim() === '') {
+        closeList()
         html += '<hr />'
         continue
       }
     }
 
+    closeList()
     html += `<p>${parseInline(line)}</p>`
   }
 
   closeBlockquote()
   closeTable()
-
-  html = html.replace(/((?:<li>.*<\/li>\s*)+)/g, (match) => {
-    return `<ul>${match}</ul>`
-  })
+  closeList()
 
   return html
 }
