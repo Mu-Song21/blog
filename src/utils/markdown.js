@@ -21,10 +21,20 @@ function parseInline(text) {
   return result
 }
 
+function slugify(text) {
+  return text
+    .toLowerCase()
+    .replace(/<[^>]+>/g, '')
+    .replace(/[^\w一-鿿\s-]/g, '')
+    .trim()
+    .replace(/\s+/g, '-')
+}
+
 export function renderMarkdown(md) {
-  if (!md) return ''
+  if (!md) return { html: '', toc: [] }
   const lines = md.split('\n')
   let html = ''
+  const toc = []
   let inCodeBlock = false
   let codeContent = ''
   let codeLang = ''
@@ -133,7 +143,12 @@ export function renderMarkdown(md) {
     if (headingMatch) {
       closeList()
       const level = headingMatch[1].length
-      html += `<h${level}>${parseInline(headingMatch[2])}</h${level}>`
+      const text = headingMatch[2].replace(/[*`~]/g, '')
+      const id = slugify(text)
+      html += `<h${level} id="${id}">${parseInline(headingMatch[2])}</h${level}>`
+      if (level === 2 || level === 3) {
+        toc.push({ id, text, level })
+      }
       continue
     }
 
@@ -175,5 +190,5 @@ export function renderMarkdown(md) {
   closeTable()
   closeList()
 
-  return html
+  return { html, toc }
 }

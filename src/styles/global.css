@@ -55,6 +55,33 @@
   --nav-height: 64px;
 }
 
+/* ===== Light Theme ===== */
+[data-theme="light"] {
+  --bg-primary: #fafaf9;
+  --bg-secondary: #f0efed;
+  --bg-card: #ffffff;
+  --bg-card-hover: #f5f5f4;
+  --bg-input: #f0efed;
+  --border: #e0ddd8;
+  --border-light: #d0cdc8;
+
+  --text-primary: #1c1917;
+  --text-secondary: #57534e;
+  --text-muted: #a8a29e;
+
+  --accent: #d97706;
+  --accent-light: #f59e0b;
+  --accent-dim: #b45309;
+  --accent-glow: rgba(217, 119, 6, 0.08);
+  --accent-glow-strong: rgba(217, 119, 6, 0.15);
+
+  --teal: #0891b2;
+  --teal-glow: rgba(8, 145, 178, 0.08);
+
+  --shadow: 0 4px 24px rgba(0, 0, 0, 0.08);
+  --shadow-lg: 0 8px 48px rgba(0, 0, 0, 0.12);
+}
+
 html {
   scroll-behavior: smooth;
 }
@@ -67,6 +94,7 @@ body {
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   overflow-x: hidden;
+  transition: background-color 0.4s ease, color 0.4s ease;
 }
 
 /* Subtle noise texture overlay */

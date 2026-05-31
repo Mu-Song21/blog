@@ -19,6 +19,7 @@
           <h4 class="footer-nav-title">社交</h4>
           <a href="https://github.com/Mu-Song21" target="_blank" rel="noopener noreferrer" class="footer-link">GitHub</a>
           <a href="mailto:2814969359@qq.com" class="footer-link">邮箱</a>
+          <a href="/rss.xml" target="_blank" rel="noopener noreferrer" class="footer-link">RSS 订阅</a>
         </div>
       </div>
       <div class="footer-bottom">

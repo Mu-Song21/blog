@@ -5,24 +5,50 @@
         <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M13 8H3M7 4L3 8l4 4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
         返回文章列表
       </router-link>
-      <article class="article reveal">
-        <header class="article-header">
-          <span class="category">{{ article.category }}</span>
-          <h1 class="article-title">{{ article.title }}</h1>
-          <div class="article-meta">
-            <span class="date">发布于 {{ article.createdAt }}</span>
-            <span v-if="article.updatedAt !== article.createdAt" class="date">更新于 {{ article.updatedAt }}</span>
-            <span class="read-time">
-              <svg width="12" height="12" viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="9" stroke="currentColor" stroke-width="2"/><path d="M12 7v5l3 3" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
-              {{ readTime }} 阅读
-            </span>
-          </div>
-          <div class="article-tags">
-            <span class="tag" v-for="tag in article.tags" :key="tag">{{ tag }}</span>
-          </div>
-        </header>
-        <div class="article-body markdown-body" v-html="renderedContent"></div>
-      </article>
+      <div class="article-layout">
+        <article class="article reveal">
+          <header class="article-header">
+            <span class="category">{{ article.category }}</span>
+            <h1 class="article-title">{{ article.title }}</h1>
+            <div class="article-meta">
+              <span class="date">发布于 {{ article.createdAt }}</span>
+              <span v-if="article.updatedAt !== article.createdAt" class="date">更新于 {{ article.updatedAt }}</span>
+              <span class="read-time">
+                <svg width="12" height="12" viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="9" stroke="currentColor" stroke-width="2"/><path d="M12 7v5l3 3" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
+                {{ readTime }} 阅读
+              </span>
+            </div>
+            <div class="article-tags">
+              <span class="tag" v-for="tag in article.tags" :key="tag">{{ tag }}</span>
+            </div>
+          </header>
+          <div class="article-body markdown-body" v-html="renderedHtml"></div>
+          <ShareBar :title="article.title" :url="shareUrl" />
+          <Comment />
+        </article>
+        <ArticleToc :toc="toc" />
+      </div>
+      <div class="related-section reveal" v-if="relatedArticles.length > 0">
+        <div class="related-header">
+          <span class="related-label">相关推荐</span>
+          <span class="related-divider"></span>
+        </div>
+        <div class="related-grid">
+          <router-link
+            v-for="ra in relatedArticles"
+            :key="ra.id"
+            :to="`/blog/${ra.id}`"
+            class="related-card card"
+            @click="ripple"
+          >
+            <span class="related-category">{{ ra.category }}</span>
+            <h4 class="related-title">{{ ra.title }}</h4>
+            <div class="related-tags">
+              <span class="tag" v-for="t in ra.tags.slice(0, 3)" :key="t">{{ t }}</span>
+            </div>
+          </router-link>
+        </div>
+      </div>
       <div class="article-nav reveal" v-if="prevArticle || nextArticle">
         <router-link v-if="prevArticle" :to="`/blog/${prevArticle.id}`" class="nav-card card" @click="ripple">
           <span class="nav-label">← 上一篇</span>
@@ -49,6 +75,9 @@ import { useScrollReveal } from '../composables/useScrollReveal'
 import { useRipple } from '../composables/useRipple'
 import { renderMarkdown } from '../utils/markdown'
 import hljs from '../utils/hljs'
+import ArticleToc from '../components/ArticleToc.vue'
+import Comment from '../components/Comment.vue'
+import ShareBar from '../components/ShareBar.vue'
 import 'highlight.js/styles/atom-one-dark.css'
 
 const route = useRoute()
@@ -64,12 +93,30 @@ const currentIndex = computed(() => publishedList.value.findIndex(a => a.id === 
 const prevArticle = computed(() => currentIndex.value > 0 ? publishedList.value[currentIndex.value - 1] : null)
 const nextArticle = computed(() => currentIndex.value < publishedList.value.length - 1 ? publishedList.value[currentIndex.value + 1] : null)
 
-const renderedContent = computed(() => renderMarkdown(article.value?.content))
+const renderResult = computed(() => renderMarkdown(article.value?.content))
+const renderedHtml = computed(() => renderResult.value.html)
+const toc = computed(() => renderResult.value.toc)
 
 const readTime = computed(() => {
   const content = article.value?.content || ''
   const words = content.replace(/[#*`\-\[\]()>|]/g, '').length
   return Math.max(1, Math.ceil(words / 400))
+})
+
+const shareUrl = computed(() => `https://melodic-cactus-78f6a1.netlify.app/blog/${route.params.id}`)
+
+const relatedArticles = computed(() => {
+  if (!article.value) return []
+  const currentTags = article.value.tags
+  return store.publishedArticles
+    .filter(a => a.id !== article.value.id)
+    .map(a => ({
+      ...a,
+      score: a.tags.filter(t => currentTags.includes(t)).length
+    }))
+    .filter(a => a.score > 0)
+    .sort((a, b) => b.score - a.score)
+    .slice(0, 3)
 })
 
 function highlightCode() {
@@ -128,8 +175,16 @@ watch(renderedContent, () => {
   color: var(--accent-light);
 }
 
+.article-layout {
+  display: flex;
+  gap: 48px;
+  max-width: 1020px;
+}
+
 .article {
   max-width: 760px;
+  flex: 1;
+  min-width: 0;
 }
 
 .article-header {
@@ -432,6 +487,85 @@ watch(renderedContent, () => {
   text-decoration: line-through;
 }
 
+/* 相关推荐 */
+.related-section {
+  margin-top: 64px;
+  max-width: 760px;
+}
+
+.related-header {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  margin-bottom: 24px;
+}
+
+.related-label {
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--accent);
+  text-transform: uppercase;
+  letter-spacing: 3px;
+  font-family: var(--font-mono);
+  white-space: nowrap;
+}
+
+.related-divider {
+  flex: 1;
+  height: 1px;
+  background: var(--border);
+}
+
+.related-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 16px;
+}
+
+.related-card {
+  text-decoration: none;
+  color: inherit;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  padding: 20px;
+  cursor: pointer;
+}
+
+.related-category {
+  font-size: 10px;
+  font-weight: 600;
+  color: var(--accent);
+  text-transform: uppercase;
+  letter-spacing: 2px;
+  font-family: var(--font-mono);
+}
+
+.related-title {
+  font-size: 15px;
+  font-weight: 500;
+  color: var(--text-primary);
+  line-height: 1.4;
+}
+
+.related-tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin-top: auto;
+}
+
+.related-tags .tag {
+  font-size: 10px;
+  padding: 2px 8px;
+}
+
+@media (max-width: 768px) {
+  .related-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
 .article-nav {
   display: grid;
   grid-template-columns: 1fr 1fr;
@@ -471,6 +605,11 @@ watch(renderedContent, () => {
 }
 
 @media (max-width: 768px) {
+  .article-layout {
+    flex-direction: column;
+    gap: 0;
+  }
+
   .article-title {
     font-size: 28px;
   }

@@ -8,11 +8,15 @@
         <router-link to="/" @click="onNavClick" class="nav-link-item">首页</router-link>
         <router-link to="/projects" @click="onNavClick" class="nav-link-item">项目</router-link>
         <router-link to="/blog" @click="onNavClick" class="nav-link-item">文章</router-link>
+        <router-link to="/tags" @click="onNavClick" class="nav-link-item">标签</router-link>
         <router-link to="/about" @click="onNavClick" class="nav-link-item">关于</router-link>
       </div>
-      <button class="menu-toggle" @click="menuOpen = !menuOpen" aria-label="菜单">
+      <div class="nav-actions">
+        <ThemeToggle />
+        <button class="menu-toggle" @click="menuOpen = !menuOpen" aria-label="菜单">
         <span :class="{ active: menuOpen }"></span>
       </button>
+      </div>
     </div>
   </nav>
 </template>
@@ -20,6 +24,7 @@
 <script setup>
 import { ref, onMounted, onUnmounted } from 'vue'
 import { useRipple } from '../composables/useRipple'
+import ThemeToggle from './ThemeToggle.vue'
 const menuOpen = ref(false)
 const isScrolled = ref(false)
 const { createRipple } = useRipple()
@@ -50,11 +55,12 @@ onUnmounted(() => { window.removeEventListener('scroll', onScroll) })
 }
 
 .navbar.scrolled {
-  background: rgba(11, 11, 15, 0.9);
+  background: var(--bg-primary);
+  opacity: 0.95;
   backdrop-filter: blur(20px);
   -webkit-backdrop-filter: blur(20px);
   border-bottom-color: var(--border);
-  box-shadow: 0 1px 24px rgba(0, 0, 0, 0.3);
+  box-shadow: var(--shadow);
 }
 
 .nav-inner {
@@ -117,6 +123,12 @@ onUnmounted(() => { window.removeEventListener('scroll', onScroll) })
   width: 100%;
 }
 
+.nav-actions {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
 .menu-toggle {
   display: none;
   background: none;
@@ -177,7 +189,7 @@ onUnmounted(() => { window.removeEventListener('scroll', onScroll) })
     left: 0;
     right: 0;
     flex-direction: column;
-    background: rgba(11, 11, 15, 0.95);
+    background: var(--bg-primary);
     backdrop-filter: blur(20px);
     -webkit-backdrop-filter: blur(20px);
     border-bottom: 1px solid var(--border);

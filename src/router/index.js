@@ -5,6 +5,7 @@ const routes = [
   { path: '/projects', name: 'Projects', component: () => import('../views/Projects.vue') },
   { path: '/blog', name: 'Blog', component: () => import('../views/BlogList.vue') },
   { path: '/blog/:id', name: 'BlogDetail', component: () => import('../views/BlogDetail.vue') },
+  { path: '/tags', name: 'Tags', component: () => import('../views/Tags.vue') },
   { path: '/about', name: 'About', component: () => import('../views/About.vue') },
   { path: '/admin/login', name: 'AdminLogin', component: () => import('../views/admin/Login.vue') },
   { path: '/admin', name: 'Admin', component: () => import('../views/admin/Dashboard.vue'), meta: { requiresAuth: true } },
