@@ -192,4 +192,11 @@ onUnmounted(() => {
   opacity: 1;
   max-height: 500px;
 }
+
+/* 超小屏幕（手机）上完全隐藏目录，避免挡住评论与正文 */
+@media (max-width: 768px) {
+  .toc {
+    display: none;
+  }
+}
 </style>
