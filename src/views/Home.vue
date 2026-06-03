@@ -29,7 +29,7 @@
             </div>
             <div class="hero-stats reveal reveal-delay-4">
               <div class="stat-item">
-                <CountUp :end="3" suffix="+" />
+                <CountUp :end="4" suffix="+" />
                 <span class="stat-text">代表项目</span>
               </div>
               <div class="stat-divider"></div>
@@ -262,6 +262,17 @@ const projects = [
     stats: [
       { value: 'AI', label: '语音交互' },
       { value: '跨端', label: 'H5 + 小程序' }
+    ]
+  },
+  {
+    name: '校园综合管理系统',
+    description: '基于 Spring Boot 3 + Vue 3 的校园教务与学工一体化管理平台，支持多角色登录、选课成绩、考勤统计和数据大屏展示。',
+    icon: '🏫',
+    gradient: 'linear-gradient(135deg, #6366f122, #0ea5e922)',
+    tech: ['Spring Boot 3', 'Spring Security', 'JWT', 'MyBatis-Plus', 'MySQL', 'Vue 3', 'ECharts'],
+    stats: [
+      { value: '3', label: '角色权限' },
+      { value: '可视化', label: 'Dashboard' }
     ]
   }
 ]

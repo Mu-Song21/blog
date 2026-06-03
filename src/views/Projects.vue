@@ -113,6 +113,27 @@ const projects = [
       { value: 'LBS', label: '位置服务' },
       { value: '实时', label: '告警推送' }
     ]
+  },
+  {
+    name: '校园综合管理系统',
+    category: '企业应用 · 校园教务',
+    description: '基于 Spring Boot 3 + Vue 3 + JWT 的校园教务与学工一体化管理平台',
+    detail: '面向高校教务与学工场景，实现学生、教师、管理员三种角色的统一登录与权限控制，支持学生信息、课程与选课、成绩、考勤、通知公告等核心模块，后端通过 JWT、方法级权限控制、统一异常处理和数据校验保证接口安全与稳定，前端基于 Vue 3 + Element Plus 实现角色差异化首页与数据可视化大屏。',
+    icon: '🏫',
+    gradient: 'linear-gradient(135deg, #6366f133, #0ea5e933)',
+    tech: ['Spring Boot 3', 'Spring Security', 'JWT', 'MyBatis-Plus', 'MySQL 8', 'Vue 3', 'Element Plus', 'ECharts'],
+    features: [
+      '基于 JWT 的多角色登录与权限控制（ADMIN / TEACHER / STUDENT）',
+      '学生、课程、选课、成绩、考勤、通知公告等教务与学工模块',
+      '方法级 @PreAuthorize 权限、统一业务异常 BizException 与全局异常处理',
+      '学生表单前后端双重校验，手机号/邮箱等关键字段格式约束',
+      'Dashboard 大屏展示角色差异化首页与多维度统计图表'
+    ],
+    highlights: [
+      { value: '3', label: '用户角色' },
+      { value: '可视化', label: '数据大屏' },
+      { value: '校验', label: '异常处理' }
+    ]
   }
 ]
 </script>

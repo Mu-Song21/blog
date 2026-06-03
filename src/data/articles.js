@@ -962,5 +962,65 @@ cane/{deviceId}/command
     updatedAt: '2026-05-06',
     featured: false,
     status: 'published'
+  },
+  {
+    id: 14,
+    title: '校园综合管理系统：Spring Boot 3 + Vue 3 打造教务一体化平台',
+    excerpt: '以高校教务与学工场景为背景，记录如何用 Spring Boot 3、Spring Security、JWT、MyBatis-Plus 和 Vue 3 搭建一套多角色校园综合管理系统，从数据库建模到 Dashboard 可视化的完整实践。',
+    content: `## 项目背景
+ 
+传统校园教务系统往往只覆盖选课和成绩，学生考勤、通知公告、学工统计等功能分散在不同系统中，体验割裂。本项目希望用一套 Spring Boot 3 + Vue 3 的前后端分离架构，搭建一个覆盖学生、教师、管理员三种角色的校园综合管理平台。
+ 
+## 技术选型
+ 
+- 后端：Spring Boot 3.x、Spring Security + JWT、MyBatis-Plus、MySQL 8
+- 前端：Vue 3、Vite、Element Plus、Pinia、Axios、ECharts
+- 其他：Jakarta Bean Validation 做参数校验，全局异常处理 + 业务异常 BizException 统一错误返回格式
+ 
+## 核心模块
+ 
+### 1. 统一认证与角色权限
+ 
+通过 Spring Security + JWT 实现统一登录，Token 中携带 username 与 role（ADMIN / TEACHER / STUDENT），后端在过滤器中解析并写入 SecurityContext。再结合 @PreAuthorize 注解对接口做方法级权限控制：
+ 
+- 管理员：管理学生、教师、班级、课程等基础数据
+- 教师：录入和维护成绩、考勤，查看自己授课的统计
+- 学生：查看个人选课、成绩和考勤记录
+ 
+### 2. 教务与学工一体化
+ 
+系统围绕学生全生命周期提供一体化管理能力：
+ 
+- 学生信息管理：支持按学院、关键字搜索和分页展示
+- 课程与选课：容量控制、防重复选课、课程已满拦截
+- 成绩管理：总评成绩与等级（优秀、良好、中等、及格、不及格）统计
+- 考勤管理：NORMAL、LATE、LEAVE、EARLY_LEAVE、ABSENT 多状态考勤
+- 通知公告：按角色（ALL / STUDENT / TEACHER）定向推送
+ 
+### 3. 全局异常与业务校验
+ 
+通过全局异常处理器统一封装接口返回格式，对参数校验失败、业务异常和系统异常分别给出清晰的错误信息。业务层抛出 BizException，前端可以直接根据 code 和 message 做提示，避免“500 服务器错误”这类模糊信息。
+ 
+### 4. 角色差异化 Dashboard
+ 
+首页 Dashboard 会根据当前登录角色展示不同的数据视图：
+ 
+- 管理员：学生/教师/课程/班级总量、学院学生分布、全校成绩等级分布、近 7 日整体出勤率、热门课程排行
+- 教师：已录入成绩条数、今日考勤记录等教学相关指标
+- 学生：已选课程数、已通过/待修读课程、未读通知数量，以及“我的成绩分布”和“我的考勤趋势”图表
+ 
+## 数据体验
+ 
+在数据库初始化脚本中，补充了多届学生、不同学院和多门课程的数据，同时构造了最近一周的考勤记录，让 Dashboard 在演示环境下也能展示丰富的图表效果，而不是一片空白。
+ 
+## 项目收获
+ 
+通过这个项目，我把 Spring Boot 3 + Vue 3 + JWT + MyBatis-Plus 这一套典型后台技术栈完整跑通了一遍，从表结构设计、接口抽象、权限控制到前端路由守卫、状态管理和可视化大屏搭建，为后续参与类似教务/后台项目打下了比较扎实的基础。`,
+    tags: ['Spring Boot 3', 'Spring Security', 'JWT', 'MyBatis-Plus', 'Vue 3', '校园管理', 'ECharts'],
+    category: '企业应用',
+    createdAt: '2026-06-03',
+    updatedAt: '2026-06-03',
+    featured: true,
+    status: 'published'
   }
 ]
