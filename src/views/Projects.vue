@@ -4,7 +4,7 @@
       <div class="container">
         <div class="section-label reveal">PROJECTS</div>
         <h1 class="projects-hero-title reveal reveal-delay-1">项目展示</h1>
-        <p class="projects-hero-desc reveal reveal-delay-2">围绕 Java 后端、物联网通信、实时告警和智慧民生场景，记录从需求分析到系统落地的完整实践。</p>
+        <p class="projects-hero-desc reveal reveal-delay-2">围绕 Java 后端、物联网通信、家庭健康管理、AI 算法与车载安全监测场景，记录从需求分析到系统落地的完整实践。</p>
       </div>
     </section>
 
@@ -112,6 +112,48 @@ const projects = [
       { value: 'IoT', label: '硬件接入' },
       { value: 'LBS', label: '位置服务' },
       { value: '实时', label: '告警推送' }
+    ]
+  },
+  {
+    name: '健康管家家庭康养管理平台',
+    category: '企业应用 · 家庭健康',
+    description: '面向家庭康养场景的前后端分离平台，子女 Web 端 + 父母小程序端双端协同',
+    detail: '子女通过 Vue 3 Web 管理台关注父母健康，父母通过 uni-app 小程序完成日常打卡与语音录入。后端基于 Spring Boot 3 + MyBatis-Plus 构建，覆盖健康档案、健康记录（血压/血糖）、病例管理、用药提醒、AI 食谱生成、月度健康报告和 AI 健康助手等完整模块，文本 AI 走讯飞星火，语音 ASR/TTS 走百度智能云。',
+    icon: '🏥',
+    gradient: 'linear-gradient(135deg, #10b98133, #06b6d433)',
+    tech: ['Spring Boot 3', 'MyBatis-Plus', 'JWT', 'Vue 3', 'uni-app', 'ECharts', '讯飞星火', '百度语音'],
+    features: [
+      '子女 Web 端 + 父母微信小程序双端，数据经 parentId 与家庭绑定统一汇聚',
+      '健康档案驱动 AI：食谱生成、月度报告、AI 助手均基于真实档案与近期记录',
+      '讯飞星火并发生成七日食谱（21 餐），支持异步 AI 任务轮询',
+      '百度 ASR 语音录入血压/血糖，正则意图解析后自动写入健康记录',
+      'SSE 流式输出 AI 健康助手，月度聚合分析生成健康评分与建议'
+    ],
+    highlights: [
+      { value: '双端', label: '子女 + 父母' },
+      { value: 'AI', label: '档案驱动' },
+      { value: '语音', label: 'ASR 录入' }
+    ]
+  },
+  {
+    name: '智能车载疲劳驾驶监测装置',
+    category: 'AI + IoT · 行车安全',
+    description: '基于 MediaPipe + OpenCV + 树莓派的车载疲劳与分心驾驶实时监测系统',
+    detail: '围绕行车安全场景，通过摄像头实时采集驾驶员面部图像，融合眼部闭合状态（EAR/PERCLOS）、哈欠检测、头部姿态（低头/侧脸）、持续驾驶时长等多维度指标进行综合疲劳评分，实现三级分级预警（提醒/预警/告警），支持声光报警、CSV 事件日志记录与 Web 实时可视化仪表盘，可部署至树莓派实现车载实时监测。',
+    icon: '🚗',
+    gradient: 'linear-gradient(135deg, #3b82f633, #f59e0b33)',
+    tech: ['Python', 'MediaPipe', 'OpenCV', '树莓派', 'Flask', 'WebSocket', 'pyttsx3'],
+    features: [
+      '多维度融合疲劳判定：EAR 闭眼率、PERCLOS 滑动窗口、哈欠检测',
+      '头部姿态分析：低头 / 侧脸分心角度实时检测',
+      '个人自适应 EAR 基线校准，降低误报与漏报',
+      '三级分级预警（提醒 / 预警 / 告警）+ 语音与声光联动',
+      'Web 实时仪表盘：EAR / MAR / PERCLOS 可视化与告警事件日志'
+    ],
+    highlights: [
+      { value: '三级', label: '分级预警' },
+      { value: '多维', label: '融合判定' },
+      { value: '自适应', label: '阈值校准' }
     ]
   },
   {

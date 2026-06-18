@@ -1022,5 +1022,549 @@ cane/{deviceId}/command
     updatedAt: '2026-06-03',
     featured: true,
     status: 'published'
+  },
+  {
+    id: 15,
+    title: '讯飞星火 SSE 流式输出与并发食谱生成实践',
+    excerpt: '在健康管家项目中，如何用 Spring Boot 对接讯飞星火 WebSocket API 实现 SSE 流式返回，以及用线程池并发生成七日 21 餐食谱，避免串行 AI 调用超时的完整方案。',
+    content: `## 问题背景
+
+健康管家需要根据用户健康档案生成一周的个性化食谱。如果对周一到周日逐个串行调用大模型，单次耗时 3–5 秒，七天就需要等待 20 秒以上，用户体验极差。
+
+## 讯飞星火接入方式
+
+讯飞星火提供两种调用方式：HTTP 同步接口和 WebSocket 流式接口。流式接口可以边生成边返回，配合 Spring 的 SseEmitter 可以实现前端打字机效果。
+
+### WebSocket 握手鉴权
+
+讯飞星火 WebSocket 鉴权通过 HMAC-SHA256 对 URL 签名：
+
+\`\`\`java
+String date = DateTimeFormatter.RFC_1123_DATE_TIME
+    .format(ZonedDateTime.now(ZoneId.of("GMT")));
+String preStr = "host: spark-api.xf-yun.com\\ndate: " + date
+    + "\\nGET /v3.5/chat HTTP/1.1";
+Mac mac = Mac.getInstance("HmacSHA256");
+mac.init(new SecretKeySpec(apiSecret.getBytes(), "HmacSHA256"));
+String signature = Base64.getEncoder()
+    .encodeToString(mac.doFinal(preStr.getBytes()));
+String authorization = Base64.getEncoder().encodeToString(
+    ("api_key=\\"" + apiKey + "\\", algorithm=\\"hmac-sha256\\","
+    + " headers=\\"host date request-line\\","
+    + " signature=\\"" + signature + "\\"").getBytes());
+\`\`\`
+
+### SSE 流式返回
+
+后端收到星火的 WebSocket 消息后，逐 token 写入 SseEmitter：
+
+\`\`\`java
+public SseEmitter streamChat(String prompt, Long parentId) {
+    SseEmitter emitter = new SseEmitter(60_000L);
+    executor.execute(() -> {
+        try {
+            String context = aiProfileContextService
+                .buildProfileContext(parentId);
+            sparkService.streamChat(context + prompt, token -> {
+                emitter.send(SseEmitter.event().data(token));
+            });
+            emitter.complete();
+        } catch (Exception e) {
+            emitter.completeWithError(e);
+        }
+    });
+    return emitter;
+}
+\`\`\`
+
+前端用 EventSource 接收，追加到文本框即可实现打字机效果。
+
+## 并发食谱生成
+
+七日食谱生成是最耗时的操作，串行调用不可行。方案是用线程池对周一到周日并发调用，设置总超时 60 秒：
+
+\`\`\`java
+@Bean("aiDietExecutor")
+public ExecutorService aiDietExecutor() {
+    return new ThreadPoolExecutor(7, 14, 60L, TimeUnit.SECONDS,
+        new LinkedBlockingQueue<>(10),
+        new ThreadPoolExecutor.CallerRunsPolicy());
+}
+\`\`\`
+
+\`\`\`java
+public DietPlan generateDiet(Long parentId, DietPreference pref) {
+    HealthProfile profile = profileService.getByParentId(parentId);
+    String healthSummary = buildHealthSummary(profile);
+    String dietRules = buildDietRules(profile);
+
+    List<CompletableFuture<DayDiet>> futures = Arrays.stream(DayOfWeek.values())
+        .map(day -> CompletableFuture.supplyAsync(() ->
+            sparkService.generateDietForDay(day, healthSummary, dietRules, pref),
+            aiDietExecutor))
+        .collect(Collectors.toList());
+
+    // 等待全部完成，总超时 60s
+    List<DayDiet> days = futures.stream()
+        .map(f -> {
+            try { return f.get(60, TimeUnit.SECONDS); }
+            catch (Exception e) { return fallbackDiet(); }
+        })
+        .collect(Collectors.toList());
+
+    return saveDietPlan(parentId, days);
+}
+\`\`\`
+
+七天并发后，整体耗时从 20+ 秒降到约 5–6 秒（受制于最慢的那次 AI 调用）。
+
+## Prompt 工程
+
+食谱生成的 Prompt 质量直接决定结果可用性。关键策略：
+
+1. **注入健康档案摘要**：慢性病（高血压、糖尿病）、过敏史、体重 BMI
+2. **注入饮食规则**：\`buildDietRules()\` 根据慢性病生成「低盐低脂」「控制血糖生成指数」等约束
+3. **强制 JSON 格式输出**：在 Prompt 末尾要求返回固定 JSON Schema，便于解析
+4. **失败回退**：AI 返回非法 JSON 时，使用预置的健康默认食谱，不让整个流程崩溃
+
+## 异步任务防超时
+
+对于前端不需要等待结果的场景（如刷新食谱），使用异步任务表 \`t_ai_task\`：
+
+\`\`\`java
+// 前端提交任务，立即返回 taskId
+Long taskId = aiTaskService.createDietPlanTask(parentId, pref);
+
+// 前端轮询任务状态
+// GET /ai/task/{taskId}/status → PENDING / RUNNING / SUCCESS / FAILED
+\`\`\`
+
+线程池执行完后更新任务状态，前端拿到 SUCCESS 再刷新食谱列表，完全不阻塞主线程。
+
+## 总结
+
+核心思路：并发 > 串行，流式 > 同步等待，AI 失败有回退。三者结合让健康管家的 AI 功能在 5 秒内完成食谱生成，同时保证服务稳定性。`,
+    tags: ['讯飞星火', 'SSE', 'Spring Boot', 'CompletableFuture', 'AI'],
+    category: 'Java 后端',
+    createdAt: '2026-06-10',
+    updatedAt: '2026-06-10',
+    featured: true,
+    status: 'published'
+  },
+  {
+    id: 16,
+    title: 'EAR、PERCLOS 与头部姿态：疲劳驾驶检测算法深度解析',
+    excerpt: '从眼部纵横比（EAR）到 PERCLOS 滑动窗口，再到头部偏转角度，系统拆解智能车载疲劳监测装置的核心算法，以及个人自适应基线校准如何降低误报率。',
+    content: `## 为什么单靠"闭眼检测"不够
+
+最简单的疲劳检测只判断"眼睛是否闭合"，但这会产生大量误报：
+
+- 普通眨眼被误判为疲劳
+- 每个人的眼睛大小不同，同一阈值适配性差
+- 短暂闭眼和持续困倦闭眼无法区分
+
+实际可用的系统需要 EAR + PERCLOS + 头部姿态的多维度融合。
+
+## EAR（Eye Aspect Ratio）眼部纵横比
+
+EAR 是当前帧眼睛睁开程度的量化指标，由 MediaPipe Face Mesh 提供的 468 个关键点中的眼部点计算得出：
+
+\`\`\`python
+def compute_ear(landmarks, eye_indices, img_w, img_h):
+    pts = [(int(landmarks[i].x * img_w), int(landmarks[i].y * img_h))
+           for i in eye_indices]
+    # 垂直方向两组点的距离
+    v1 = np.linalg.norm(np.array(pts[1]) - np.array(pts[5]))
+    v2 = np.linalg.norm(np.array(pts[2]) - np.array(pts[4]))
+    # 水平方向点距
+    h  = np.linalg.norm(np.array(pts[0]) - np.array(pts[3]))
+    return (v1 + v2) / (2.0 * h + 1e-6)
+\`\`\`
+
+EAR 接近 0 表示完全闭眼，睁眼时通常在 0.25–0.35 之间（因人而异）。
+
+## 个人自适应基线校准
+
+固定阈值 0.23 在不同人脸上误报率高。启动时进行 3 秒睁眼基线采样，动态计算阈值：
+
+\`\`\`python
+# 校准阶段：采集睁眼 EAR 样本
+if calibrating and ear > 0.15:
+    ear_samples.append(ear)
+
+# 校准完成后
+baseline = np.mean(ear_samples)
+ear_threshold = baseline * ear_scale  # 默认 scale=0.72
+\`\`\`
+
+这样阈值随用户调整，小眼睛用户不再被频繁误报。
+
+## PERCLOS（眼睛闭合时间占比）
+
+PERCLOS 是在时间窗口内（默认 30 秒）眼睛闭合帧占总帧数的比例，是学术界公认的疲劳度量标准：
+
+\`\`\`python
+from collections import deque
+
+class PerclosTracker:
+    def __init__(self, window_seconds=30, fps=15):
+        self.window = deque(maxlen=int(window_seconds * fps))
+
+    def update(self, is_closed: bool) -> float:
+        self.window.append(1 if is_closed else 0)
+        if len(self.window) < 10:
+            return 0.0
+        return sum(self.window) / len(self.window)
+\`\`\`
+
+PERCLOS > 0.25 触发预警，> 0.40 触发告警。相比瞬时 EAR，PERCLOS 对短暂眨眼免疫，只有持续嗜睡才会触发。
+
+## 头部姿态：低头与侧脸
+
+MediaPipe 提供头部 3D 旋转角（yaw/pitch/roll），用于检测分心行为：
+
+\`\`\`python
+def get_head_pose(face_landmarks, img_w, img_h):
+    # 取鼻尖、下颌、左右眼角、左右嘴角 6 个特征点
+    image_points = np.array([...], dtype=np.float64)
+    model_points = np.array([...], dtype=np.float64)  # 标准 3D 模型
+    _, rvec, tvec = cv2.solvePnP(model_points, image_points,
+                                  camera_matrix, dist_coeffs)
+    rmat, _ = cv2.Rodrigues(rvec)
+    angles, *_ = cv2.RQDecomp3x3(rmat)
+    pitch, yaw, roll = angles
+    return pitch, yaw, roll
+\`\`\`
+
+- \`|yaw| > 28°\`：侧脸分心（看手机/副驾）
+- \`pitch < -18°\`：低头（看手机/打瞌睡点头）
+
+## 分级状态机
+
+多维度数据汇聚后，通过状态机决策最终输出状态，避免多个维度同时触发导致告警堆叠：
+
+\`\`\`python
+def update_state(ear, perclos, yaw, pitch, no_face_seconds):
+    if no_face_seconds > 1.2:
+        return State.NO_FACE
+    if perclos > 0.40 or closed_seconds > 1.8:
+        return State.HIGH_FATIGUE
+    if perclos > 0.25 or closed_seconds > 0.8 or yawn_active:
+        return State.FATIGUE
+    if abs(yaw) > 28 or pitch < -18:
+        return State.DISTRACTED
+    return State.NORMAL
+\`\`\`
+
+状态之间设置冷却时间，同一状态的语音播报不会在 3 秒内重复触发。
+
+## 树莓派部署优化
+
+在 ARM 平台上，降低分辨率和限制处理帧率是最有效的优化手段：
+
+\`\`\`python
+cap.set(cv2.CAP_PROP_FRAME_WIDTH, 640)
+cap.set(cv2.CAP_PROP_FRAME_HEIGHT, 480)
+
+# 每隔一帧处理一次，降低 CPU 占用
+frame_count = 0
+while True:
+    ret, frame = cap.read()
+    frame_count += 1
+    if frame_count % 2 != 0:
+        continue
+    # 处理逻辑...
+\`\`\`
+
+实测树莓派 4B 在 640×480 分辨率、隔帧处理下可稳定跑到 12–15 FPS，CPU 占用约 65%。
+
+## 总结
+
+EAR 负责捕捉瞬时状态，PERCLOS 负责统计累计疲劳程度，头部姿态覆盖分心场景，三者互补形成完整的多维度疲劳监测体系。个人基线校准是降低误报的关键，而分级状态机则保证告警的合理性和用户体验。`,
+    tags: ['MediaPipe', 'OpenCV', 'EAR', 'PERCLOS', 'Python', '疲劳检测'],
+    category: 'AI + IoT',
+    createdAt: '2026-06-12',
+    updatedAt: '2026-06-12',
+    featured: true,
+    status: 'published'
+  },
+  {
+    id: 17,
+    title: 'Spring Boot JWT 多角色鉴权的工程化实践',
+    excerpt: '结合校园管理系统与健康管家项目，梳理 JWT 签发、拦截器解析、SecurityContext 注入、方法级 @PreAuthorize 控制，以及多租户场景下父子资源访问权限校验的完整设计思路。',
+    content: `## 为什么需要在项目中自己实现鉴权
+
+若依等框架内置了完整权限体系，但在 Spring Boot 3 + JWT 的新项目中，理解并自己实现一遍鉴权链路更有价值。健康管家和校园管理系统都采用了这套方案。
+
+## JWT 结构与签发
+
+JWT 由 Header.Payload.Signature 三部分组成，Payload 中写入用户身份信息：
+
+\`\`\`java
+public String generateToken(User user) {
+    Map<String, Object> claims = new HashMap<>();
+    claims.put("userId", user.getId());
+    claims.put("username", user.getUsername());
+    claims.put("role", user.getUserType()); // 1=子女 2=父母 / ADMIN TEACHER STUDENT
+    return Jwts.builder()
+        .setClaims(claims)
+        .setIssuedAt(new Date())
+        .setExpiration(new Date(System.currentTimeMillis() + expiration))
+        .signWith(Keys.hmacShaKeyFor(secret.getBytes()), SignatureAlgorithm.HS256)
+        .compact();
+}
+\`\`\`
+
+Token 不存服务端，无状态设计天然适合水平扩展。
+
+## 拦截器解析与 SecurityContext 注入
+
+所有受保护接口经过 JwtInterceptor，解析 Token 并将用户信息写入 ThreadLocal：
+
+\`\`\`java
+@Component
+public class JwtInterceptor implements HandlerInterceptor {
+    @Override
+    public boolean preHandle(HttpServletRequest req,
+                             HttpServletResponse res, Object handler) {
+        String token = req.getHeader("Authorization");
+        if (token != null && token.startsWith("Bearer ")) {
+            LoginUser user = jwtUtil.parseToken(token.substring(7));
+            UserContext.set(user);   // ThreadLocal
+            return true;
+        }
+        res.setStatus(401);
+        return false;
+    }
+
+    @Override
+    public void afterCompletion(...) {
+        UserContext.clear();   // 防止内存泄漏
+    }
+}
+\`\`\`
+
+接入 Spring Security 的项目则将解析结果封装为 UsernamePasswordAuthenticationToken 写入 SecurityContextHolder，后续 @PreAuthorize 才能生效。
+
+## 方法级权限控制
+
+校园管理系统中三种角色对同一接口的访问权限不同，用 @PreAuthorize 精确控制：
+
+\`\`\`java
+// 只有管理员可以删除学生
+@PreAuthorize("hasRole('ADMIN')")
+@DeleteMapping("/{id}")
+public Result<Void> delete(@PathVariable Long id) { ... }
+
+// 教师只能录入自己授课课程的成绩
+@PreAuthorize("hasAnyRole('ADMIN', 'TEACHER')")
+@PostMapping("/grade")
+public Result<Void> saveGrade(@RequestBody GradeDTO dto) {
+    // 教师角色额外校验课程归属
+    LoginUser current = UserContext.get();
+    if ("TEACHER".equals(current.getRole())) {
+        courseService.checkTeacherOwnership(current.getUserId(), dto.getCourseId());
+    }
+    gradeService.save(dto);
+    return Result.ok();
+}
+\`\`\`
+
+## 多租户场景：子女访问父母资源
+
+健康管家引入了更复杂的场景：子女只能访问自己绑定的父母数据，不能访问其他人。这不是简单的角色权限，而是数据级隔离。
+
+\`\`\`java
+@Service
+public class FamilyAccessService {
+    public void checkAccess(Long childId, Long parentId) {
+        boolean bound = familyMapper.exists(
+            new LambdaQueryWrapper<Family>()
+                .eq(Family::getChildId, childId)
+                .eq(Family::getParentId, parentId)
+        );
+        if (!bound) throw new BizException(ErrorCode.ACCESS_DENIED,
+            "无权访问该父母的数据");
+    }
+}
+\`\`\`
+
+在所有涉及父母数据的 Service 方法入口调用此校验：
+
+\`\`\`java
+public HealthProfile getProfile(Long parentId) {
+    Long childId = UserContext.get().getUserId();
+    familyAccessService.checkAccess(childId, parentId);
+    return profileMapper.selectByParentId(parentId);
+}
+\`\`\`
+
+这样即使绕过前端路由直接请求 API，也无法访问未绑定的数据。
+
+## 统一异常处理
+
+鉴权和业务校验失败都通过统一异常处理器返回标准格式：
+
+\`\`\`java
+@RestControllerAdvice
+public class GlobalExceptionHandler {
+    @ExceptionHandler(BizException.class)
+    public Result<Void> handleBizException(BizException e) {
+        return Result.fail(e.getCode(), e.getMessage());
+    }
+
+    @ExceptionHandler(AccessDeniedException.class)
+    public Result<Void> handleAccessDenied(AccessDeniedException e) {
+        return Result.fail(403, "权限不足");
+    }
+}
+\`\`\`
+
+前端拿到 code 字段后统一跳转或提示，不会出现 500 白屏。
+
+## 总结
+
+JWT 鉴权的核心链路：**签发 → 携带 → 解析 → 注入上下文 → 方法级控制 → 数据级隔离**。角色权限解决"能不能访问这个接口"，数据隔离解决"能不能访问这条数据"，两者缺一不可。`,
+    tags: ['Spring Boot', 'JWT', 'Spring Security', '鉴权', 'Java'],
+    category: 'Java 后端',
+    createdAt: '2026-06-14',
+    updatedAt: '2026-06-14',
+    featured: false,
+    status: 'published'
+  },
+  {
+    id: 18,
+    title: 'MyBatis-Plus 在多模块项目中的实战技巧',
+    excerpt: '结合若依框架二次开发与健康管家项目，梳理 MyBatis-Plus 分页查询、逻辑删除、条件构造器、乐观锁与多数据源配置的工程化用法，以及在复杂业务场景下避坑的关键细节。',
+    content: `## 为什么选 MyBatis-Plus
+
+相比原生 MyBatis，MyBatis-Plus 提供了开箱即用的 CRUD 接口、条件构造器和分页插件，在校园管理、健康管家等业务系统中可以减少大量重复的 SQL 编写工作。但用不好也容易踩坑。
+
+## 分页查询标准姿势
+
+安隅社区管理、健康管家等项目中，几乎每个列表接口都需要分页。MyBatis-Plus 配合 Page 对象是最简洁的方式：
+
+\`\`\`java
+@Configuration
+public class MybatisPlusConfig {
+    @Bean
+    public MybatisPlusInterceptor mybatisPlusInterceptor() {
+        MybatisPlusInterceptor interceptor = new MybatisPlusInterceptor();
+        interceptor.addInnerInterceptor(new PaginationInnerInterceptor(DbType.MYSQL));
+        return interceptor;
+    }
+}
+\`\`\`
+
+\`\`\`java
+public PageResult<HealthRecordVO> listRecords(Long parentId, Integer pageNum, Integer pageSize) {
+    Page<HealthRecord> page = new Page<>(pageNum, pageSize);
+    LambdaQueryWrapper<HealthRecord> wrapper = new LambdaQueryWrapper<HealthRecord>()
+        .eq(HealthRecord::getParentId, parentId)
+        .eq(HealthRecord::getDeleted, 0)
+        .orderByDesc(HealthRecord::getRecordDate);
+    Page<HealthRecord> result = baseMapper.selectPage(page, wrapper);
+    return PageResult.of(result.getTotal(), convertToVO(result.getRecords()));
+}
+\`\`\`
+
+注意 Page 对象的 current 从 1 开始，前端传 0 会导致查不到数据，这是常见的对接坑。
+
+## 逻辑删除
+
+健康管家所有核心表都使用逻辑删除，防止误删数据。只需全局配置 + 字段注解：
+
+\`\`\`yaml
+mybatis-plus:
+  global-config:
+    db-config:
+      logic-delete-field: deleted
+      logic-delete-value: 1
+      logic-not-delete-value: 0
+\`\`\`
+
+\`\`\`java
+@TableLogic
+private Integer deleted;
+\`\`\`
+
+配置后，所有 \`selectXxx\` 方法自动追加 \`WHERE deleted = 0\`，\`deleteXxx\` 方法变为 \`UPDATE SET deleted = 1\`。
+
+**踩坑点**：逻辑删除后，若该记录存在唯一索引（如用户名、手机号），再次注册相同值会因为 deleted=1 的旧记录冲突。解决方式是唯一索引改为联合唯一索引，加入 deleted 字段。
+
+## 条件构造器的正确用法
+
+LambdaQueryWrapper 比字符串拼接更安全，但有几个细节容易出错：
+
+\`\`\`java
+// 1. 条件为空时不拼入 SQL（常见于搜索筛选）
+wrapper.like(StringUtils.isNotBlank(keyword), HealthRecord::getNote, keyword)
+       .eq(recordType != null, HealthRecord::getRecordType, recordType)
+       .between(startDate != null && endDate != null,
+                HealthRecord::getRecordDate, startDate, endDate);
+
+// 2. 嵌套 OR 条件
+wrapper.and(w -> w.eq(User::getUserType, 1).or().eq(User::getUserType, 2));
+// 生成：AND (user_type = 1 OR user_type = 2)
+
+// 3. 只查需要的字段，减少数据传输
+wrapper.select(HealthRecord::getId, HealthRecord::getRecordDate,
+               HealthRecord::getRecordType);
+\`\`\`
+
+**最常见错误**：在循环中 new 同一个 Wrapper 对象反复 .eq()，条件会不断叠加，导致第二次查询带上了第一次的条件。每次查询都应该 new 一个新的 Wrapper。
+
+## BaseEntity 统一字段
+
+校园管理和健康管家项目中，所有表都有 createTime、updateTime、deleted 字段。用 @TableField 自动填充避免每次手动设置：
+
+\`\`\`java
+@Data
+public abstract class BaseEntity {
+    @TableId(type = IdType.AUTO)
+    private Long id;
+
+    @TableField(fill = FieldFill.INSERT)
+    private LocalDateTime createTime;
+
+    @TableField(fill = FieldFill.INSERT_UPDATE)
+    private LocalDateTime updateTime;
+
+    @TableLogic
+    private Integer deleted;
+}
+
+@Component
+public class AutoFillHandler implements MetaObjectHandler {
+    @Override
+    public void insertFill(MetaObject metaObject) {
+        setFieldValByName("createTime", LocalDateTime.now(), metaObject);
+        setFieldValByName("updateTime", LocalDateTime.now(), metaObject);
+    }
+
+    @Override
+    public void updateFill(MetaObject metaObject) {
+        setFieldValByName("updateTime", LocalDateTime.now(), metaObject);
+    }
+}
+\`\`\`
+
+所有实体继承 BaseEntity，从此不再手动写 createTime。
+
+## 性能注意事项
+
+- **禁止全表查询**：Wrapper 为 null 时 selectList 会扫全表，务必加兜底条件或断言
+- **批量插入用 saveBatch**：循环单条 insert 性能极差，saveBatch 默认每 1000 条一批
+- **关联查询不滥用**：MyBatis-Plus 不擅长多表 JOIN，复杂查询还是写 XML，单表 CRUD 才是它的主场
+
+## 总结
+
+MyBatis-Plus 的核心价值是简化单表 CRUD，条件构造器 + 分页插件 + 逻辑删除覆盖了 80% 的业务查询场景。理解它的边界（不擅长复杂关联）并配合 XML 使用，才是企业项目中最务实的姿势。`,
+    tags: ['MyBatis-Plus', 'Spring Boot', 'Java', '分页', '数据库'],
+    category: 'Java 后端',
+    createdAt: '2026-06-16',
+    updatedAt: '2026-06-16',
+    featured: false,
+    status: 'published'
   }
 ]

@@ -103,7 +103,7 @@ const readTime = computed(() => {
   return Math.max(1, Math.ceil(words / 400))
 })
 
-const shareUrl = computed(() => `https://melodic-cactus-78f6a1.netlify.app/blog/${route.params.id}`)
+const shareUrl = computed(() => `https://musong-blog.netlify.app/blog/${route.params.id}`)
 
 const relatedArticles = computed(() => {
   if (!article.value) return []
