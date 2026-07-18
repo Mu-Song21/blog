@@ -9,7 +9,7 @@ const ROOT = resolve(__dirname, '..')
 // 动态导入文章数据
 const { DEFAULT_ARTICLES } = await import('../src/data/articles.js')
 
-const SITE_URL = 'https://melodic-cactus-78f6a1.netlify.app'
+const SITE_URL = 'https://musong-blog.netlify.app'
 const SITE_TITLE = '目送 - 技术博客'
 const SITE_DESCRIPTION = 'Java 后端 · 物联网 · Vue 前端 — 一个大学生的技术探索'
 

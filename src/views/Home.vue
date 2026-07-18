@@ -17,7 +17,7 @@
               我是
               <TypedText :strings="typedStrings" :type-speed="70" :delete-speed="35" :pause-time="2500" />
               <br />
-              聚焦 Spring Boot、Redis、WebSocket、MQTT 与 Vue，构建智慧养老、智能盲杖、家庭健康管理、车载安全监测等完整项目闭环。
+              聚焦 Spring Boot、Redis、WebSocket 与 Vue，构建守望、引路、安康、醒驾等真实场景下的完整项目闭环。
             </p>
             <div class="hero-actions reveal reveal-delay-3">
               <router-link to="/projects" class="btn btn-primary btn-glow" @click="ripple">
@@ -196,6 +196,7 @@
 import { useBlogStore } from '../stores/blog'
 import { useScrollReveal } from '../composables/useScrollReveal'
 import { useRipple } from '../composables/useRipple'
+import { PROJECTS, toHomeProject } from '../data/projects'
 import ArticleCard from '../components/ArticleCard.vue'
 import ProjectCard from '../components/ProjectCard.vue'
 import TypedText from '../components/TypedText.vue'
@@ -231,74 +232,7 @@ const coreValues = [
   { title: '可展示的作品集', desc: '有线上博客、GitHub 仓库和多个围绕智慧养老、智能硬件的项目案例。' }
 ]
 
-const projects = [
-  {
-    name: 'ElderGuard 独居老人守护终端',
-    description: '基于 Spring Boot + Redis + WebSocket + MQTT 的智慧养老监护系统，覆盖老人档案、设备管理、异常告警、告警闭环和通知中心。',
-    icon: '🛡️',
-    gradient: 'linear-gradient(135deg, #f59e0b22, #f9731622)',
-    tech: ['Spring Boot', 'JPA', 'Redis', 'MQTT', 'WebSocket'],
-    stats: [
-      { value: '闭环', label: '告警处理' },
-      { value: '实时', label: '数据推送' }
-    ]
-  },
-  {
-    name: '安隅智能社区',
-    description: '基于若依框架二次开发的智慧社区管理平台，涵盖住户、房屋、费用、预约、投诉、访客和公告等物业业务。',
-    icon: '🏘️',
-    gradient: 'linear-gradient(135deg, #06b6d422, #0891b222)',
-    tech: ['若依', 'Spring Security', 'JWT', 'Redis', 'MyBatis-Plus'],
-    stats: [
-      { value: '8+', label: '核心模块' },
-      { value: 'RBAC', label: '权限体系' }
-    ]
-  },
-  {
-    name: '智能盲杖辅助系统',
-    description: '面向视障人士的智能硬件管理平台，支持传感器数据上报、跌倒检测、电子围栏、轨迹回放和 AI 按键唤醒。',
-    icon: '🦯',
-    gradient: 'linear-gradient(135deg, #f59e0b11, #d9770611)',
-    tech: ['Spring Boot', 'MyBatis', 'WebSocket', 'GPS', 'uni-app'],
-    stats: [
-      { value: 'AI', label: '语音交互' },
-      { value: '跨端', label: 'H5 + 小程序' }
-    ]
-  },
-  {
-    name: '校园综合管理系统',
-    description: '基于 Spring Boot 3 + Vue 3 的校园教务与学工一体化管理平台，支持多角色登录、选课成绩、考勤统计和数据大屏展示。',
-    icon: '🏫',
-    gradient: 'linear-gradient(135deg, #6366f122, #0ea5e922)',
-    tech: ['Spring Boot 3', 'Spring Security', 'JWT', 'MyBatis-Plus', 'MySQL', 'Vue 3', 'ECharts'],
-    stats: [
-      { value: '3', label: '角色权限' },
-      { value: '可视化', label: 'Dashboard' }
-    ]
-  },
-  {
-    name: '健康管家家庭康养平台',
-    description: '面向家庭康养场景的双端应用，子女 Web 端管理健康档案，父母小程序端语音录入，AI 驱动个性化食谱与月度健康报告。',
-    icon: '🏥',
-    gradient: 'linear-gradient(135deg, #10b98122, #06b6d422)',
-    tech: ['Spring Boot 3', 'MyBatis-Plus', 'Vue 3', 'uni-app', '讯飞星火', '百度语音'],
-    stats: [
-      { value: '双端', label: '子女 + 父母' },
-      { value: 'AI', label: '档案驱动' }
-    ]
-  },
-  {
-    name: '智能车载疲劳监测装置',
-    description: '基于 MediaPipe + OpenCV + 树莓派的车载疲劳驾驶实时监测，多维度融合 EAR/PERCLOS/头部姿态，三级分级预警联动声光报警。',
-    icon: '🚗',
-    gradient: 'linear-gradient(135deg, #3b82f622, #f59e0b22)',
-    tech: ['Python', 'MediaPipe', 'OpenCV', '树莓派', 'Flask'],
-    stats: [
-      { value: '三级', label: '分级预警' },
-      { value: '自适应', label: '阈值校准' }
-    ]
-  }
-]
+const projects = PROJECTS.map(toHomeProject)
 
 const techCategories = [
   {
@@ -341,11 +275,13 @@ const techCategories = [
 
 const timeline = [
   { date: '2024', title: '初识编程', desc: '第一次接触 Java，写下了 Hello World。从此打开了新世界的大门。', color: '#f59e0b' },
-  { date: '2025 上', title: '第一个完整项目', desc: '独立完成安隅智能社区平台，从需求分析到架构设计，理解了企业级开发的全貌。', color: '#06b6d4' },
-  { date: '2025 下', title: '物联网探索', desc: '搭建 ElderGuard 独居老人守护终端，打通传感器 → MQTT → 云端 → 小程序的完整链路。', color: '#f59e0b' },
-  { date: '2026 上', title: 'AI 赋能无障碍', desc: '开发智能盲杖系统，融合 AI 对话与地图导航，践行"技术向善"的理念。', color: '#06b6d4' },
-  { date: '2026 中', title: '健康管理与 AI 融合', desc: '构建家庭健康管家平台，接入讯飞星火与百度语音，探索 AI 在民生场景的落地路径。', color: '#10b981' },
-  { date: '现在', title: '持续精进', desc: '深耕全栈技术，探索 AI 更多落地场景。目送每一个项目远去，也目送自己不断成长。', color: '#fbbf24' },
+  { date: '2025 上', title: '安隅 · 若依扩展', desc: '在 RuoYi 多模块工程上落地投诉、缴费、访客、公告等社区业务 CRUD，熟悉企业后台脚手架扩展方式。', color: '#06b6d4' },
+  { date: '2025 下', title: '守望 · 物联网闭环', desc: '搭建独居老人主动守护系统：告警落库、Redis 状态、WebSocket 大屏与夜间离床状态机。', color: '#f59e0b' },
+  { date: '2026 上', title: '引路 · 硬件到 AI', desc: '完成慧杖护行：ESP32 上报、跌倒/围栏判断、家属监护，并接入明眼助手语音对话。', color: '#06b6d4' },
+  { date: '2026 中', title: '安康 · 颐康云', desc: '做出子女 Web + 父母小程序双端，讯飞星火 SSE / 并发食谱与百度语音真正接到档案数据上。', color: '#10b981' },
+  { date: '2026 中', title: '醒驾 · SmartCar', desc: '完成 MediaPipe 疲劳/分心检测软件原型：自适应 EAR、PERCLOS 与本地 Web 仪表盘。', color: '#3b82f6' },
+  { date: '2026 中', title: '青衿 · 智慧校园', desc: 'Spring Security + JWT 多角色教务后台，跑通选课容量、成绩考勤与角色化 Dashboard。', color: '#6366f1' },
+  { date: '现在', title: '持续精进', desc: '深耕后端与物联网，继续打磨作品集表达与工程细节。目送每一个项目远去，也目送自己不断成长。', color: '#fbbf24' },
 ]
 </script>
 

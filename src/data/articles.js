@@ -1,165 +1,159 @@
 export const DEFAULT_ARTICLES = [
   {
     id: 1,
-    title: '独居老人居家守护终端：从零到一的物联网实践',
-    excerpt: '基于 Spring Boot + MQTT + Redis 构建的实时健康监测与异常报警系统，融合传感器数据采集、WebSocket 实时推送与微信小程序端交互，探索智慧养老的技术实现路径。',
+    title: '守望：独居老人非接触式居家主动守护系统实践',
+    excerpt: 'Spring Boot 告警中枢 + Vue 监控大屏 + 微信小程序：WebSocket 实时推送、Redis 夜间离床状态机与告警闭环处置的物联网实践。',
     content: `## 项目背景
 
-独居老人的安全问题一直是社会关注的焦点。当老人在家中发生跌倒、突发疾病等意外时，往往因为无法及时获得救助而造成严重后果。本项目旨在通过物联网技术，构建一套非侵入式的居家守护方案。
+独居老人在家中发生离床过久、跌倒风险等情况时，往往难以及时被发现。本项目「守望」面向这一场景，构建一套**非接触式居家主动守护**方案：以后端为告警中枢，把设备上报、状态判断、实时推送和家属处置串成闭环。
 
 ## 技术架构
 
-系统采用**传感器端 → MQTT Broker → 后端服务 → 小程序端**的四层架构：
+系统采用 **设备/模拟上报 → Spring Boot → MySQL / Redis → WebSocket 大屏 + 小程序** 的链路：
 
-- **传感器层**：通过温度、湿度、烟雾、红外人体感应等传感器采集环境数据
-- **通信层**：使用 MQTT 协议进行轻量级消息传输，支持 QoS 1 确保消息可靠到达
-- **服务层**：Spring Boot 处理业务逻辑，Redis 缓存实时数据，WebSocket 推送告警
-- **前端层**：微信小程序为家属提供实时监控与告警接收
+- **接入层**：HTTP 模拟告警、设备心跳；MQTT 订阅能力已预留（可开关接入）
+- **服务层**：Spring Boot 3 + JPA 落库，Redis 维护老人异常状态与夜间离床状态
+- **推送层**：WebSocket 向监控大屏广播告警与统计刷新
+- **客户端**：Vue 3 运营大屏（主端）+ 微信小程序（家属轻端）
 
 ## 核心功能
 
-### 实时健康监测
-传感器数据通过 MQTT 发布到指定 Topic，后端订阅并解析后存入 Redis，前端通过 WebSocket 实时获取最新数据。
+### 告警全链路
+告警写入 MySQL 后，同步更新 Redis 异常标记，并通过 WebSocket 推送 \`ALARM\` / \`STATS\`，大屏无需轮询即可刷新。
 
-### 异常告警机制
-基于规则引擎判断传感器数据是否异常，支持多级告警（提示、警告、紧急），紧急告警自动通知家属。
+### 夜间离床状态机
+在夜间时段维护 Redis 状态：离床超过阈值触发预警；若门磁未开则升级为潜在风险紧急告警，体现「规则 + 状态」而非一次性阈值判断。
 
-### 设备管理
-支持设备的注册、绑定、在线状态监控，设备离线自动告警。
+### 设备在线守护
+设备心跳上报结合定时离线检测，自动生成设备离线告警，保证感知链路可观测。
+
+### 告警闭环处置
+支持处理人、处理结果、是否通知家属等字段；通知以系统内通知记录沉淀，便于演示处置闭环与耗时统计。
 
 ## 技术亮点
 
-- MQTT 消息的可靠传输与重试机制
-- Redis 时间序列数据的高效存储与查询
-- WebSocket 长连接的心跳保活与断线重连
-- 微信小程序的订阅消息推送
+- Redis 状态机驱动的夜间离床与风险升级
+- WebSocket 告警与 Dashboard 统计联动刷新
+- 三端协同：API、Vue 监控大屏、微信小程序
+- MQTT 可插拔接入，便于后续对接真实设备网关
 
 ## 项目收获
 
-这个项目让我对物联网系统的全链路有了深入理解，从硬件通信到云端服务，再到移动端展示，每一个环节都有独特的技术挑战。`,
-    tags: ['Spring Boot', 'MQTT', 'Redis', 'WebSocket', '微信小程序'],
+这个项目让我把「上报 → 判断 → 推送 → 处置」真正跑通，也更清楚物联网后台的核心不是堆传感器名词，而是把状态、告警和人的处理动作设计清楚。`,
+    tags: ['Spring Boot', 'Redis', 'WebSocket', 'JPA', '微信小程序', 'Vue 3'],
     category: '物联网',
     createdAt: '2025-12-15',
-    updatedAt: '2025-12-15',
+    updatedAt: '2026-07-18',
     featured: true,
     status: 'published'
   },
   {
     id: 2,
-    title: '安隅智能社区：基于若依框架的社区管理平台',
-    excerpt: '以若依框架为基座，Spring Boot + Vue 2 构建的智慧社区综合管理平台，涵盖住户管理、报修投诉、物业缴费、公告通知等核心模块，助力社区数字化转型。',
+    title: '安隅：基于若依 RuoYi-Vue 的智慧社区后台扩展',
+    excerpt: '以 RuoYi 3.9.1（Spring Boot 4 + Vue 2）为基座，扩展投诉、缴费账单、访客邀请、公告等社区业务模块，沉淀多模块 CRUD 与权限体系实践。',
     content: `## 项目背景
 
-传统社区管理依赖纸质记录和人工沟通，效率低下、信息不透明。本项目旨在为物业公司提供一站式数字化管理工具，提升社区服务质量和管理效率。
+物业数字化常需要大量台账类后台：投诉、缴费、访客、公告等。本作品集产品名「安隅」，工程基于开源若依快速搭建可扩展的社区管理后台。
 
 ## 技术选型
 
-选择若依（RuoYi）框架作为基础，主要考虑到：
-- 成熟的权限管理体系（RBAC）
-- 完善的代码生成器，加速开发
-- 活跃的社区和丰富的组件生态
+- 基座：若依 **RuoYi 3.9.1**（多模块 Maven）
+- 后端：Spring Boot **4.x**、Spring Security、JWT、Redis、Quartz
+- 持久层：MyBatis（框架默认）+ 部分模块引入 MyBatis-Plus；PageHelper 分页；POI 导出
+- 前端：Vue **2.6** + Element UI + ECharts（\`ruoyi-ui\`）
 
-### 后端
-- Spring Boot 2.x
-- MyBatis-Plus 持久层
-- Redis 缓存与会话管理
-- MySQL 数据存储
+> 说明：仓库默认页面标题仍是「若依管理系统」；「安隅」是对外作品集命名。
 
-### 前端
-- Vue 2 + Element UI
-- ECharts 数据可视化
-- 富文本编辑器
+## 我做了什么（业务扩展）
 
-## 核心模块
+在若依标准系统模块之外，按业务拆出多个 Maven 子模块 / Controller 包，例如：
 
-### 住户管理
-支持楼栋-单元-房屋的三级结构管理，住户信息的增删改查与导入导出。
+- **投诉工单**：列表、详情、增删改、Excel 导出
+- **缴费账单**：物业/水/电等账单台账维护（状态、金额字段）
+- **访客邀请**：业主邀请访客记录，含邀请码、楼栋单元房间与到访状态
+- **公告通知**：公告发布与已读记录
+- **预约 / 驿站 / 外卖等**：同类 CRUD 扩展，用于社区服务场景演示
 
-### 报修投诉
-业主在线提交报修/投诉工单，物业人员接单处理，支持图片上传和进度跟踪。
+权限、登录、动态菜单、代码生成器等能力主要复用若依框架，二次开发重点在**业务域建模与模块落地**。
 
-### 物业缴费
-生成缴费账单，在线支付，自动生成缴费统计报表。
+## 需要诚实界定的边界
 
-### 公告通知
-支持富文本公告编辑，按楼栋/全体推送，已读未读统计。
-
-### 访客预约
-业主在线为访客预约门禁权限，支持临时二维码通行。
-
-## 数据看板
-
-基于 ECharts 构建可视化大屏，实时展示：
-- 报修工单处理率
-- 缴费完成率
-- 投诉分类统计
-- 住户满意度趋势
+- **不是**完整第三方「在线支付网关」：缴费模块侧重账单与支付记录台账
+- **不是**已对接真实门禁的「临时二维码通行」：访客能力以邀请码/台账为主
+- 部分前端目录命名（如 \`test\` / \`test01\`）与 \`community\` / \`smartcommunity\` 并存，体现迭代痕迹；作品集应强调可演示的主流程，而非宣称每个接口都已产品化打磨
 
 ## 项目收获
 
-这个项目让我深入理解了企业级后台系统的架构设计，尤其是在权限管理、多角色协作和报表统计方面积累了丰富经验。`,
-    tags: ['若依', 'Spring Boot', 'Vue 2', 'Element UI', 'MyBatis-Plus'],
+把企业级后台的真实工作方式跑通一遍：在成熟脚手架上做多模块扩展、权限菜单配置、分页导出与业务表设计。对后续若依/后台类实习项目，迁移成本会低很多。`,
+    tags: ['若依', 'RuoYi', 'Spring Boot 4', 'Vue 2', 'Element UI', 'MyBatis', '社区管理'],
     category: '企业应用',
     createdAt: '2025-11-20',
-    updatedAt: '2025-11-20',
+    updatedAt: '2026-07-18',
     featured: true,
     status: 'published'
   },
   {
     id: 3,
-    title: '智能盲杖：AI 赋能的视障辅助导航系统',
-    excerpt: '融合 Spring Boot、AI 对话、高德地图与百度语音技术，结合 Vue 3 + uni-app 跨端开发，为视障人士打造集 GPS 定位、电子围栏、轨迹回放与智能语音交互于一体的辅助出行系统。',
+    title: '引路 · 慧杖护行：从 ESP32 盲杖到 AI 语音助手',
+    excerpt: 'ESP32 感知上报 + Spring Boot 跌倒/圆形围栏判断 + WebSocket 推送；Vue 管理端与 uni-app 小程序协同，明眼助手接入 DeepSeek 与百度语音。',
     content: `## 项目背景
 
-全球约有 2.53 亿视力障碍者，出行安全是他们面临的最大挑战之一。传统盲杖只能探测近距离障碍物，无法提供路线导航和远程监护。本项目尝试用技术为视障群体构建更安全的出行体验。
+传统盲杖只能近距离探测障碍，家属难以掌握出行位置与突发风险。作品「慧杖护行」（博客产品名：引路）以智能盲杖为感知端，把**避障、跌倒检测、位置守护与 AI 语音陪伴**接到同一条云端链路里。
 
 ## 系统架构
 
-### 后端服务
-- Spring Boot 3.x 作为核心框架
-- 高德地图 API 实现路径规划与地理围栏
-- 百度语音 API 提供语音合成与识别
-- AI 大模型 API 实现智能对话
+\`\`\`
+ESP32 ──HTTPS──► Spring Boot（MyBatis / MySQL）
+                    ├─ 跌倒置信度 / 圆形围栏越界
+                    └─ WebSocket ──► Vue 管理端 / uni-app 小程序
+小程序 / 按键唤醒 ──► DeepSeek 对话 + 百度 STT/TTS（明眼助手）
+\`\`\`
 
-### 前端应用
-- Vue 3 + TypeScript + uni-app 跨端方案
-- 同时支持 H5 和微信小程序
-- 无障碍适配（大字体、高对比度、语音引导）
+### 后端
+- Spring Boot 3.3 + MyBatis + MySQL
+- WebSocket 推送告警、围栏、AI 唤醒等事件
+- 高德逆地理与管理端地图展示；圆形围栏 Haversine 越界判断
+
+### 客户端与硬件
+- Vue 3 管理端：设备、监控、围栏、轨迹回放
+- uni-app 微信小程序：监护、告警、明眼助手
+- ESP32 固件：超声波避障、MPU6050 跌倒状态机、GPS、SOS
 
 ## 核心功能
 
-### 实时 GPS 定位
-家属可通过管理端实时查看使用者位置，支持历史轨迹回放，精确到街道级别。
+### 感知与上报
+盲杖经 HTTPS 上报障碍物距离、三轴加速度、GPS 等数据；支持设备测试模拟，便于联调与演示。
 
-### 电子围栏
-家属为使用者设定安全活动范围，离开预设区域自动触发告警通知。
+### 跌倒与围栏
+后端结合加速度幅值做跌倒置信度判断；电子围栏以**圆心 + 半径**持久化，越界边沿触发告警并推送。
 
-### AI 智能语音助手
-集成大语言模型 API，使用者可通过语音与系统交互：
-- "帮我导航到最近的地铁站"
-- "前面有什么障碍物"
-- "通知家人我的位置"
+### 位置与轨迹
+管理端基于高德地图做监控与轨迹回放；小程序侧可查看位置与告警，完成家属监护闭环。
 
-### 路径导航
-基于高德地图 API 提供无障碍路径规划，通过语音播报引导方向和距离。
+### 明眼助手
+DeepSeek 带设备/位置上下文的对话，百度语音 STT/TTS；盲杖按键可触发 AI 唤醒事件推到小程序。
 
-### 紧急求助
-一键 SOS 功能，自动向紧急联系人发送位置信息和求助消息。
+### 紧急与协同
+SOS 上报、家属安抚/目的地文本经 WebSocket 协同；路口辅助由 OpenCV 演示脚本上报识别结果（演示级）。
 
 ## 技术亮点
 
-- uni-app 一套代码适配多端，降低开发维护成本
-- 地理围栏的实时碰撞检测算法
-- AI 对话的上下文管理与意图识别优化
-- 语音播报的自然度与响应速度优化
+- 真实硬件固件与云端业务闭环，而不只是后台 CRUD
+- 圆形围栏越界检测 + WebSocket 实时推送
+- AI 语音助手与设备按键唤醒串联
+- 管理端 / 小程序 / 硬件三端分工清晰
+
+## 说明
+
+本项目不做完整 turn-by-turn 路径导航，也不依赖 MQTT/Redis；位置能力侧重**监护、围栏与轨迹**，AI 侧重**语音问答与陪伴**。
 
 ## 项目收获
 
-这个项目让我深刻体会到技术向善的力量。在开发过程中，我们多次与视障用户交流，真正理解了他们的需求和痛点，也让我对产品设计有了全新的认识。`,
-    tags: ['Spring Boot', 'AI', '高德地图', '百度语音', 'Vue 3', 'uni-app'],
+把硬件上报、规则判断和家属侧体验串起来之后，更理解「无障碍」不是堆功能名词，而是让风险可被看见、可被响应。`,
+    tags: ['Spring Boot', 'ESP32', 'WebSocket', 'DeepSeek', '百度语音', 'uni-app', '高德地图'],
     category: 'AI + IoT',
     createdAt: '2026-02-10',
-    updatedAt: '2026-02-10',
+    updatedAt: '2026-07-18',
     featured: true,
     status: 'published'
   },
@@ -965,75 +959,64 @@ cane/{deviceId}/command
   },
   {
     id: 14,
-    title: '校园综合管理系统：Spring Boot 3 + Vue 3 打造教务一体化平台',
-    excerpt: '以高校教务与学工场景为背景，记录如何用 Spring Boot 3、Spring Security、JWT、MyBatis-Plus 和 Vue 3 搭建一套多角色校园综合管理系统，从数据库建模到 Dashboard 可视化的完整实践。',
+    title: '青衿 · 智慧校园：Spring Boot 3 + Vue 3 多角色教务后台',
+    excerpt: '产品 UI 为「智慧校园」：Spring Boot 3.2 + Security/JWT + MyBatis-Plus + Vue 3，覆盖选课容量、成绩考勤与角色化 Dashboard。',
     content: `## 项目背景
- 
-传统校园教务系统往往只覆盖选课和成绩，学生考勤、通知公告、学工统计等功能分散在不同系统中，体验割裂。本项目希望用一套 Spring Boot 3 + Vue 3 的前后端分离架构，搭建一个覆盖学生、教师、管理员三种角色的校园综合管理平台。
- 
+
+传统校园教务能力常分散在多个系统。本项目（博客产品名「青衿」，界面品牌「智慧校园」）用前后端分离架构，搭一套覆盖管理员、教师、学生的教务学工后台。
+
 ## 技术选型
- 
-- 后端：Spring Boot 3.x、Spring Security + JWT、MyBatis-Plus、MySQL 8
+
+- 后端：Spring Boot **3.2.5**、Spring Security + JWT、MyBatis-Plus、MySQL
 - 前端：Vue 3、Vite、Element Plus、Pinia、Axios、ECharts
-- 其他：Jakarta Bean Validation 做参数校验，全局异常处理 + 业务异常 BizException 统一错误返回格式
- 
+- 其他：Jakarta Bean Validation、BizException + 全局异常处理
+
 ## 核心模块
- 
+
 ### 1. 统一认证与角色权限
- 
-通过 Spring Security + JWT 实现统一登录，Token 中携带 username 与 role（ADMIN / TEACHER / STUDENT），后端在过滤器中解析并写入 SecurityContext。再结合 @PreAuthorize 注解对接口做方法级权限控制：
- 
-- 管理员：管理学生、教师、班级、课程等基础数据
-- 教师：录入和维护成绩、考勤，查看自己授课的统计
-- 学生：查看个人选课、成绩和考勤记录
- 
-### 2. 教务与学工一体化
- 
-系统围绕学生全生命周期提供一体化管理能力：
- 
-- 学生信息管理：支持按学院、关键字搜索和分页展示
-- 课程与选课：容量控制、防重复选课、课程已满拦截
-- 成绩管理：总评成绩与等级（优秀、良好、中等、及格、不及格）统计
-- 考勤管理：NORMAL、LATE、LEAVE、EARLY_LEAVE、ABSENT 多状态考勤
-- 通知公告：按角色（ALL / STUDENT / TEACHER）定向推送
- 
-### 3. 全局异常与业务校验
- 
-通过全局异常处理器统一封装接口返回格式，对参数校验失败、业务异常和系统异常分别给出清晰的错误信息。业务层抛出 BizException，前端可以直接根据 code 和 message 做提示，避免“500 服务器错误”这类模糊信息。
- 
+
+JWT 携带身份与角色（ADMIN / TEACHER / STUDENT），过滤器写入 SecurityContext，再用 \`@PreAuthorize\` 做方法级控制：
+
+- 管理员：学生、教师、班级、课程等基础数据
+- 教师：成绩、考勤维护与通知发布
+- 学生：选课、查成绩与个人考勤
+
+### 2. 教务业务闭环
+
+- 学生 / 教师 / 班级信息管理与分页检索
+- 课程与选课：容量控制、防重复选课、已满拦截（BizException）
+- 成绩与多状态考勤（NORMAL、LATE、LEAVE 等）
+- 通知公告：按角色定向（ALL / STUDENT / TEACHER）
+
+### 3. 全局异常与校验
+
+参数校验失败与业务异常统一成清晰返回，避免前端只看到模糊的 500。
+
 ### 4. 角色差异化 Dashboard
- 
-首页 Dashboard 会根据当前登录角色展示不同的数据视图：
- 
-- 管理员：学生/教师/课程/班级总量、学院学生分布、全校成绩等级分布、近 7 日整体出勤率、热门课程排行
-- 教师：已录入成绩条数、今日考勤记录等教学相关指标
-- 学生：已选课程数、已通过/待修读课程、未读通知数量，以及“我的成绩分布”和“我的考勤趋势”图表
- 
-## 数据体验
- 
-在数据库初始化脚本中，补充了多届学生、不同学院和多门课程的数据，同时构造了最近一周的考勤记录，让 Dashboard 在演示环境下也能展示丰富的图表效果，而不是一片空白。
- 
+
+首页按角色切换指标卡片与图表文案。管理员看全校分布与热门课程；学生看个人成绩分布与考勤趋势；教师侧部分图表目前仍为全局示意，后续可按授课维度细化。
+
 ## 项目收获
- 
-通过这个项目，我把 Spring Boot 3 + Vue 3 + JWT + MyBatis-Plus 这一套典型后台技术栈完整跑通了一遍，从表结构设计、接口抽象、权限控制到前端路由守卫、状态管理和可视化大屏搭建，为后续参与类似教务/后台项目打下了比较扎实的基础。`,
-    tags: ['Spring Boot 3', 'Spring Security', 'JWT', 'MyBatis-Plus', 'Vue 3', '校园管理', 'ECharts'],
+
+把 Spring Security + JWT + MyBatis-Plus + Vue 路由守卫这条企业后台主链路完整跑通，为后续后台类项目打下基础。`,
+    tags: ['Spring Boot 3', 'Spring Security', 'JWT', 'MyBatis-Plus', 'Vue 3', '智慧校园', 'ECharts'],
     category: '企业应用',
     createdAt: '2026-06-03',
-    updatedAt: '2026-06-03',
+    updatedAt: '2026-07-18',
     featured: true,
     status: 'published'
   },
   {
     id: 15,
-    title: '讯飞星火 SSE 流式输出与并发食谱生成实践',
-    excerpt: '在健康管家项目中，如何用 Spring Boot 对接讯飞星火 WebSocket API 实现 SSE 流式返回，以及用线程池并发生成七日 21 餐食谱，避免串行 AI 调用超时的完整方案。',
+    title: '颐康云：讯飞星火 SSE 流式输出与并发食谱生成',
+    excerpt: '在颐康云（安康）中，用 Spring Boot 对接讯飞星火，经 SseEmitter 流式返回，并用线程池分片并发生成一周食谱，避免串行超时。',
     content: `## 问题背景
 
-健康管家需要根据用户健康档案生成一周的个性化食谱。如果对周一到周日逐个串行调用大模型，单次耗时 3–5 秒，七天就需要等待 20 秒以上，用户体验极差。
+颐康云需要根据父母健康档案生成一周个性化食谱。若对周一到周日串行调用大模型，单次数秒、整周可能超过 20 秒，体验很差。
 
 ## 讯飞星火接入方式
 
-讯飞星火提供两种调用方式：HTTP 同步接口和 WebSocket 流式接口。流式接口可以边生成边返回，配合 Spring 的 SseEmitter 可以实现前端打字机效果。
+星火提供 HTTP 同步与 WebSocket/流式通道。流式结果经 Spring \`SseEmitter\` 推到前端，实现打字机效果。
 
 ### WebSocket 握手鉴权
 
@@ -1056,17 +1039,16 @@ String authorization = Base64.getEncoder().encodeToString(
 
 ### SSE 流式返回
 
-后端收到星火的 WebSocket 消息后，逐 token 写入 SseEmitter：
+后端收到星火消息后，逐 token 写入 SseEmitter：
 
 \`\`\`java
-public SseEmitter streamChat(String prompt, Long parentId) {
-    SseEmitter emitter = new SseEmitter(60_000L);
-    executor.execute(() -> {
+@PostMapping("/chat/stream")
+public SseEmitter chatStream(@RequestBody AiChatDTO dto) {
+    SseEmitter emitter = new SseEmitter(120_000L);
+    aiStreamExecutor.execute(() -> {
         try {
-            String context = aiProfileContextService
-                .buildProfileContext(parentId);
-            sparkService.streamChat(context + prompt, token -> {
-                emitter.send(SseEmitter.event().data(token));
+            sparkService.streamChat(dto.getMessage(), chunk -> {
+                emitter.send(SseEmitter.event().data(chunk));
             });
             emitter.complete();
         } catch (Exception e) {
@@ -1077,84 +1059,40 @@ public SseEmitter streamChat(String prompt, Long parentId) {
 }
 \`\`\`
 
-前端用 EventSource 接收，追加到文本框即可实现打字机效果。
+对话、健康报告分析等接口均提供 stream 变体。
 
-## 并发食谱生成
+## 周食谱分片并发
 
-七日食谱生成是最耗时的操作，串行调用不可行。方案是用线程池对周一到周日并发调用，设置总超时 60 秒：
-
-\`\`\`java
-@Bean("aiDietExecutor")
-public ExecutorService aiDietExecutor() {
-    return new ThreadPoolExecutor(7, 14, 60L, TimeUnit.SECONDS,
-        new LinkedBlockingQueue<>(10),
-        new ThreadPoolExecutor.CallerRunsPolicy());
-}
-\`\`\`
+实现上不是「7 次串行」，而是把一周拆成 3 个分片并行（周一~三 / 周四~五 / 周六~日），用 \`CompletableFuture\` + \`aiDietExecutor\` 汇总，失败可回退整周单次生成。
 
 \`\`\`java
-public DietPlan generateDiet(Long parentId, DietPreference pref) {
-    HealthProfile profile = profileService.getByParentId(parentId);
-    String healthSummary = buildHealthSummary(profile);
-    String dietRules = buildDietRules(profile);
-
-    List<CompletableFuture<DayDiet>> futures = Arrays.stream(DayOfWeek.values())
-        .map(day -> CompletableFuture.supplyAsync(() ->
-            sparkService.generateDietForDay(day, healthSummary, dietRules, pref),
-            aiDietExecutor))
-        .collect(Collectors.toList());
-
-    // 等待全部完成，总超时 60s
-    List<DayDiet> days = futures.stream()
-        .map(f -> {
-            try { return f.get(60, TimeUnit.SECONDS); }
-            catch (Exception e) { return fallbackDiet(); }
-        })
-        .collect(Collectors.toList());
-
-    return saveDietPlan(parentId, days);
-}
+List<CompletableFuture<String>> futures = DIET_WEEK_CHUNKS.stream()
+    .map(days -> CompletableFuture.supplyAsync(
+        () -> sparkService.generateDietForDays(healthInfo, days), dietExecutor))
+    .toList();
+CompletableFuture.allOf(futures.toArray(new CompletableFuture[0])).join();
 \`\`\`
 
-七天并发后，整体耗时从 20+ 秒降到约 5–6 秒（受制于最慢的那次 AI 调用）。
+长任务还可走异步任务接口：先返回 taskId，前端轮询 PENDING / RUNNING / SUCCESS。
 
-## Prompt 工程
+## 语音录入说明
 
-食谱生成的 Prompt 质量直接决定结果可用性。关键策略：
-
-1. **注入健康档案摘要**：慢性病（高血压、糖尿病）、过敏史、体重 BMI
-2. **注入饮食规则**：\`buildDietRules()\` 根据慢性病生成「低盐低脂」「控制血糖生成指数」等约束
-3. **强制 JSON 格式输出**：在 Prompt 末尾要求返回固定 JSON Schema，便于解析
-4. **失败回退**：AI 返回非法 JSON 时，使用预置的健康默认食谱，不让整个流程崩溃
-
-## 异步任务防超时
-
-对于前端不需要等待结果的场景（如刷新食谱），使用异步任务表 \`t_ai_task\`：
-
-\`\`\`java
-// 前端提交任务，立即返回 taskId
-Long taskId = aiTaskService.createDietPlanTask(parentId, pref);
-
-// 前端轮询任务状态
-// GET /ai/task/{taskId}/status → PENDING / RUNNING / SUCCESS / FAILED
-\`\`\`
-
-线程池执行完后更新任务状态，前端拿到 SUCCESS 再刷新食谱列表，完全不阻塞主线程。
+父母端经百度 ASR 转文字后，正则意图目前优先解析**血压**（如 \`120/80\`）并自动落库；血糖等更复杂表达仍以手动记录或普通 AI 对话为主，避免夸大「全意图自动落库」。
 
 ## 总结
 
-核心思路：并发 > 串行，流式 > 同步等待，AI 失败有回退。三者结合让健康管家的 AI 功能在 5 秒内完成食谱生成，同时保证服务稳定性。`,
-    tags: ['讯飞星火', 'SSE', 'Spring Boot', 'CompletableFuture', 'AI'],
+核心思路：分片并发 > 整周串行，流式 > 同步等待，AI 失败有回退。再配合档案上下文，让颐康云的 AI 能力既可演示又相对稳。`,
+    tags: ['讯飞星火', 'SSE', 'Spring Boot', 'CompletableFuture', '颐康云', 'AI'],
     category: 'Java 后端',
     createdAt: '2026-06-10',
-    updatedAt: '2026-06-10',
+    updatedAt: '2026-07-18',
     featured: true,
     status: 'published'
   },
   {
     id: 16,
-    title: 'EAR、PERCLOS 与头部姿态：疲劳驾驶检测算法深度解析',
-    excerpt: '从眼部纵横比（EAR）到 PERCLOS 滑动窗口，再到头部偏转角度，系统拆解智能车载疲劳监测装置的核心算法，以及个人自适应基线校准如何降低误报率。',
+    title: 'EAR、PERCLOS 与头部姿态：SmartCar 疲劳检测算法解析',
+    excerpt: '拆解 SmartCar（醒驾）软件原型：EAR、PERCLOS、solvePnP 头部姿态与自适应基线校准；本地仪表盘为 HTTP 轮询，树莓派外设属后续规划。',
     content: `## 为什么单靠"闭眼检测"不够
 
 最简单的疲劳检测只判断"眼睛是否闭合"，但这会产生大量误报：
@@ -1163,138 +1101,64 @@ Long taskId = aiTaskService.createDietPlanTask(parentId, pref);
 - 每个人的眼睛大小不同，同一阈值适配性差
 - 短暂闭眼和持续困倦闭眼无法区分
 
-实际可用的系统需要 EAR + PERCLOS + 头部姿态的多维度融合。
+可用的演示系统需要 EAR + PERCLOS + 头部姿态的多规则组合（本仓库是优先级状态机，而非单独打分模型）。
 
 ## EAR（Eye Aspect Ratio）眼部纵横比
 
-EAR 是当前帧眼睛睁开程度的量化指标，由 MediaPipe Face Mesh 提供的 468 个关键点中的眼部点计算得出：
+EAR 由 MediaPipe Face Mesh 眼部关键点计算：
 
 \`\`\`python
 def compute_ear(landmarks, eye_indices, img_w, img_h):
     pts = [(int(landmarks[i].x * img_w), int(landmarks[i].y * img_h))
            for i in eye_indices]
-    # 垂直方向两组点的距离
     v1 = np.linalg.norm(np.array(pts[1]) - np.array(pts[5]))
     v2 = np.linalg.norm(np.array(pts[2]) - np.array(pts[4]))
-    # 水平方向点距
     h  = np.linalg.norm(np.array(pts[0]) - np.array(pts[3]))
     return (v1 + v2) / (2.0 * h + 1e-6)
 \`\`\`
 
-EAR 接近 0 表示完全闭眼，睁眼时通常在 0.25–0.35 之间（因人而异）。
-
 ## 个人自适应基线校准
 
-固定阈值 0.23 在不同人脸上误报率高。启动时进行 3 秒睁眼基线采样，动态计算阈值：
+启动约 3 秒采集睁眼 EAR，动态阈值约为 \`baseline * ear_scale\`（默认 scale=0.72），并做合理上下限裁剪。
 
-\`\`\`python
-# 校准阶段：采集睁眼 EAR 样本
-if calibrating and ear > 0.15:
-    ear_samples.append(ear)
+## PERCLOS
 
-# 校准完成后
-baseline = np.mean(ear_samples)
-ear_threshold = baseline * ear_scale  # 默认 scale=0.72
-\`\`\`
+在时间窗口内（默认 30 秒）统计闭眼帧占比。与连续闭眼时长一起触发 Fatigue / High Fatigue。
 
-这样阈值随用户调整，小眼睛用户不再被频繁误报。
+## 头部姿态
 
-## PERCLOS（眼睛闭合时间占比）
+姿态角由 OpenCV \`solvePnP\` 估计（yaw / pitch / roll），再结合持续时间判定 Distracted，而不是「MediaPipe 直接返回角度」。
 
-PERCLOS 是在时间窗口内（默认 30 秒）眼睛闭合帧占总帧数的比例，是学术界公认的疲劳度量标准：
+## 状态机与输出
 
-\`\`\`python
-from collections import deque
+优先级大致为：No Face → High Fatigue → Fatigue → Distracted → PERCLOS 规则 → Long Drive → Normal。并行输出：
 
-class PerclosTracker:
-    def __init__(self, window_seconds=30, fps=15):
-        self.window = deque(maxlen=int(window_seconds * fps))
+- OpenCV 叠加窗口
+- 蜂鸣 / TTS（Windows 优先系统语音）
+- CSV 事件日志
+- \`web_dashboard.py\`：标准库 HTTP + MJPEG 画面 + JSON 状态轮询（**不是 Flask / WebSocket**）
 
-    def update(self, is_closed: bool) -> float:
-        self.window.append(1 if is_closed else 0)
-        if len(self.window) < 10:
-            return 0.0
-        return sum(self.window) / len(self.window)
-\`\`\`
+## 关于树莓派
 
-PERCLOS > 0.25 触发预警，> 0.40 触发告警。相比瞬时 EAR，PERCLOS 对短暂眨眼免疫，只有持续嗜睡才会触发。
-
-## 头部姿态：低头与侧脸
-
-MediaPipe 提供头部 3D 旋转角（yaw/pitch/roll），用于检测分心行为：
-
-\`\`\`python
-def get_head_pose(face_landmarks, img_w, img_h):
-    # 取鼻尖、下颌、左右眼角、左右嘴角 6 个特征点
-    image_points = np.array([...], dtype=np.float64)
-    model_points = np.array([...], dtype=np.float64)  # 标准 3D 模型
-    _, rvec, tvec = cv2.solvePnP(model_points, image_points,
-                                  camera_matrix, dist_coeffs)
-    rmat, _ = cv2.Rodrigues(rvec)
-    angles, *_ = cv2.RQDecomp3x3(rmat)
-    pitch, yaw, roll = angles
-    return pitch, yaw, roll
-\`\`\`
-
-- \`|yaw| > 28°\`：侧脸分心（看手机/副驾）
-- \`pitch < -18°\`：低头（看手机/打瞌睡点头）
-
-## 分级状态机
-
-多维度数据汇聚后，通过状态机决策最终输出状态，避免多个维度同时触发导致告警堆叠：
-
-\`\`\`python
-def update_state(ear, perclos, yaw, pitch, no_face_seconds):
-    if no_face_seconds > 1.2:
-        return State.NO_FACE
-    if perclos > 0.40 or closed_seconds > 1.8:
-        return State.HIGH_FATIGUE
-    if perclos > 0.25 or closed_seconds > 0.8 or yawn_active:
-        return State.FATIGUE
-    if abs(yaw) > 28 or pitch < -18:
-        return State.DISTRACTED
-    return State.NORMAL
-\`\`\`
-
-状态之间设置冷却时间，同一状态的语音播报不会在 3 秒内重复触发。
-
-## 树莓派部署优化
-
-在 ARM 平台上，降低分辨率和限制处理帧率是最有效的优化手段：
-
-\`\`\`python
-cap.set(cv2.CAP_PROP_FRAME_WIDTH, 640)
-cap.set(cv2.CAP_PROP_FRAME_HEIGHT, 480)
-
-# 每隔一帧处理一次，降低 CPU 占用
-frame_count = 0
-while True:
-    ret, frame = cap.read()
-    frame_count += 1
-    if frame_count % 2 != 0:
-        continue
-    # 处理逻辑...
-\`\`\`
-
-实测树莓派 4B 在 640×480 分辨率、隔帧处理下可稳定跑到 12–15 FPS，CPU 占用约 65%。
+仓库 README 将树莓派 GPIO / OLED / LED 列为**后续可拓展**；当前交付是桌面软件原型。部署到 ARM 时可降低分辨率（如 \`--max-width 640\`），但不宜把未合入的外设或未留存的 FPS 实测写成已完成能力。
 
 ## 总结
 
-EAR 负责捕捉瞬时状态，PERCLOS 负责统计累计疲劳程度，头部姿态覆盖分心场景，三者互补形成完整的多维度疲劳监测体系。个人基线校准是降低误报的关键，而分级状态机则保证告警的合理性和用户体验。`,
-    tags: ['MediaPipe', 'OpenCV', 'EAR', 'PERCLOS', 'Python', '疲劳检测'],
+EAR 抓瞬时闭眼，PERCLOS 看累计疲劳，头部姿态覆盖分心，自适应基线降低个体差异误报。清醒地界定「软件原型 vs 车载量产」，作品集反而更可信。`,
+    tags: ['MediaPipe', 'OpenCV', 'EAR', 'PERCLOS', 'Python', 'SmartCar'],
     category: 'AI + IoT',
     createdAt: '2026-06-12',
-    updatedAt: '2026-06-12',
+    updatedAt: '2026-07-18',
     featured: true,
     status: 'published'
   },
   {
     id: 17,
     title: 'Spring Boot JWT 多角色鉴权的工程化实践',
-    excerpt: '结合校园管理系统与健康管家项目，梳理 JWT 签发、拦截器解析、SecurityContext 注入、方法级 @PreAuthorize 控制，以及多租户场景下父子资源访问权限校验的完整设计思路。',
+    excerpt: '结合智慧校园与颐康云，梳理 JWT 签发、拦截器/过滤器解析、SecurityContext、@PreAuthorize，以及子女-父母数据级隔离。',
     content: `## 为什么需要在项目中自己实现鉴权
 
-若依等框架内置了完整权限体系，但在 Spring Boot 3 + JWT 的新项目中，理解并自己实现一遍鉴权链路更有价值。健康管家和校园管理系统都采用了这套方案。
+若依等框架内置了完整权限体系，但在 Spring Boot 3 + JWT 的新项目中，理解并自己实现一遍鉴权链路更有价值。颐康云与智慧校园都采用了 JWT 方案（校园侧叠加 Spring Security \`@PreAuthorize\`）。
 
 ## JWT 结构与签发
 
@@ -1319,7 +1183,7 @@ Token 不存服务端，无状态设计天然适合水平扩展。
 
 ## 拦截器解析与 SecurityContext 注入
 
-所有受保护接口经过 JwtInterceptor，解析 Token 并将用户信息写入 ThreadLocal：
+颐康云侧，受保护接口经过 JwtInterceptor，解析 Token 并将用户信息写入 ThreadLocal：
 
 \`\`\`java
 @Component
@@ -1344,105 +1208,57 @@ public class JwtInterceptor implements HandlerInterceptor {
 }
 \`\`\`
 
-接入 Spring Security 的项目则将解析结果封装为 UsernamePasswordAuthenticationToken 写入 SecurityContextHolder，后续 @PreAuthorize 才能生效。
+智慧校园接入 Spring Security 时，将解析结果写入 SecurityContextHolder，后续 \`@PreAuthorize\` 才能生效。
 
 ## 方法级权限控制
 
-校园管理系统中三种角色对同一接口的访问权限不同，用 @PreAuthorize 精确控制：
-
 \`\`\`java
-// 只有管理员可以删除学生
 @PreAuthorize("hasRole('ADMIN')")
 @DeleteMapping("/{id}")
 public Result<Void> delete(@PathVariable Long id) { ... }
 
-// 教师只能录入自己授课课程的成绩
 @PreAuthorize("hasAnyRole('ADMIN', 'TEACHER')")
 @PostMapping("/grade")
-public Result<Void> saveGrade(@RequestBody GradeDTO dto) {
-    // 教师角色额外校验课程归属
-    LoginUser current = UserContext.get();
-    if ("TEACHER".equals(current.getRole())) {
-        courseService.checkTeacherOwnership(current.getUserId(), dto.getCourseId());
-    }
-    gradeService.save(dto);
-    return Result.ok();
-}
+public Result<Void> saveGrade(@RequestBody GradeDTO dto) { ... }
 \`\`\`
 
-## 多租户场景：子女访问父母资源
+## 数据级隔离：子女访问父母资源
 
-健康管家引入了更复杂的场景：子女只能访问自己绑定的父母数据，不能访问其他人。这不是简单的角色权限，而是数据级隔离。
+颐康云中子女只能访问已绑定父母的数据，由 FamilyAccessService 在 Service 入口校验 parentId。
 
 \`\`\`java
-@Service
-public class FamilyAccessService {
-    public void checkAccess(Long childId, Long parentId) {
-        boolean bound = familyMapper.exists(
-            new LambdaQueryWrapper<Family>()
-                .eq(Family::getChildId, childId)
-                .eq(Family::getParentId, parentId)
-        );
-        if (!bound) throw new BizException(ErrorCode.ACCESS_DENIED,
-            "无权访问该父母的数据");
-    }
+public void checkAccess(Long childId, Long parentId) {
+    boolean bound = familyMapper.exists(
+        new LambdaQueryWrapper<Family>()
+            .eq(Family::getChildId, childId)
+            .eq(Family::getParentId, parentId)
+    );
+    if (!bound) throw new BizException(ErrorCode.ACCESS_DENIED,
+        "无权访问该父母的数据");
 }
 \`\`\`
-
-在所有涉及父母数据的 Service 方法入口调用此校验：
-
-\`\`\`java
-public HealthProfile getProfile(Long parentId) {
-    Long childId = UserContext.get().getUserId();
-    familyAccessService.checkAccess(childId, parentId);
-    return profileMapper.selectByParentId(parentId);
-}
-\`\`\`
-
-这样即使绕过前端路由直接请求 API，也无法访问未绑定的数据。
-
-## 统一异常处理
-
-鉴权和业务校验失败都通过统一异常处理器返回标准格式：
-
-\`\`\`java
-@RestControllerAdvice
-public class GlobalExceptionHandler {
-    @ExceptionHandler(BizException.class)
-    public Result<Void> handleBizException(BizException e) {
-        return Result.fail(e.getCode(), e.getMessage());
-    }
-
-    @ExceptionHandler(AccessDeniedException.class)
-    public Result<Void> handleAccessDenied(AccessDeniedException e) {
-        return Result.fail(403, "权限不足");
-    }
-}
-\`\`\`
-
-前端拿到 code 字段后统一跳转或提示，不会出现 500 白屏。
 
 ## 总结
 
-JWT 鉴权的核心链路：**签发 → 携带 → 解析 → 注入上下文 → 方法级控制 → 数据级隔离**。角色权限解决"能不能访问这个接口"，数据隔离解决"能不能访问这条数据"，两者缺一不可。`,
-    tags: ['Spring Boot', 'JWT', 'Spring Security', '鉴权', 'Java'],
+JWT 鉴权的核心链路：**签发 → 携带 → 解析 → 注入上下文 → 方法级控制 → 数据级隔离**。角色权限解决「能不能访问这个接口」，数据隔离解决「能不能访问这条数据」。`,
+    tags: ['Spring Boot', 'JWT', 'Spring Security', '鉴权', '颐康云', '智慧校园'],
     category: 'Java 后端',
     createdAt: '2026-06-14',
-    updatedAt: '2026-06-14',
+    updatedAt: '2026-07-18',
     featured: false,
     status: 'published'
   },
   {
     id: 18,
     title: 'MyBatis-Plus 在多模块项目中的实战技巧',
-    excerpt: '结合若依框架二次开发与健康管家项目，梳理 MyBatis-Plus 分页查询、逻辑删除、条件构造器、乐观锁与多数据源配置的工程化用法，以及在复杂业务场景下避坑的关键细节。',
+    excerpt: '结合若依二次开发与颐康云，梳理 MyBatis-Plus 分页、逻辑删除、条件构造器与自动填充的工程化用法。',
     content: `## 为什么选 MyBatis-Plus
 
-相比原生 MyBatis，MyBatis-Plus 提供了开箱即用的 CRUD 接口、条件构造器和分页插件，在校园管理、健康管家等业务系统中可以减少大量重复的 SQL 编写工作。但用不好也容易踩坑。
+相比原生 MyBatis，MyBatis-Plus 提供了开箱即用的 CRUD 接口、条件构造器和分页插件，在智慧校园、颐康云等业务系统中可以减少大量重复的 SQL 编写工作。但用不好也容易踩坑。
 
 ## 分页查询标准姿势
 
-安隅社区管理、健康管家等项目中，几乎每个列表接口都需要分页。MyBatis-Plus 配合 Page 对象是最简洁的方式：
+安隅、颐康云等项目中，几乎每个列表接口都需要分页。MyBatis-Plus 配合 Page 对象是最简洁的方式：
 
 \`\`\`java
 @Configuration
@@ -1472,7 +1288,7 @@ public PageResult<HealthRecordVO> listRecords(Long parentId, Integer pageNum, In
 
 ## 逻辑删除
 
-健康管家所有核心表都使用逻辑删除，防止误删数据。只需全局配置 + 字段注解：
+颐康云核心表使用逻辑删除，防止误删数据。只需全局配置 + 字段注解：
 
 \`\`\`yaml
 mybatis-plus:
@@ -1488,82 +1304,26 @@ mybatis-plus:
 private Integer deleted;
 \`\`\`
 
-配置后，所有 \`selectXxx\` 方法自动追加 \`WHERE deleted = 0\`，\`deleteXxx\` 方法变为 \`UPDATE SET deleted = 1\`。
-
-**踩坑点**：逻辑删除后，若该记录存在唯一索引（如用户名、手机号），再次注册相同值会因为 deleted=1 的旧记录冲突。解决方式是唯一索引改为联合唯一索引，加入 deleted 字段。
-
-## 条件构造器的正确用法
-
-LambdaQueryWrapper 比字符串拼接更安全，但有几个细节容易出错：
+## 条件构造器与空值陷阱
 
 \`\`\`java
-// 1. 条件为空时不拼入 SQL（常见于搜索筛选）
-wrapper.like(StringUtils.isNotBlank(keyword), HealthRecord::getNote, keyword)
-       .eq(recordType != null, HealthRecord::getRecordType, recordType)
-       .between(startDate != null && endDate != null,
-                HealthRecord::getRecordDate, startDate, endDate);
-
-// 2. 嵌套 OR 条件
-wrapper.and(w -> w.eq(User::getUserType, 1).or().eq(User::getUserType, 2));
-// 生成：AND (user_type = 1 OR user_type = 2)
-
-// 3. 只查需要的字段，减少数据传输
-wrapper.select(HealthRecord::getId, HealthRecord::getRecordDate,
-               HealthRecord::getRecordType);
+wrapper.eq(StringUtils.hasText(keyword), HealthRecord::getNotes, keyword)
+       .ge(startDate != null, HealthRecord::getRecordDate, startDate);
 \`\`\`
 
-**最常见错误**：在循环中 new 同一个 Wrapper 对象反复 .eq()，条件会不断叠加，导致第二次查询带上了第一次的条件。每次查询都应该 new 一个新的 Wrapper。
+条件为 false 时不会拼进 SQL，避免 \`column = null\` 这类隐性过滤错误。
 
-## BaseEntity 统一字段
+## 自动填充
 
-校园管理和健康管家项目中，所有表都有 createTime、updateTime、deleted 字段。用 @TableField 自动填充避免每次手动设置：
-
-\`\`\`java
-@Data
-public abstract class BaseEntity {
-    @TableId(type = IdType.AUTO)
-    private Long id;
-
-    @TableField(fill = FieldFill.INSERT)
-    private LocalDateTime createTime;
-
-    @TableField(fill = FieldFill.INSERT_UPDATE)
-    private LocalDateTime updateTime;
-
-    @TableLogic
-    private Integer deleted;
-}
-
-@Component
-public class AutoFillHandler implements MetaObjectHandler {
-    @Override
-    public void insertFill(MetaObject metaObject) {
-        setFieldValByName("createTime", LocalDateTime.now(), metaObject);
-        setFieldValByName("updateTime", LocalDateTime.now(), metaObject);
-    }
-
-    @Override
-    public void updateFill(MetaObject metaObject) {
-        setFieldValByName("updateTime", LocalDateTime.now(), metaObject);
-    }
-}
-\`\`\`
-
-所有实体继承 BaseEntity，从此不再手动写 createTime。
-
-## 性能注意事项
-
-- **禁止全表查询**：Wrapper 为 null 时 selectList 会扫全表，务必加兜底条件或断言
-- **批量插入用 saveBatch**：循环单条 insert 性能极差，saveBatch 默认每 1000 条一批
-- **关联查询不滥用**：MyBatis-Plus 不擅长多表 JOIN，复杂查询还是写 XML，单表 CRUD 才是它的主场
+智慧校园与颐康云常见 createTime / updateTime / deleted 字段，用 \`MetaObjectHandler\` 自动填充，减少样板代码。
 
 ## 总结
 
-MyBatis-Plus 的核心价值是简化单表 CRUD，条件构造器 + 分页插件 + 逻辑删除覆盖了 80% 的业务查询场景。理解它的边界（不擅长复杂关联）并配合 XML 使用，才是企业项目中最务实的姿势。`,
-    tags: ['MyBatis-Plus', 'Spring Boot', 'Java', '分页', '数据库'],
+MyBatis-Plus 适合业务 CRUD 密集的项目；复杂报表仍建议手写 SQL 或 XML。分页、逻辑删除、条件构造器三件套用对，日常开发效率会高很多。`,
+    tags: ['MyBatis-Plus', 'Spring Boot', '颐康云', 'Java'],
     category: 'Java 后端',
     createdAt: '2026-06-16',
-    updatedAt: '2026-06-16',
+    updatedAt: '2026-07-18',
     featured: false,
     status: 'published'
   }

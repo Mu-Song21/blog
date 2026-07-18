@@ -147,8 +147,8 @@ const philosophies = [
 const skillGroups = [
   { name: '后端', items: ['Java', 'Spring Boot', 'MyBatis-Plus', 'MQTT', 'Redis', 'MySQL', 'WebSocket', 'JWT'] },
   { name: '前端', items: ['Vue 2 / Vue 3', 'TypeScript', 'Element UI', 'uni-app', '微信小程序', 'ECharts'] },
-  { name: 'AI & 算法', items: ['讯飞星火', '百度语音 ASR/TTS', 'MediaPipe', 'OpenCV', 'Python'] },
-  { name: '其他', items: ['高德地图', '若依框架', '树莓派', 'Git', 'Netlify'] },
+  { name: 'AI & 算法', items: ['讯飞星火', '百度语音 ASR/TTS', 'DeepSeek', 'MediaPipe', 'OpenCV', 'Python'] },
+  { name: '其他', items: ['高德地图', '若依框架', 'ESP32', 'Git', 'Netlify'] },
 ]
 
 const interests = [

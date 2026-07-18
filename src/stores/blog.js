@@ -2,7 +2,7 @@ import { defineStore } from 'pinia'
 import { ref, computed } from 'vue'
 import { DEFAULT_ARTICLES } from '../data/articles'
 
-const DATA_VERSION = 7
+const DATA_VERSION = 10
 
 export const useBlogStore = defineStore('blog', () => {
   const storedVersion = Number(localStorage.getItem('blog_data_version') || '0')
