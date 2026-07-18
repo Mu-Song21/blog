@@ -1,7 +1,7 @@
 ---
 id: 1
 title: "守望：独居老人非接触式居家主动守护系统实践"
-excerpt: "不是堆传感器名词，而是把告警落库、Redis 夜间离床状态机、WebSocket 大屏推送和处置闭环真正串起来——守望项目的工程复盘。"
+excerpt: "告警落库、Redis 夜间离床状态机、WebSocket 大屏推送与处置闭环如何串起来：对照真实入口（行为接口 / mock / 可选 MQTT），写清三端分工与不宜夸大的边界。"
 category: "物联网"
 tags: ["Spring Boot","Redis","WebSocket","JPA","微信小程序","Vue 3"]
 createdAt: 2025-12-15
@@ -12,70 +12,87 @@ status: published
 
 ## 一开始想清楚的问题
 
-独居场景里，家属真正怕的不是「少看一个温湿度」，而是：**异常发生后有没有人看见、有没有人处理完**。所以守望的目标不是做一个传感器展览馆，而是一条可演示的闭环：
+独居场景里，家属真正怕的不是「少看一个温湿度」，而是：**异常发生后有没有人看见、有没有人处理完**。所以守望的目标不是传感器展览馆，而是一条可演示闭环：
 
 **上报 → 判断 → 落库 → 推送 → 处置**
 
-仓库拆成三端：Spring Boot API、Vue 3 监控大屏、微信小程序家属端。没有真实毫米波固件时，用 HTTP mock / 心跳模拟把链路跑通。
+仓库拆成三端：Spring Boot API（默认端口 8181）、Vue 3 监控大屏、微信小程序家属端。没有真实毫米波固件时，用 HTTP mock / 行为接口 / 心跳把链路跑通。
 
-## 架构怎么落
+## 系统怎么串
 
 ```
-HTTP mock / 心跳 /（可选）MQTT
+行为上报 / HTTP mock /（可选）MQTT
         ↓
-   AlarmService
-   ├─ MySQL 告警事实
-   ├─ Redis 异常状态 / 夜间离床状态 / Dashboard 缓存
-   └─ WebSocket → 大屏（ALARM + STATS）
+   AlarmService.processAlarmMessage（异步线程池）
+   ├─ MySQL：告警事实 + 老人异常标记
+   ├─ Redis：elder:abnormal:{id}、夜间离床状态、dashboard:stats（约 30s）
+   └─ WebSocket /ws/alarm → 大屏（ALARM + STATS）
         ↓
-   小程序 HTTP 查告警、一键处理
+   小程序 HTTP：未处理列表、一键处置
 ```
 
-取舍很明确：
+取舍：
 
-- **演示主路径用 HTTP**，MQTT 代码写了但默认关掉——避免「没 Broker 就跑不起来」
-- **大屏走 WebSocket**，小程序仍用 HTTP——家属端交互低频，不必硬上长连接
-- **通知是库内 SYSTEM 记录**，不是短信/订阅消息——先把处置流程做完，再谈通道
+- **演示主路径用 HTTP**；MQTT 有代码但默认 `mqtt.enabled=false`  
+- **大屏走 WebSocket**（另有 10s 轮询兜底）；小程序只用 `wx.request`  
+- **通知家属**：处置时写库内 SYSTEM 通知，不是短信 / 订阅消息推送  
 
-## 真正有辨识度的点：夜间离床状态机
+## 夜间离床状态机（辨识度最高的一段）
 
-一次性阈值判断（「离床就报警」）误报太多。守望用 Redis 存夜间状态，按时间升级：
+入口：`POST /api/behavior/night-bed-state` → `NightBedStateService`。Redis key：`night-bed-state:{elderId}`，TTL 12 小时。夜间窗口约 22:00–06:00。
 
-- 夜间且无在床：开始累计离床时长
-- ≥ 10 分钟：离床预警（只发一次，靠 `bedLeaveAlarmSent` 防抖）
-- ≥ 30 分钟且门磁未开：升级潜在风险紧急告警
+状态字段包括：`absentStartTime`、`bedLeaveAlarmSent`、`potentialRiskAlarmSent` 等。升级规则：
 
-关键逻辑类似：
+- 离床累计 ≥ 10 分钟且未发过：`BED_LEAVE` 预警（只发一次）  
+- ≥ 30 分钟且门磁未开且未发过：`POTENTIAL_RISK` 紧急告警  
 
 ```java
-if (absentMinutes >= 10 && !state.isBedLeaveAlarmSent()) {
-    alarmService.processAlarmMessage(...BED_LEAVE...);
+long absentMinutes = Duration.between(
+    LocalDateTime.parse(state.getAbsentStartTime()), now).toMinutes();
+
+if (absentMinutes >= BED_LEAVE_MINUTES && !state.isBedLeaveAlarmSent()) {
+    alarmService.processAlarmMessage(buildAlarm(..., AlarmType.BED_LEAVE, ...));
     state.setBedLeaveAlarmSent(true);
 }
-if (absentMinutes >= 30 && !doorOpened && !state.isPotentialRiskAlarmSent()) {
-    alarmService.processAlarmMessage(...POTENTIAL_RISK...);
+if (absentMinutes >= POTENTIAL_RISK_MINUTES
+        && !Boolean.TRUE.equals(dto.getDoorOpened())
+        && !state.isPotentialRiskAlarmSent()) {
+    alarmService.processAlarmMessage(buildAlarm(..., AlarmType.POTENTIAL_RISK, ...));
     state.setPotentialRiskAlarmSent(true);
 }
 redisTemplate.opsForValue().set(key, state, 12, TimeUnit.HOURS);
 ```
 
-这比「规则引擎」四个字实在：状态在 Redis，升级条件可读，告警不重复刷屏。
+这比空写「规则引擎」实在：状态在 Redis，升级条件可读，靠布尔位防抖，避免刷屏。
 
-## 告警闭环为什么重要
+## 告警落库之后发生什么
 
-只生成告警不够。运营大屏上需要：
+`processAlarmMessage`（`@Async`）同步路径大致是：
 
-- 谁处理的、结果是什么、要不要记通知
-- 今日处置数、平均耗时——给演示和 Dashboard 用
+1. `saveAlarm` → MySQL  
+2. `updateElderAbnormalStatus` → Redis + 老人表异常标记  
+3. `invalidateStatsCache` → 删 Dashboard 缓存  
+4. `broadcast(ALARM)` + `broadcast(STATS)` → 大屏  
 
-家属小程序可以拉未处理列表并处理。**「通知家属」在本项目里是写通知表**，不是真推微信，写作品集时别夸大。
+处置接口 `handleAlarm` 才写处理人、结果、是否通知家属与耗时。**告警刚产生时不会自动推微信**——作品集别写成「紧急自动通知家属」。
+
+## 能力边界
+
+| 不宜声称 | 实际情况 |
+|----------|----------|
+| 硬件守护终端已交付 | 无固件仓库；设备类型是数据标签 |
+| Redis 时序存传感器 | Redis 做状态机 / 异常标记 / 短缓存 |
+| MQTT 已全面接入 | 默认可关；Broker 挂了应用仍可启动 |
+| 小程序实时长连接 | 仅 HTTP |
 
 ## 踩过的坑
 
-1. **Redis 用途别写成时序库**——这里是状态与短时统计缓存，不是存传感器曲线  
-2. **MQTT 有代码 ≠ 已量产接入**——默认关，面试时要主动说清  
-3. **设备类型是数据标签**（毫米波/门磁等），没有固件仓库——诚实比堆硬件名词更安全  
+1. 小程序 `api.js` 曾写死 `8080`，后端实际 `8181`——联调先对端口。  
+2. 仓库里有未接线的 `WebSocketPushService` / `RedisStatusService`，写文章要以实际注入路径为准。  
+3. 前端 WS 重连是固定约 3s，不是指数退避；大屏轮询与 WS 并存，WS 是增强不是唯一真相源。
 
 ## 收获
 
-物联网后台的核心竞争力，往往不是协议名词，而是：**状态怎么存、告警怎么升级、人怎么收尾**。守望把这三段跑通后，再做引路、颐康云时，设计实时链路会快很多。
+物联网后台的竞争力往往不在协议名词，而在：**状态怎么存、告警怎么升级、人怎么收尾**。
+
+专题：[WebSocket 推送](/blog/10) · [Redis 状态机](/blog/11) · [可插拔 MQTT](/blog/9)

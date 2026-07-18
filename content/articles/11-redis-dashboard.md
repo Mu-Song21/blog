@@ -1,7 +1,7 @@
 ---
 id: 11
 title: "守望里的 Redis：状态机优先，统计缓存其次"
-excerpt: "守望项目里 Redis 真正值钱的是夜间离床状态与老人异常标记；Dashboard 30 秒缓存只是顺手加速。别把它吹成时序数据库。"
+excerpt: "夜间离床 night-bed-state、老人异常标记、Dashboard 30 秒缓存——写清 key、TTL 与防抖字段，纠正「Redis 时序库」的常见吹法。"
 category: "Java 后端"
 tags: ["Redis","Dashboard","缓存","Spring Boot","守望"]
 createdAt: 2026-05-12
@@ -12,49 +12,29 @@ status: published
 
 ## 先纠正一个常见吹法
 
-很多作品集写「Redis 时间序列存储传感器数据」。守望**没有**这么做。传感器/告警事实在 MySQL；Redis 做三件事：
+很多作品集写「Redis 时间序列存储传感器数据」。守望**没有**这么做。传感器 / 告警事实在 MySQL；Redis 做三件事：
 
-1. **夜间离床状态机**（`night-bed-state:{elderId}`）
-2. **老人异常标记**（告警产生后快速给大屏卡片用）
-3. **Dashboard 统计短缓存**（约 30 秒 TTL）
+| Key / 用途 | 作用 |
+|------------|------|
+| `night-bed-state:{elderId}` | 夜间离床状态机（TTL 12h） |
+| `elder:abnormal:{elderId}` | 告警后的异常标记，供大屏卡片 |
+| `dashboard:stats` | 统计短缓存（约 30s TTL） |
 
-分清主次，面试官会觉得你懂边界。
+另有一份未接线的 `RedisStatusService`（`elder:status:` 等），写文章不要引用成主路径。
 
 ## 状态机为什么适合放 Redis
 
-离床判断依赖「从什么时候开始不在床」「这条预警发过没有」。这些是**会话态**，不是报表态：
+夜间离床需要跨多次上报记住：什么时候开始离床、预警发过没有、风险告警发过没有。这些是**短期会话状态**，放 Redis 读写快、带 TTL 自然过期；MySQL 继续存「发生过哪些告警」这一事实。
 
-- 写频繁、读频繁
-- 跨请求共享
-- 可以设 12 小时过期，天亮自然丢弃
+防抖靠状态里的布尔位（`bedLeaveAlarmSent` / `potentialRiskAlarmSent`），避免每分钟刷一条同质告警。
 
-落 MySQL 行锁/频繁 update 反而重。Redis `opsForValue` 存序列化状态对象就够。
+## Dashboard 缓存怎么失效
 
-## Dashboard 缓存怎么做才不假
+统计接口读 `dashboard:stats`；有新告警时 `invalidateStatsCache()` 删掉 key，下次查询重建。TTL 约 30 秒，是顺手加速，不是架构亮点——亮点仍是夜间状态机。
 
-大屏数字如果永远吃缓存，处置完告警数字不动——演示翻车。守望做法是：
+## 和 MySQL 的分工一句话
 
-- 读：先 Redis，未命中再聚合 MySQL，回填短 TTL
-- 写：告警生成/处理后**删掉或覆盖** `dashboard:stats`，必要时直接 WS 推新统计
+- MySQL：**事实**（告警记录、处置结果）  
+- Redis：**过程状态**（离床观测、异常标记、短统计）  
 
-原则：**DB 是真相，Redis 是快照；写路径负责让快照失效。**
-
-## Key 约定（可读比炫技重要）
-
-```
-night-bed-state:{elderId}
-elder:abnormal:{elderId}
-dashboard:stats
-```
-
-后期排查「为什么这个老人还红着」时，直接 `GET` 对应 key，比翻日志快。
-
-## 踩坑
-
-- 状态对象反序列化类型不对时要兜底 `new State()`，别 NPE 把整条告警链路打挂  
-- 不要把「所有传感器历史」塞 Redis——体积和过期策略都会炸  
-- 小程序不读这些 key，只读 API；缓存策略是为后台热路径服务的  
-
-## 一句话
-
-在守望里，Redis 的高光是**状态机**，不是缓存中间件名词。统计缓存是锦上添花；没有状态机，这个项目就只剩 CRUD。
+把两者写反，面试一问就穿帮。总览见 [守望实践](/blog/1)。

@@ -1,7 +1,7 @@
 ---
 id: 10
 title: "守望里的 WebSocket：告警一生成，大屏就刷新"
-excerpt: "以守望项目为例：告警落库后广播 ALARM/STATS，前端按 type 分发；小程序继续走 HTTP。记录心跳重连和消息去重的实际做法。"
+excerpt: "端点 /ws/alarm，消息类型 ALARM / STATS；落库后广播，连上先推一帧统计。对照大屏订阅与小程序 HTTP，以及轮询兜底、固定重连等实现细节。"
 category: "Java 后端"
 tags: ["WebSocket","Spring Boot","实时告警","守望","Vue"]
 createdAt: 2026-05-26
@@ -12,53 +12,41 @@ status: published
 
 ## 业务上为什么必须推
 
-守望大屏如果 5 秒轮询一次统计，演示时「离床告警已经生成了，卡片还是旧的」——体感很差。告警是**事件**，适合推送；轮询更适合低频列表。
+大屏若只靠轮询，演示时经常出现「告警已入库，卡片还是旧的」。告警是事件，适合推送；列表类查询仍可 HTTP。
 
-所以守望约定：
+守望约定：
 
-- **Vue 大屏**：连 `/ws/alarm`，收推送
-- **小程序**：继续 `wx.request`，不做长连接（实现成本与收益不匹配）
+- 端点：`/ws/alarm`（`WebSocketConfig` + `AlarmWebSocketHandler`）  
+- 包络：`type` + `data` + `timestamp`  
+- 生产类型：**`ALARM`**、**`STATS`**  
+- 心跳：客户端 `PING` → 服务端原文 `PONG`  
 
-## 推送挂在业务尾部，而不是单独玩 Demo
+连上后立即推一帧 `STATS`，避免空白仪表盘。
 
-`AlarmService` 在告警入库、更新 Redis 异常标记之后，再广播两类消息：
+## 谁在听，谁不听
 
-```java
-webSocketService.broadcast(WebSocketMessage.of("ALARM", alarmView));
-webSocketService.broadcast(WebSocketMessage.of("STATS", dashboardService.getDashboardStats()));
+Vue 大屏：
+
+```javascript
+wsClient.connect('ws://localhost:8181/ws/alarm')
+wsClient.on('ALARM', (data) => alarmStore.addAlarm(data))
+wsClient.on('STATS', (data) => alarmStore.updateStats(data))
 ```
 
-连接建立时也会先推一帧 `STATS`，避免大屏白屏等下一次告警。
+同时仍有约 **10 秒** HTTP 轮询——WS 断线时页面不至于全瞎。
 
-## 消息契约：先定 type
+微信小程序：**没有** WebSocket 代码，一律 `wx.request`。家属端交互低频，硬上长连接收益有限。
 
-```json
-{ "type": "ALARM", "data": { "id": 1001, "alarmType": "BED_LEAVE", "level": "WARNING" } }
-{ "type": "STATS",  "data": { "unhandledToday": 3, "onlineDevices": 12 } }
-```
+## 和业务怎么接
 
-前端按 `type` 分发：告警列表 upsert（同 id 更新，没有则插顶），统计区整表覆盖。**不要无数组盲目 push**，否则处理后状态会重复。
+告警写入后走 `broadcastAlarmAndStats()`：先失效 `dashboard:stats` 缓存，再广播 ALARM 与最新 STATS。MQTT / mock / 夜间离床最终都汇入同一套 `AlarmService`，因此**推送入口只有一处**，不会每种上报各写一套 WS。
 
-## 心跳与重连（大屏侧）
+## 实现上的诚实细节
 
-演示环境 Wi-Fi 不稳时，最常见故障是「推送静默失败」：
+- 仓库里另有未使用的 `WebSocketPushService`（EMERGENCY 等类型）——以 `WebSocketService.broadcast` 为准。  
+- 前端重连间隔固定约 3 秒，不是指数退避。  
+- Vite 配了 `/ws` 代理，但大屏曾硬编码完整 `ws://localhost:8181/...`，部署时要注意环境。
 
-- 前端定时 PING，服务端 PONG
-- 断开后指数退避重连，避免打爆后端
-- `afterConnectionClosed` / 传输错误里从 `CopyOnWriteArraySet` 摘掉 session，防泄漏
+## 小结
 
-这些不写进简历也行，但答辩被问「断线怎么办」时要答得出来。
-
-## 和引路项目的对比
-
-引路（慧杖护行）同样用 `/ws/alarm`，但事件更杂：围栏、AI 唤醒、路口辅助等。模式一样——**业务产生事件 → 统一 WS 出口 → 多端订阅**。协议选型（HTTP/MQTT）可以变，推送层尽量稳。
-
-## 取舍
-
-| 做法 | 为什么 |
-|------|--------|
-| 大屏 WS + 小程序 HTTP | 家属端交互少，省复杂度 |
-| 告警与统计一起推 | 一次事件两边 UI 一致 |
-| 不接第三方推送通道 | 作品集阶段先保证「看见」和「处理」 |
-
-WebSocket 的价值很朴素：把「刷新一下才知道出事了」变成「出事的那一秒屏幕就变了」。
+守望的实时性 = **事件推送 + 短轮询兜底**。小程序保持 HTTP，是复杂度与收益权衡后的结果，不是「不会做 WS」。

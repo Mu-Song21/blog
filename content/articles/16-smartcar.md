@@ -1,7 +1,7 @@
 ---
 id: 16
-title: "醒驾 · SmartCar：桌面疲劳监测原型到底做了什么"
-excerpt: "EAR + PERCLOS + solvePnP 头部姿态的优先级状态机；本地仪表盘是 http.server + MJPEG，不是 Flask/WebSocket。树莓派外设属后续规划。"
+title: "醒驾 · SmartCar：桌面疲劳监测原型的算法与交付边界"
+excerpt: "EAR + PERCLOS + solvePnP 头部姿态的优先级状态机；个人 EAR 基线校准；本地仪表盘为 http.server + MJPEG 轮询。写清软件原型 vs 车载量产，以及未交付的 Flask/树莓派外设。"
 category: "AI + IoT"
 tags: ["MediaPipe","OpenCV","EAR","PERCLOS","Python","醒驾","SmartCar"]
 createdAt: 2026-07-10
@@ -10,21 +10,17 @@ featured: true
 status: published
 ---
 
-## 产品名与仓库名
+## 产品名与交付形态
 
-仓库叫 **SmartCar**，作品集品牌叫 **醒驾**。交付形态是 **Windows 桌面软件原型**：摄像头 → 视觉规则 → 叠加画面 / 蜂鸣 TTS / CSV 日志 / 简易 Web 仪表盘。不是已上车的量产 ADAS。
+仓库叫 **SmartCar**，作品集品牌叫 **醒驾**。交付是 **Windows 桌面软件原型**：摄像头或视频 → 视觉规则 → 叠加画面 / 蜂鸣 TTS / CSV 日志 / 简易 Web 仪表盘。不是已上车的量产 ADAS。
 
 ## 为什么单靠「闭眼」不够
 
-- 普通眨眼会被误判  
-- 个体眼裂差异大，固定阈值伤人  
-- 短闭眼 ≠ 持续困倦  
-
-所以用 **EAR + PERCLOS + 头部姿态** 组合，再用优先级状态机出最终状态（不是单独打一个黑盒分数）。
+普通眨眼误报、个体眼裂差异、短闭眼 ≠ 持续困倦。因此用 **EAR + PERCLOS + 头部姿态** 组合，再用优先级状态机输出最终状态。
 
 ## EAR 与自适应基线
 
-MediaPipe Face Mesh 取眼部关键点算 EAR；启动约 3 秒采睁眼基线，动态阈值约 `baseline * ear_scale`（默认 0.72），并做上下限裁剪——这是演示里最影响「准不准」的开关之一。
+MediaPipe Face Mesh 取眼部关键点算 EAR；启动约 3 秒采睁眼基线，动态阈值约 `baseline * ear_scale`（默认 0.72），并做上下限裁剪。
 
 ```python
 def compute_ear(landmarks, eye_indices, img_w, img_h):
@@ -36,21 +32,17 @@ def compute_ear(landmarks, eye_indices, img_w, img_h):
     return (v1 + v2) / (2.0 * h + 1e-6)
 ```
 
-## PERCLOS 与姿态
+## PERCLOS、姿态与状态机
 
-- PERCLOS：默认 30 秒窗口内闭眼帧占比，配合连续闭眼时长触发 Fatigue / High Fatigue  
-- 姿态：OpenCV `solvePnP` 估 yaw/pitch/roll，按持续时间判 Distracted（不是 MediaPipe 直接吐角度）
+- PERCLOS：默认约 30 秒窗口闭眼帧占比，配合连续闭眼时长触发 Fatigue / High Fatigue  
+- 姿态：OpenCV `solvePnP` 估 yaw/pitch/roll，按持续时间判 Distracted  
 
-## 状态机优先级（示意）
-
-`No Face → High Fatigue → Fatigue → Distracted → PERCLOS 规则 → Long Drive → Normal`
-
-并行输出：OpenCV 窗口、蜂鸣/TTS、CSV、`web_dashboard.py`。
+优先级示意：`No Face → High Fatigue → Fatigue → Distracted → PERCLOS 规则 → Long Drive → Normal`。
 
 ## 仪表盘：别写成 Flask
 
-本地面板是标准库 **`http.server` + MJPEG 画面 + JSON 状态轮询**。仓库**没有**把 Flask、WebSocket、树莓派 GPIO/OLED 作为已交付能力。README 里的 Pi 外设是**后续可拓展**；部署到 ARM 时可降分辨率（如 `--max-width 640`），但别拿未合入代码写进简历。
+本地面板是标准库 **`http.server` + MJPEG + JSON 状态轮询**。仓库**没有**把 Flask、WebSocket、树莓派 GPIO/OLED 作为已交付能力。README 里的 Pi 外设是后续可拓展；ARM 上可降分辨率，但别拿未合入代码写进简历。
 
 ## 收获
 
-视觉规则能 demo，边界要诚实：**软件原型 ≠ 车载量产**。面试官更在意你是否分得清 EAR/PERCLOS/姿态各自解决什么误报，以及推送链路选了轮询而不是硬上 WebSocket 的理由。
+视觉规则能 demo，边界要诚实：**软件原型 ≠ 车载量产**。面试官更在意你是否分得清 EAR / PERCLOS / 姿态各自解决什么误报，以及为何用轮询而不是硬上 WebSocket。

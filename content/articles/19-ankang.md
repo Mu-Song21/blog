@@ -1,7 +1,7 @@
 ---
 id: 19
-title: "安康 · 颐康云：子女 Web + 父母小程序的家庭康养全貌"
-excerpt: "双端协同、健康档案驱动 AI、parentId 数据隔离、星火 SSE/并发食谱与语音血压录入。写清做了什么，以及 Redis/OSS 为何只是预留。"
+title: "安康 · 颐康云：子女 Web + 父母小程序的家庭康养实践"
+excerpt: "双端协同、JWT + FamilyAccess 数据隔离、档案驱动的星火 SSE 与周食谱并发、百度语音录血压。对照真实 API 与 Redis/OSS 预留边界，写清工程闭环。"
 category: "企业应用"
 tags: ["颐康云","安康","Spring Boot","JWT","Vue 3","uni-app","讯飞星火","百度语音"]
 createdAt: 2026-06-28
@@ -10,70 +10,61 @@ featured: true
 status: published
 ---
 
-## 一句话
+## 一句话目标
 
-让子女在 Web 上管得住档案与建议，让父母在小程序里用得动打卡与语音——中间是同一套 Spring Boot 业务与家庭数据边界。作品集叫**安康**，产品/工程叫**颐康云**（`health-manager`）。
+让子女在 Web 上管得住档案与建议，让父母在小程序里用得动打卡与语音——中间是同一套 Spring Boot 业务与家庭数据边界。作品集叫**安康**，产品 / 工程叫**颐康云**（`health-manager`）。
 
-## 真实架构
+## 架构
 
 ```
 子女端 Vue 3 + Element Plus
-        │ HTTP / SSE
+        │ HTTP / SSE（fetch + ReadableStream，需 Bearer）
         ▼
-Spring Boot 3.3 + MyBatis-Plus + JWT + MySQL
-        │ 按 parentId / 家庭绑定隔离
+Spring Boot（/api）+ MyBatis-Plus + JWT + MySQL health_manager
+        │ FamilyAccess 按 parentId 校验
         ▲
-父母端 uni-app 小程序（用药打卡、语音、轻量查看）
+父母端 uni-app（用药打卡、语音「小暖」、轻量查看）
 ```
 
-AI 侧：
+典型 API：`/api/family/bind`、`/api/health`、`/api/medication`、`/api/report`；流式 AI：`POST /api/ai/chat/stream`、报告/病历分析流式接口；语音：`/api/voice`。
 
-- 文本：讯飞星火（流式对话 / 报告、周食谱生成）
-- 语音：百度 ASR / TTS；意图解析后**稳定落库血压**
-
-Redis、OSS 在配置里出现过，**当前业务路径未依赖**——别写成「已上缓存集群 / 对象存储流水线」。
-
-## 双端各自干什么
-
-| 端 | 主要能力 |
-|----|----------|
-| 子女 Web | 档案、血压血糖记录、病例附件、食谱、月度/分析报告、AI 助手 |
-| 父母小程序 | 用药打卡、语音交互、与自身相关的轻量数据 |
-
-不是两套后端，而是同一套 API + 不同角色入口。演示时先跑通「子女建档 → AI 出建议 → 父母打卡反馈」，比堆页面数量有用。
+Redis、OSS 在配置里出现过，**当前业务主路径未依赖**——别写成已上缓存集群 / 对象存储流水线。
 
 ## 鉴权：角色对了，数据还要对
 
-JWT 带上身份后，子女只能碰**已绑定父母**的数据。Service 入口用 FamilyAccess（或等价校验）卡 `parentId`，相当于：
+JWT 解决「你是谁」。子女访问父母档案前还要过 FamilyAccess：
 
-- 角色权限：你能不能打这个接口  
-- 数据隔离：这条父母档案是不是你的  
+```java
+familyMapper.selectCount(
+  new LambdaQueryWrapper<Family>()
+    .eq(Family::getChildId, loginUser.getUserId())
+    .eq(Family::getParentId, parentId));
+```
 
-和青衿的 `@PreAuthorize` 角色模型对比着讲，比只贴一段 JwtUtil 更有说服力。细节见 [JWT 两套落地](/blog/17)。
+病历类 SSE 入口会先 `assertCanAccessMedicalRecord`，再 `runStream`。前端不用原生 EventSource，而用 fetch 流，因为要带 Authorization。对比青衿的 `@PreAuthorize`：那边偏角色接口权限，这边偏**行级数据隔离**。详见 [JWT 两套落地](/blog/17)。
 
-## 档案驱动 AI，而不是「万能聊天框」
+## 档案驱动 AI
 
-食谱、报告、助手上下文都吃健康档案与近况指标（如近 30 天血压血糖摘要）。慢性病约束进 Prompt，否则模型输出好看但不可用。
+食谱、报告、助手上下文拼接健康档案与近况指标；慢性病约束进 Prompt。体验上的两个工程点：
 
-体验上的两个工程点：
+1. **SSE 流式**：先吐字，避免整段等待  
+2. **周食谱分片并发**：3 分片 + 小线程池，失败可回退；长任务可走任务表轮询  
 
-1. **SSE 流式**：对话/报告先吐字，避免整段等待  
-2. **周食谱分片并发**：3 个分片 + 小线程池，失败可回退；长任务走 `t_ai_task` 轮询  
+专项：[星火 SSE 与周食谱](/blog/15)。
 
-专项复盘：[星火 SSE 与一周食谱并发](/blog/15)。
+## 语音边界
 
-## 语音：诚实写边界
+百度 ASR 后，正则意图稳定自动落库的是**血压**（如 `120/80`）。血糖等仍多靠手动或普通对话——写「语音录血压」即可。
 
-百度 ASR 之后，正则意图目前稳定自动落库的是**血压**（如 `120/80`）。血糖等仍多靠手动录入或普通对话——作品集写「语音录血压」即可，别写「全病历语音 EHR」。
+## 能力边界
 
-## 明确没做 / 别夸大
-
-- Redis 缓存主路径、OSS 附件云存储（配置预留 ≠ 已用）  
-- 医院 HIS 对接、医保支付、真人医生问诊  
-- 父母端做成完整 Web 管理后台的缩小版  
-
-病例附件走本地上传链路即可支撑演示。
+| 不宜声称 | 事实 |
+|----------|------|
+| Redis / OSS 已深度使用 | 配置预留为主 |
+| 全意图语音病历 | 血压自动落库较稳 |
+| HIS / 医保 / 真人问诊 | 未做 |
+| 生产级 Docker/CI 完备 | 文档与工程仍偏演示 |
 
 ## 收获
 
-康养类项目容易被 AI 名词带偏。颐康云让我盯住三件事：**双端分工、数据边界、档案进模型**。AI 是加速器，不是产品本身；边界写清楚，面试官反而更敢信。
+康养项目容易被 AI 名词带偏。盯住三件事：**双端分工、数据边界、档案进模型**。AI 是加速器，不是产品本身。
