@@ -206,7 +206,7 @@ export const PROJECTS = [
     category: '数字文化 · 沉浸互动',
     description: '浏览器内的国风数字展馆：三展区漫游、水墨工坊创作，并贯通课堂学习与运营后台。',
     detail:
-      'Vue 3 + TypeScript + Three.js 构建山水/书法主馆漫游，灵兽区使用独立 three-jl WebGL 栈。后端 Spring Boot 3.2 + MyBatis-Plus 提供展品管理、用户空间、异步工坊任务与 WebSocket 进度推送。可演示展区为山水、书法、灵兽三区。工坊支持可选云端生图，无 Key 时由 Java 本地水墨算法兜底；智能赏析目前以策展文案演示为主，讯飞链路未接入主流程。另含国风课堂、个人空间与基于访问日志的运营看板。',
+      'Vue 3 + TypeScript 构建展馆前端；约 3200 行的 scene.ts 作为 Three.js 主馆运行时（相机、后处理、行走画质自适应），灵兽区使用独立 three-jl WebGL 栈。后端 Spring Boot 3.2 + MyBatis-Plus 提供展品/用户空间、异步工坊任务与 /ws/scene 进度推送。可演示展区为山水、书法、灵兽三区。工坊采用本地 Canvas 预览 + 可选云端生图 + Java 水墨兜底，并支持程序化 GLB/STL 导出；智能赏析目前以策展文案演示为主。另含国风课堂、个人空间与基于 visit_log 的运营看板，开发环境可用 VITE_DEMO_FALLBACK 保证断后端仍可演示。',
     icon: '🖌️',
     gradient: 'linear-gradient(135deg, #1c191733, #b4530933)',
     tech: [
