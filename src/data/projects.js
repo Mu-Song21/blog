@@ -204,9 +204,9 @@ export const PROJECTS = [
     articleId: 20,
     relatedArticleIds: [21, 22],
     category: '数字文化 · 沉浸互动',
-    description: '把青绿山水、书法法帖与水墨灵兽搬进浏览器，做成可漫游、可创作、可归档的国风数字艺术演示系统。',
+    description: '浏览器内的国风数字展馆：三展区漫游、水墨工坊创作，并贯通课堂学习与运营后台。',
     detail:
-      '全栈毕业/竞赛向项目：Vue 3 + TypeScript + Three.js 主馆漫游，⑤灵兽区用独立 three-jl WebGL 栈；后端 Spring Boot 3.2 + MyBatis-Plus 提供展品、用户空间、异步工坊任务与 WebSocket 进度。活跃展区为山水 / 书法 / 灵兽三区。工坊可走云端兼容生图，无 Key 时 Java 本地水墨兜底；赏析目前以策展文案 + 动效呈现，讯飞主链路未接到演示路径。另含国风课堂、我的空间与运营后台看板。',
+      'Vue 3 + TypeScript + Three.js 构建山水/书法主馆漫游，灵兽区使用独立 three-jl WebGL 栈。后端 Spring Boot 3.2 + MyBatis-Plus 提供展品管理、用户空间、异步工坊任务与 WebSocket 进度推送。可演示展区为山水、书法、灵兽三区。工坊支持可选云端生图，无 Key 时由 Java 本地水墨算法兜底；智能赏析目前以策展文案演示为主，讯飞链路未接入主流程。另含国风课堂、个人空间与基于访问日志的运营看板。',
     icon: '🖌️',
     gradient: 'linear-gradient(135deg, #1c191733, #b4530933)',
     tech: [
@@ -223,17 +223,17 @@ export const PROJECTS = [
       'Docker Compose'
     ],
     features: [
-      '三展区 Web3D 漫游：千里江山行走、书法沉浸、灵兽 JL 粒子叙事',
-      '展品检索、收藏、语音导览与访问埋点统计',
-      '水墨工坊：本地预览 → 异步生成 → WS 进度 → 卷轴 3D 预览',
-      '程序化 GLB / STL 文创导出（简化卷轴几何）',
-      '国风课堂四课 + 分步课纲；我的空间等级与作品库',
-      '运营后台：展品维护 + 真实访问看板；无后端时前端 fallback 可演示'
+      '三展区 Web3D 漫游：山水行走、书法沉浸、灵兽粒子叙事',
+      '展品检索、收藏、语音导览与访问统计',
+      '水墨工坊：本地预览、异步生成、进度推送与卷轴三维预览',
+      '程序化导出 GLB / STL（简化卷轴几何）',
+      '国风课堂与个人空间：课纲进度、等级经验与作品库',
+      '运营后台：展品维护与真实访问看板；后端不可达时前端可 fallback 演示'
     ],
     highlights: [
       { value: '3区', label: '可演示展区' },
       { value: '双栈', label: 'Three.js + JL' },
-      { value: '兜底', label: '无 Key 仍可演示' }
+      { value: '兜底', label: '本地水墨可演示' }
     ],
     stats: [
       { value: '3区', label: '可演示展区' },
