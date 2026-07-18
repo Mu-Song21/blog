@@ -1,80 +1,57 @@
 ---
 id: 18
-title: "MyBatis-Plus 在多模块项目中的实战技巧"
-excerpt: "结合若依二次开发与颐康云，梳理 MyBatis-Plus 分页、逻辑删除、条件构造器与自动填充的工程化用法。"
+title: "MyBatis-Plus：分页、逻辑删除与条件构造器在康养/校园里的用法"
+excerpt: "颐康云与青衿的列表几乎都是 Page + LambdaQueryWrapper；记下 current 从 1 开始、空条件别拼 null、复杂报表仍手写 SQL。"
 category: "Java 后端"
-tags: ["MyBatis-Plus","Spring Boot","颐康云","Java"]
+tags: ["MyBatis-Plus","Spring Boot","颐康云","青衿","Java"]
 createdAt: 2026-07-18
 updatedAt: 2026-07-18
 featured: false
 status: published
 ---
 
-## 为什么选 MyBatis-Plus
+## 用它解决什么
 
-相比原生 MyBatis，MyBatis-Plus 提供了开箱即用的 CRUD 接口、条件构造器和分页插件，在智慧校园、颐康云等业务系统中可以减少大量重复的 SQL 编写工作。但用不好也容易踩坑。
+康养档案、校园选课/成绩列表都是典型 CRUD 密集。MyBatis-Plus 的价值是少写重复 XML，不是替代所有 SQL。安隅侧若依还混用 PageHelper——同一作品集里两种分页都见过，别混讲。
 
-## 分页查询标准姿势
-
-安隅、颐康云等项目中，几乎每个列表接口都需要分页。MyBatis-Plus 配合 Page 对象是最简洁的方式：
+## 分页标准姿势
 
 ```java
-@Configuration
-public class MybatisPlusConfig {
-    @Bean
-    public MybatisPlusInterceptor mybatisPlusInterceptor() {
-        MybatisPlusInterceptor interceptor = new MybatisPlusInterceptor();
-        interceptor.addInnerInterceptor(new PaginationInnerInterceptor(DbType.MYSQL));
-        return interceptor;
-    }
+@Bean
+public MybatisPlusInterceptor mybatisPlusInterceptor() {
+    MybatisPlusInterceptor interceptor = new MybatisPlusInterceptor();
+    interceptor.addInnerInterceptor(new PaginationInnerInterceptor(DbType.MYSQL));
+    return interceptor;
 }
 ```
 
 ```java
-public PageResult<HealthRecordVO> listRecords(Long parentId, Integer pageNum, Integer pageSize) {
-    Page<HealthRecord> page = new Page<>(pageNum, pageSize);
-    LambdaQueryWrapper<HealthRecord> wrapper = new LambdaQueryWrapper<HealthRecord>()
-        .eq(HealthRecord::getParentId, parentId)
-        .eq(HealthRecord::getDeleted, 0)
-        .orderByDesc(HealthRecord::getRecordDate);
-    Page<HealthRecord> result = baseMapper.selectPage(page, wrapper);
-    return PageResult.of(result.getTotal(), convertToVO(result.getRecords()));
-}
+Page<HealthRecord> page = new Page<>(pageNum, pageSize);
+LambdaQueryWrapper<HealthRecord> w = new LambdaQueryWrapper<HealthRecord>()
+    .eq(HealthRecord::getParentId, parentId)
+    .orderByDesc(HealthRecord::getRecordDate);
+Page<HealthRecord> result = baseMapper.selectPage(page, w);
 ```
 
-注意 Page 对象的 current 从 1 开始，前端传 0 会导致查不到数据，这是常见的对接坑。
+**坑**：`current` 从 1 开始；前端传 0 会查空。对接时前后端先对页码约定。
 
 ## 逻辑删除
 
-颐康云核心表使用逻辑删除，防止误删数据。只需全局配置 + 字段注解：
+颐康云核心表常用 `@TableLogic`，全局配置 `deleted` 0/1。演示「删除」实际是 UPDATE，误点不至于物理清空——对健康数据尤其合适。
 
-```yaml
-mybatis-plus:
-  global-config:
-    db-config:
-      logic-delete-field: deleted
-      logic-delete-value: 1
-      logic-not-delete-value: 0
-```
-
-```java
-@TableLogic
-private Integer deleted;
-```
-
-## 条件构造器与空值陷阱
+## 条件构造器：空值陷阱
 
 ```java
 wrapper.eq(StringUtils.hasText(keyword), HealthRecord::getNotes, keyword)
        .ge(startDate != null, HealthRecord::getRecordDate, startDate);
 ```
 
-条件为 false 时不会拼进 SQL，避免 `column = null` 这类隐性过滤错误。
+条件为 false 就不拼 SQL，避免 `notes = null` 把结果滤没。
 
-## 自动填充
+## 什么时候别硬用 MP
 
-智慧校园与颐康云常见 createTime / updateTime / deleted 字段，用 `MetaObjectHandler` 自动填充，减少样板代码。
+复杂 Dashboard 联表、统计图（青衿部分图表、安隅导出定制）——手写 SQL / XML 更清晰。自动填充 `createTime`/`updateTime` 用 `MetaObjectHandler` 即可，别在每个 Service 里 set 一遍。
 
-## 总结
+## 小结
 
-MyBatis-Plus 适合业务 CRUD 密集的项目；复杂报表仍建议手写 SQL 或 XML。分页、逻辑删除、条件构造器三件套用对，日常开发效率会高很多。
+日常列表：**分页插件 + Lambda 条件 + 逻辑删除**。作品集诚实写「CRUD 效率工具」，比吹「自研 ORM」可信。

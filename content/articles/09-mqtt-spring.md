@@ -1,68 +1,61 @@
 ---
 id: 9
-title: "Spring Boot 如何接入 MQTT 实现设备数据上报"
-excerpt: "以守望（独居守护）中的可插拔 MQTT 接入为背景，梳理 Topic 设计、消息订阅、JSON 解析与进入告警业务闭环的流程；并说明引路盲杖实际走 HTTPS 上报。"
+title: "守望的 MQTT：可插拔接入，而不是强依赖"
+excerpt: "守望默认用 HTTP mock 跑通告警闭环；MQTT 订阅写好但默认关闭。说清 Topic、入库复用与选型边界，避免和引路的 HTTPS 混谈。"
 category: "物联网"
 tags: ["Spring Boot","MQTT","物联网","设备上报","守望"]
 createdAt: 2026-06-08
-updatedAt: 2026-06-15
+updatedAt: 2026-07-18
 featured: true
 status: published
 ---
 
-## 为什么选择 MQTT
+## 为什么做成「可开关」
 
-在独居守护这类物联网场景里，设备端常有网络不稳、包小、上报频的特点。相比纯轮询，MQTT 适合作为**可插拔的设备接入层**：轻量、发布订阅解耦、可设 QoS。
+答辩环境常常没有稳定 Broker。如果启动就必须连 MQTT，演示第一分钟就挂。守望的策略是：
 
-> 作品集边界：守望仓库已实现 MQTT 订阅代码，默认配置可关闭，演示主路径仍是 HTTP 模拟告警；引路（慧杖护行）固件实际走 **HTTPS POST**，不要混写成「盲杖已用 MQTT」。
+- `mqtt.enabled=false` 时整段接入不加载（`@ConditionalOnProperty`）
+- 告警主路径：HTTP mock、行为接口、设备心跳离线检测
+- 打开开关后，MQTT 消息**走进同一套 `AlarmService`**，不另起炉灶
 
-## 通信架构（守望向）
+这叫可插拔，不叫「假接入」。
 
-可设计为：
+## 和引路项目别混
 
-- 设备 / 网关发布到 `elder/sensor/{deviceId}/alarm`
-- Spring Boot 在 `mqtt.enabled=true` 时订阅并解析
-- 复用已有 `AlarmService`：落库 → Redis 异常状态 → WebSocket 推送
-- HTTP mock / 心跳离线检测与 MQTT 入口汇合到同一业务闭环
+| 项目 | 实际上报 |
+|------|----------|
+| 守望 | HTTP 为主，MQTT 可选 |
+| 引路（慧杖） | ESP32 **HTTPS POST**，仓库无 MQTT |
 
-## Topic 设计示例
+面试被问「你们物联网是不是都用 MQTT」时，按项目答，比背协议强。
 
-| Topic | 方向 | 说明 |
-| --- | --- | --- |
-| `elder/sensor/+/alarm` | 设备到后端 | 告警 / 传感器事件 |
-| `elder/device/{id}/command` | 后端到设备 | 可选指令下发（扩展） |
+## 接入后要复用业务，不要只 printf
 
-层级清晰时，后端可用 `+` 订阅多设备，再按 deviceId 路由到业务 Service。
-
-## 后端处理流程
-
-1. 获取 Topic 与 Payload  
-2. JSON 反序列化为 DTO  
-3. 调用与 HTTP 入口相同的告警 / 行为 Service（避免两套逻辑）  
-4. 异常消息记日志，关键事件考虑幂等  
+订阅到 payload 后，正确姿势是反序列化 → 调用已有 ingest：
 
 ```java
-public void handleMessage(String topic, String payload) {
-    AlarmEvent event = objectMapper.readValue(payload, AlarmEvent.class);
-    alarmService.ingest(event); // 与 HTTP mock 共用
-}
+AlarmEvent event = objectMapper.readValue(payload, AlarmEvent.class);
+alarmService.processAlarmMessage(event); // 落库 + Redis + WS
 ```
 
-## 与 HTTPS 上报如何选型
+MQTT 只是**入口**，不是业务本身。QoS、遗嘱、重连都重要，但作品集阶段先保证「进来的消息能变成大屏上的告警」。
 
-| 方案 | 更合适的场景 |
-| --- | --- |
-| HTTPS POST | 设备已能直连云、协议简单（如引路 ESP32） |
-| MQTT | 多设备、需 Broker、要遗嘱离线与 QoS |
+## Topic 示例（守望向）
 
-同一后端可以**同时预留两种接入**，业务层只认「事件入站」。
+```
+elder/sensor/+/alarm
+```
 
-## 可靠性要点
+用 `+` 吃多设备，解析出 `deviceId` / `elderId` 再路由。指令下发可以以后再做——单向上报已经够演示闭环。
 
-- 关键告警可用 QoS 1；后端对重复消息做幂等  
-- 设备重连与遗嘱消息感知异常离线  
-- 解析失败落日志，便于排查固件字段  
+## 选型表
 
-## 总结
+| 场景 | 更合适 |
+|------|--------|
+| 多设备、要 Broker、要遗嘱离线 | MQTT |
+| 设备能直连、协议求简单（引路） | HTTPS |
+| 课堂/作品集演示 | HTTP mock + 可选 MQTT |
 
-MQTT 的价值不是「必须上」，而是让设备数据**干净地进入现有业务闭环**。守望：MQTT 可开关 + WebSocket 展示；引路：HTTPS 上报 + WebSocket 监护——按项目诚实选型即可。
+## 收获
+
+协议选型服务业务闭环。守望证明：你可以认真写 MQTT 代码，同时诚实地说「默认没开」——这比假装「全链路 MQTT 已上生产」可信得多。

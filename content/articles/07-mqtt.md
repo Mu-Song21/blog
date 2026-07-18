@@ -7,7 +7,7 @@ tags: ["MQTT","Spring Boot","物联网","Java","IoT"]
 createdAt: 2026-04-02
 updatedAt: 2026-04-02
 featured: false
-status: published
+status: draft
 ---
 
 ## 什么是 MQTT

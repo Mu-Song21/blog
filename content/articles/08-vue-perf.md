@@ -7,7 +7,7 @@ tags: ["Vue 3","性能优化","Vite","JavaScript","前端"]
 createdAt: 2026-04-28
 updatedAt: 2026-04-28
 featured: false
-status: published
+status: draft
 ---
 
 ## 性能优化的意义
