@@ -1,5 +1,5 @@
 <template>
-  <router-link :to="`/projects#${project.slug}`" class="project-card card" @click="ripple">
+  <router-link :to="`/projects/${project.slug}`" class="project-card card" @click="ripple">
     <div class="card-top">
       <div class="card-icon" :style="{ background: project.gradient }">
         <span>{{ project.icon }}</span>

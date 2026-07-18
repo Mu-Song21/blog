@@ -3,18 +3,20 @@
     <section class="projects-hero">
       <div class="container">
         <div class="section-label reveal">PROJECTS</div>
-        <h1 class="projects-hero-title reveal reveal-delay-1">项目展示</h1>
-        <p class="projects-hero-desc reveal reveal-delay-2">每个项目含业务背景、架构分层、难点方案与关键代码。点击首页卡片可定位到对应项目。</p>
+        <h1 class="projects-hero-title reveal reveal-delay-1">项目作品集</h1>
+        <p class="projects-hero-desc reveal reveal-delay-2">
+          每个项目都有独立案例页：业务背景、架构分层、难点方案、关键代码与配套文章。点击进入完整说明。
+        </p>
       </div>
     </section>
 
     <section class="section container">
       <div class="project-list">
         <article
-          class="project-item reveal"
           v-for="(project, index) in projects"
           :id="project.slug"
           :key="project.slug"
+          class="project-item reveal"
           :class="'reveal-delay-' + (index % 3 + 1)"
         >
           <div class="project-left">
@@ -33,15 +35,9 @@
               <span class="project-category">{{ project.track || project.category }}</span>
             </div>
             <p class="project-desc">{{ project.description }}</p>
-            <p class="project-detail">{{ project.detail }}</p>
             <div class="project-tech">
-              <span class="tag" v-for="t in project.tech" :key="t">{{ t }}</span>
-            </div>
-            <div class="project-features">
-              <div class="feature" v-for="f in project.features" :key="f">
-                <svg width="14" height="14" viewBox="0 0 16 16" fill="none"><path d="M3 8l3.5 3.5L13 5" stroke="var(--accent)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
-                <span>{{ f }}</span>
-              </div>
+              <span class="tag" v-for="t in project.tech.slice(0, 8)" :key="t">{{ t }}</span>
+              <span v-if="project.tech.length > 8" class="tag muted">+{{ project.tech.length - 8 }}</span>
             </div>
             <div class="project-highlights">
               <div class="highlight" v-for="h in project.highlights" :key="h.label">
@@ -49,16 +45,16 @@
                 <span class="highlight-label">{{ h.label }}</span>
               </div>
             </div>
-            <ProjectDeepDive :showcase="getShowcase(project.slug)" />
-            <div v-if="projectArticleIds(project).length" class="project-links">
+            <div class="project-actions">
+              <router-link :to="`/projects/${project.slug}`" class="btn btn-primary">
+                查看完整案例
+              </router-link>
               <router-link
-                v-for="(id, idx) in projectArticleIds(project)"
-                :key="id"
-                :to="`/blog/${id}`"
-                class="project-link"
-                :class="{ 'is-secondary': idx > 0 }"
+                v-if="project.articleId"
+                :to="`/blog/${project.articleId}`"
+                class="btn btn-secondary"
               >
-                {{ articleLinkLabel(id, idx === 0) }}
+                项目复盘
               </router-link>
             </div>
           </div>
@@ -70,37 +66,21 @@
 
 <script setup>
 import { onMounted, nextTick } from 'vue'
-import { useRoute } from 'vue-router'
+import { useRoute, useRouter } from 'vue-router'
 import { useScrollReveal } from '../composables/useScrollReveal'
-import { useBlogStore } from '../stores/blog'
-import { PROJECTS, getProjectArticleIds } from '../data/projects'
-import { getProjectShowcase } from '../data/projectShowcases'
-import ProjectDeepDive from '../components/ProjectDeepDive.vue'
+import { PROJECTS } from '../data/projects'
 
 useScrollReveal()
 const route = useRoute()
-const store = useBlogStore()
+const router = useRouter()
 const projects = PROJECTS
-const projectArticleIds = getProjectArticleIds
-const getShowcase = getProjectShowcase
-
-function articleLinkLabel(id, isPrimary) {
-  if (isPrimary) return '阅读项目复盘 →'
-  const article = store.getArticle(id)
-  if (!article) return '相关专题 →'
-  const title = article.title
-  const short =
-    title.length > 20
-      ? `${title.slice(0, 20)}…`
-      : title
-  return `${short} →`
-}
 
 onMounted(async () => {
   await nextTick()
-  if (route.hash) {
-    const el = document.querySelector(route.hash)
-    el?.scrollIntoView({ behavior: 'smooth', block: 'start' })
+  // 兼容旧锚点：/projects#mojing → /projects/mojing
+  const hash = route.hash?.replace(/^#/, '')
+  if (hash && PROJECTS.some((p) => p.slug === hash)) {
+    router.replace(`/projects/${hash}`)
   }
 })
 </script>
@@ -134,13 +114,14 @@ onMounted(async () => {
 .projects-hero-desc {
   font-size: 17px;
   color: var(--text-muted);
-  max-width: 600px;
+  max-width: 640px;
+  line-height: 1.7;
 }
 
 .project-list {
   display: flex;
   flex-direction: column;
-  gap: 32px;
+  gap: 28px;
 }
 
 .project-item {
@@ -149,8 +130,8 @@ onMounted(async () => {
   background: var(--bg-card);
   border: 1px solid var(--border);
   border-radius: var(--radius-lg);
-  padding: 40px;
-  transition: all var(--transition);
+  padding: 36px 40px;
+  transition: border-color var(--transition), box-shadow var(--transition), transform var(--transition);
   scroll-margin-top: 96px;
 }
 
@@ -211,10 +192,6 @@ onMounted(async () => {
   gap: 8px;
 }
 
-.project-brand {
-  color: var(--text);
-}
-
 .project-sep {
   color: var(--text-muted);
   font-size: 0.85em;
@@ -239,13 +216,7 @@ onMounted(async () => {
 .project-desc {
   font-size: 15px;
   color: var(--text-secondary);
-  font-weight: 500;
-}
-
-.project-detail {
-  font-size: 14px;
-  color: var(--text-muted);
-  line-height: 1.8;
+  line-height: 1.7;
 }
 
 .project-tech {
@@ -254,28 +225,16 @@ onMounted(async () => {
   gap: 8px;
 }
 
-.project-features {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
-  gap: 10px;
-  margin-top: 8px;
-}
-
-.feature {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  font-size: 13px;
-  color: var(--text-secondary);
+.tag.muted {
+  opacity: 0.7;
 }
 
 .project-highlights {
   display: flex;
-  gap: 32px;
-  padding-top: 20px;
-  margin-top: 8px;
+  gap: 28px;
+  padding-top: 16px;
   border-top: 1px solid var(--border);
-  margin-bottom: 4px;
+  flex-wrap: wrap;
 }
 
 .highlight {
@@ -285,7 +244,7 @@ onMounted(async () => {
 }
 
 .highlight-value {
-  font-size: 20px;
+  font-size: 18px;
   font-weight: 700;
   font-family: var(--font-mono);
   color: var(--accent-light);
@@ -298,30 +257,11 @@ onMounted(async () => {
   letter-spacing: 1px;
 }
 
-.project-links {
-  padding-top: 8px;
+.project-actions {
   display: flex;
-  flex-direction: column;
-  align-items: flex-start;
-  gap: 8px;
-}
-
-.project-link {
-  font-size: 14px;
-  color: var(--accent);
-  text-decoration: none;
-  font-weight: 500;
-}
-
-.project-link.is-secondary {
-  font-size: 13px;
-  font-weight: 400;
-  color: var(--text-secondary);
-}
-
-.project-link:hover {
-  text-decoration: underline;
-  color: var(--accent);
+  flex-wrap: wrap;
+  gap: 10px;
+  padding-top: 4px;
 }
 
 @media (max-width: 768px) {
@@ -337,14 +277,6 @@ onMounted(async () => {
 
   .project-left {
     flex-direction: row;
-  }
-
-  .project-features {
-    grid-template-columns: 1fr;
-  }
-
-  .project-highlights {
-    flex-wrap: wrap;
   }
 }
 </style>

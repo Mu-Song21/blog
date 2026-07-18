@@ -1,7 +1,8 @@
-import { writeFileSync, mkdirSync, copyFileSync } from 'fs'
+import { writeFileSync, mkdirSync } from 'fs'
 import { resolve, dirname } from 'path'
 import { fileURLToPath } from 'url'
 import { loadArticlesFromMarkdown } from './loadArticles.mjs'
+import { PROJECTS } from '../src/data/projects.js'
 
 const __dirname = dirname(fileURLToPath(import.meta.url))
 const ROOT = resolve(__dirname, '..')
@@ -19,10 +20,21 @@ const articles = loadArticlesFromMarkdown()
   .filter((a) => a.status === 'published')
   .sort((a, b) => a.id - b.id)
 
+const projectPages = PROJECTS.map((p) => ({
+  path: `/projects/${p.slug}`,
+  priority: '0.85'
+}))
+
 const urls = [
   ...staticPages.map(
     (p) => `  <url>
     <loc>${SITE_URL}${p.path === '/' ? '/' : p.path}</loc>
+    <priority>${p.priority}</priority>
+  </url>`
+  ),
+  ...projectPages.map(
+    (p) => `  <url>
+    <loc>${SITE_URL}${p.path}</loc>
     <priority>${p.priority}</priority>
   </url>`
   ),
@@ -46,4 +58,6 @@ const distDir = resolve(ROOT, 'dist')
 mkdirSync(distDir, { recursive: true })
 writeFileSync(publicFile, xml, 'utf8')
 writeFileSync(resolve(distDir, 'sitemap.xml'), xml, 'utf8')
-console.log(`✅ Sitemap generated: ${staticPages.length} pages + ${articles.length} articles`)
+console.log(
+  `✅ Sitemap generated: ${staticPages.length} pages + ${projectPages.length} projects + ${articles.length} articles`
+)

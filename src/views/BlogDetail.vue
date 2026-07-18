@@ -26,7 +26,7 @@
               <router-link
                 v-for="p in relatedProjects"
                 :key="p.slug"
-                :to="`/projects#${p.slug}`"
+                :to="`/projects/${p.slug}`"
                 class="related-project-chip"
                 @click="ripple"
               >
