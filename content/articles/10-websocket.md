@@ -4,8 +4,8 @@ title: "WebSocket 实现实时告警推送"
 excerpt: "从告警生成到前端实时刷新，记录 Spring Boot + WebSocket 在智慧养老和智能硬件项目中的实践方案。"
 category: "Java 后端"
 tags: ["WebSocket","Spring Boot","实时告警","智慧养老","Vue"]
-createdAt: 2026-05-09
-updatedAt: 2026-05-09
+createdAt: 2026-05-26
+updatedAt: 2026-05-26
 featured: true
 status: published
 ---

@@ -4,7 +4,7 @@ title: "MyBatis-Plus 在多模块项目中的实战技巧"
 excerpt: "结合若依二次开发与颐康云，梳理 MyBatis-Plus 分页、逻辑删除、条件构造器与自动填充的工程化用法。"
 category: "Java 后端"
 tags: ["MyBatis-Plus","Spring Boot","颐康云","Java"]
-createdAt: 2026-06-16
+createdAt: 2026-07-18
 updatedAt: 2026-07-18
 featured: false
 status: published

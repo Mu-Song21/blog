@@ -4,8 +4,8 @@ title: "EAR、PERCLOS 与头部姿态：SmartCar 疲劳检测算法解析"
 excerpt: "拆解 SmartCar（醒驾）软件原型：EAR、PERCLOS、solvePnP 头部姿态与自适应基线校准；本地仪表盘为 HTTP 轮询，树莓派外设属后续规划。"
 category: "AI + IoT"
 tags: ["MediaPipe","OpenCV","EAR","PERCLOS","Python","SmartCar"]
-createdAt: 2026-06-12
-updatedAt: 2026-07-18
+createdAt: 2026-07-10
+updatedAt: 2026-07-14
 featured: true
 status: published
 ---

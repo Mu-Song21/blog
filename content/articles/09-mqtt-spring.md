@@ -4,8 +4,8 @@ title: "Spring Boot 如何接入 MQTT 实现设备数据上报"
 excerpt: "以守望（独居守护）中的可插拔 MQTT 接入为背景，梳理 Topic 设计、消息订阅、JSON 解析与进入告警业务闭环的流程；并说明引路盲杖实际走 HTTPS 上报。"
 category: "物联网"
 tags: ["Spring Boot","MQTT","物联网","设备上报","守望"]
-createdAt: 2026-05-10
-updatedAt: 2026-07-18
+createdAt: 2026-06-08
+updatedAt: 2026-06-15
 featured: true
 status: published
 ---

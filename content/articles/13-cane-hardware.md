@@ -4,8 +4,8 @@ title: "引路 · 慧杖护行：硬件与后端交互流程"
 excerpt: "以仓库实现为准：ESP32 HTTPS 上报传感器数据，Spring Boot 做跌倒/圆形围栏判断，WebSocket 推送到管理端与小程序。"
 category: "物联网"
 tags: ["智能盲杖","ESP32","HTTPS","Spring Boot","WebSocket"]
-createdAt: 2026-05-06
-updatedAt: 2026-07-18
+createdAt: 2026-03-18
+updatedAt: 2026-03-25
 featured: false
 status: published
 ---

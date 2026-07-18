@@ -5,7 +5,7 @@ excerpt: "Spring Boot 告警中枢 + Vue 监控大屏 + 微信小程序：WebSoc
 category: "物联网"
 tags: ["Spring Boot","Redis","WebSocket","JPA","微信小程序","Vue 3"]
 createdAt: 2025-12-15
-updatedAt: 2026-07-18
+updatedAt: 2026-01-08
 featured: true
 status: published
 ---

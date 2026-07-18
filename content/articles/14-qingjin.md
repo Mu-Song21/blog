@@ -4,8 +4,8 @@ title: "青衿 · 智慧校园：Spring Boot 3 + Vue 3 多角色教务后台"
 excerpt: "产品 UI 为「智慧校园」：Spring Boot 3.2 + Security/JWT + MyBatis-Plus + Vue 3，覆盖选课容量、成绩考勤与角色化 Dashboard。"
 category: "企业应用"
 tags: ["Spring Boot 3","Spring Security","JWT","MyBatis-Plus","Vue 3","智慧校园","ECharts"]
-createdAt: 2026-06-03
-updatedAt: 2026-07-18
+createdAt: 2026-06-20
+updatedAt: 2026-06-28
 featured: true
 status: published
 ---

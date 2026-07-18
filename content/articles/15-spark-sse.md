@@ -4,8 +4,8 @@ title: "颐康云：讯飞星火 SSE 流式输出与并发食谱生成"
 excerpt: "在颐康云（安康）中，用 Spring Boot 对接讯飞星火，经 SseEmitter 流式返回，并用线程池分片并发生成一周食谱，避免串行超时。"
 category: "Java 后端"
 tags: ["讯飞星火","SSE","Spring Boot","CompletableFuture","颐康云","AI"]
-createdAt: 2026-06-10
-updatedAt: 2026-07-18
+createdAt: 2026-07-02
+updatedAt: 2026-07-08
 featured: true
 status: published
 ---

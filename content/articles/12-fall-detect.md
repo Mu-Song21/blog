@@ -4,8 +4,8 @@ title: "基于三轴加速度的跌倒检测思路"
 excerpt: "从智能盲杖传感器数据出发，介绍如何利用 accelX、accelY、accelZ 计算合加速度和跌倒置信度。"
 category: "物联网"
 tags: ["三轴加速度","跌倒检测","智能盲杖","算法","IoT"]
-createdAt: 2026-05-07
-updatedAt: 2026-05-07
+createdAt: 2026-04-15
+updatedAt: 2026-04-15
 featured: false
 status: published
 ---

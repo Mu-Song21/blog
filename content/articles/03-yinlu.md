@@ -5,7 +5,7 @@ excerpt: "ESP32 感知上报 + Spring Boot 跌倒/圆形围栏判断 + WebSocket
 category: "AI + IoT"
 tags: ["Spring Boot","ESP32","WebSocket","DeepSeek","百度语音","uni-app","高德地图"]
 createdAt: 2026-02-10
-updatedAt: 2026-07-18
+updatedAt: 2026-02-22
 featured: true
 status: published
 ---

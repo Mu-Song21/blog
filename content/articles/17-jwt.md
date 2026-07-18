@@ -4,8 +4,8 @@ title: "Spring Boot JWT 多角色鉴权的工程化实践"
 excerpt: "结合智慧校园与颐康云，梳理 JWT 签发、拦截器/过滤器解析、SecurityContext、@PreAuthorize，以及子女-父母数据级隔离。"
 category: "Java 后端"
 tags: ["Spring Boot","JWT","Spring Security","鉴权","颐康云","智慧校园"]
-createdAt: 2026-06-14
-updatedAt: 2026-07-18
+createdAt: 2026-07-16
+updatedAt: 2026-07-16
 featured: false
 status: published
 ---

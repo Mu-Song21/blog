@@ -4,8 +4,8 @@ title: "Redis 在智慧养老 Dashboard 中的缓存实践"
 excerpt: "结合老人异常状态、设备在线状态和数据看板统计，说明 Redis 在智慧养老后台中的缓存设计和失效策略。"
 category: "Java 后端"
 tags: ["Redis","Dashboard","缓存","Spring Boot","智慧养老"]
-createdAt: 2026-05-08
-updatedAt: 2026-05-08
+createdAt: 2026-05-12
+updatedAt: 2026-05-12
 featured: true
 status: published
 ---
