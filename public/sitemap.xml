@@ -21,6 +21,34 @@
     <priority>0.8</priority>
   </url>
   <url>
+    <loc>https://musong-blog.netlify.app/projects/shouwang</loc>
+    <priority>0.85</priority>
+  </url>
+  <url>
+    <loc>https://musong-blog.netlify.app/projects/anyu</loc>
+    <priority>0.85</priority>
+  </url>
+  <url>
+    <loc>https://musong-blog.netlify.app/projects/yinlu</loc>
+    <priority>0.85</priority>
+  </url>
+  <url>
+    <loc>https://musong-blog.netlify.app/projects/ankang</loc>
+    <priority>0.85</priority>
+  </url>
+  <url>
+    <loc>https://musong-blog.netlify.app/projects/xingjia</loc>
+    <priority>0.85</priority>
+  </url>
+  <url>
+    <loc>https://musong-blog.netlify.app/projects/qingjin</loc>
+    <priority>0.85</priority>
+  </url>
+  <url>
+    <loc>https://musong-blog.netlify.app/projects/mojing</loc>
+    <priority>0.85</priority>
+  </url>
+  <url>
     <loc>https://musong-blog.netlify.app/blog/1</loc>
     <lastmod>2026-07-18</lastmod>
     <priority>0.6</priority>
