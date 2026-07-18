@@ -26,6 +26,9 @@
         <h1>{{ tab === 'articles' ? '文章管理' : (editingId ? '编辑文章' : '写新文章') }}</h1>
         <button v-if="tab === 'articles'" class="btn btn-primary" @click="openEditor(null)">+ 新建文章</button>
       </header>
+      <p class="admin-tip">
+        正式文章写在仓库 <code>content/articles/*.md</code>；此处编辑仅当前浏览器会话有效，刷新或退出后会恢复 Markdown 源。
+      </p>
 
       <div v-if="tab === 'articles'" class="articles-table">
         <div class="sort-bar">
@@ -379,6 +382,19 @@ function handleLogout() {
   font-size: 24px;
   font-weight: 400;
   font-family: var(--font-display);
+}
+
+.admin-tip {
+  margin: -16px 0 28px;
+  font-size: 13px;
+  color: var(--text-muted);
+  line-height: 1.6;
+}
+
+.admin-tip code {
+  font-family: var(--font-mono);
+  font-size: 12px;
+  color: var(--accent);
 }
 
 .articles-table {

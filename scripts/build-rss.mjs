@@ -1,13 +1,11 @@
 import { Feed } from 'feed'
-import { writeFileSync } from 'fs'
+import { writeFileSync, mkdirSync } from 'fs'
 import { resolve, dirname } from 'path'
 import { fileURLToPath } from 'url'
+import { loadArticlesFromMarkdown } from './loadArticles.mjs'
 
 const __dirname = dirname(fileURLToPath(import.meta.url))
 const ROOT = resolve(__dirname, '..')
-
-// 动态导入文章数据
-const { DEFAULT_ARTICLES } = await import('../src/data/articles.js')
 
 const SITE_URL = 'https://musong-blog.netlify.app'
 const SITE_TITLE = '目送 - 技术博客'
@@ -29,12 +27,11 @@ const feed = new Feed({
   }
 })
 
-const published = DEFAULT_ARTICLES
-  .filter(a => a.status === 'published')
+const published = loadArticlesFromMarkdown()
+  .filter((a) => a.status === 'published')
   .sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt))
 
 for (const article of published) {
-  // 去掉 markdown 标记，提取纯文本摘要
   const plainText = (article.excerpt || article.content || '')
     .replace(/[#*`\-\[\]()>|]/g, '')
     .replace(/\n+/g, ' ')
@@ -52,5 +49,7 @@ for (const article of published) {
   })
 }
 
-writeFileSync(resolve(ROOT, 'dist', 'rss.xml'), feed.rss2())
+const distDir = resolve(ROOT, 'dist')
+mkdirSync(distDir, { recursive: true })
+writeFileSync(resolve(distDir, 'rss.xml'), feed.rss2())
 console.log(`✅ RSS feed generated: ${published.length} articles`)

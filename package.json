@@ -4,9 +4,13 @@
   "version": "1.0.0",
   "type": "module",
   "scripts": {
+    "predev": "node scripts/generate-articles.mjs",
     "dev": "vite",
-    "build": "vite build && node scripts/build-rss.mjs",
+    "prebuild": "node scripts/generate-articles.mjs",
+    "build": "vite build && node scripts/build-rss.mjs && node scripts/build-sitemap.mjs",
     "build:rss": "node scripts/build-rss.mjs",
+    "build:sitemap": "node scripts/build-sitemap.mjs",
+    "generate:articles": "node scripts/generate-articles.mjs",
     "preview": "vite preview"
   },
   "dependencies": {
