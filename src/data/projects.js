@@ -202,6 +202,7 @@ export const PROJECTS = [
     subtitle: '墨境流芳 · 国风 Web3D 数字展馆',
     track: '数字文化 · Web3D',
     articleId: 20,
+    relatedArticleIds: [21, 22],
     category: '数字文化 · 沉浸互动',
     description: '把青绿山水、书法法帖与水墨灵兽搬进浏览器，做成可漫游、可创作、可归档的国风数字艺术演示系统。',
     detail:

@@ -59,3 +59,5 @@ Docker Compose 可一键拉起 MySQL / Redis / EMQX / 前后端；本地默认 R
 ## 收获
 
 Web3D 项目的工程难点往往不在「会不会调 Three.js」，而在**性能分级、资源隔离、演示 graceful degradation**。墨境让我把「现场断网 / 没 Key 也能讲完」当成一等需求——这和物联网项目里的 mock 上报是同一类思维。
+
+专题：[双 WebGL 栈隔离](/blog/21) · [水墨工坊异步与兜底](/blog/22)
