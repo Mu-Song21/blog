@@ -4,7 +4,7 @@
       <div class="container">
         <div class="section-label reveal">PROJECTS</div>
         <h1 class="projects-hero-title reveal reveal-delay-1">项目展示</h1>
-        <p class="projects-hero-desc reveal reveal-delay-2">Java 后端业务、物联网实时链路、AI 落地，以及国风 Web3D 互动展馆。点击首页卡片可定位到对应项目。</p>
+        <p class="projects-hero-desc reveal reveal-delay-2">每个项目含业务背景、架构分层、难点方案与关键代码。点击首页卡片可定位到对应项目。</p>
       </div>
     </section>
 
@@ -49,6 +49,7 @@
                 <span class="highlight-label">{{ h.label }}</span>
               </div>
             </div>
+            <ProjectDeepDive :showcase="getShowcase(project.slug)" />
             <div v-if="projectArticleIds(project).length" class="project-links">
               <router-link
                 v-for="(id, idx) in projectArticleIds(project)"
@@ -73,12 +74,15 @@ import { useRoute } from 'vue-router'
 import { useScrollReveal } from '../composables/useScrollReveal'
 import { useBlogStore } from '../stores/blog'
 import { PROJECTS, getProjectArticleIds } from '../data/projects'
+import { getProjectShowcase } from '../data/projectShowcases'
+import ProjectDeepDive from '../components/ProjectDeepDive.vue'
 
 useScrollReveal()
 const route = useRoute()
 const store = useBlogStore()
 const projects = PROJECTS
 const projectArticleIds = getProjectArticleIds
+const getShowcase = getProjectShowcase
 
 function articleLinkLabel(id, isPrimary) {
   if (isPrimary) return '阅读项目复盘 →'
@@ -271,6 +275,7 @@ onMounted(async () => {
   padding-top: 20px;
   margin-top: 8px;
   border-top: 1px solid var(--border);
+  margin-bottom: 4px;
 }
 
 .highlight {
