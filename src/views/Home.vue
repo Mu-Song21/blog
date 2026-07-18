@@ -8,16 +8,16 @@
       <div class="container hero-content">
         <div class="hero-main">
           <div class="hero-copy">
-            <div class="hero-label reveal">JAVA BACKEND · IOT · REAL-TIME SYSTEM</div>
+            <div class="hero-label reveal">JAVA BACKEND · IOT · AI PRACTICE</div>
             <h1 class="hero-title reveal reveal-delay-1">
               <span class="line">用 Java 后端</span>
-              <span class="line accent">连接真实世界的数据</span>
+              <span class="line accent">把业务与数据串成闭环</span>
             </h1>
             <p class="hero-desc reveal reveal-delay-2">
               我是
               <TypedText :strings="typedStrings" :type-speed="70" :delete-speed="35" :pause-time="2500" />
               <br />
-              聚焦 Spring Boot、Redis、WebSocket 与 Vue，构建守望、引路、安康、醒驾等真实场景下的完整项目闭环。
+              主线是 Spring Boot 业务系统；同时用 WebSocket / Redis 做实时告警，并用 AI API 把能力接到康养与出行场景。
             </p>
             <div class="hero-actions reveal reveal-delay-3">
               <router-link to="/projects" class="btn btn-primary btn-glow" @click="ripple">
@@ -29,7 +29,12 @@
             </div>
             <div class="hero-stats reveal reveal-delay-4">
               <div class="stat-item">
-                <CountUp :end="6" suffix="+" />
+                <CountUp :end="3" suffix="" />
+                <span class="stat-text">能力主线</span>
+              </div>
+              <div class="stat-divider"></div>
+              <div class="stat-item">
+                <CountUp :end="6" suffix="" />
                 <span class="stat-text">代表项目</span>
               </div>
               <div class="stat-divider"></div>
@@ -37,17 +42,12 @@
                 <CountUp :end="store.publishedArticles.length" suffix="" />
                 <span class="stat-text">技术文章</span>
               </div>
-              <div class="stat-divider"></div>
-              <div class="stat-item">
-                <CountUp :end="25" suffix="+" />
-                <span class="stat-text">技术栈</span>
-              </div>
             </div>
           </div>
           <div class="hero-panel reveal reveal-delay-2">
             <div class="panel-header">
               <span class="panel-dot"></span>
-              <span>SmartCareSystem.java</span>
+              <span>BackendLoop.java</span>
             </div>
             <div class="system-flow">
               <div v-for="item in systemFlow" :key="item.name" class="flow-node">
@@ -59,10 +59,10 @@
               </div>
             </div>
             <div class="panel-footer">
-              <span>MQTT</span>
+              <span>Spring Boot</span>
+              <span>JWT</span>
               <span>Redis</span>
               <span>WebSocket</span>
-              <span>Spring Boot</span>
             </div>
           </div>
         </div>
@@ -77,7 +77,7 @@
       <div class="section-header reveal">
         <div class="section-label">DEEP INSIGHTS</div>
         <h2 class="section-title">精选技术文章</h2>
-        <p class="section-subtitle">围绕 Java 后端、物联网通信、实时告警和智能硬件，沉淀可展示的项目实践</p>
+        <p class="section-subtitle">从接口鉴权、实时推送到 AI 接入，记录可复查的工程细节</p>
       </div>
       <div class="article-grid">
         <div v-for="(article, i) in store.publishedArticles.slice(0, 6)" :key="article.id" class="reveal" :class="'reveal-delay-' + (i % 3 + 1)">
@@ -96,10 +96,10 @@
       <div class="section-header reveal">
         <div class="section-label">PROJECTS</div>
         <h2 class="section-title">项目实践</h2>
-        <p class="section-subtitle">每一个项目，都是一次从 0 到 1 的探索旅程</p>
+        <p class="section-subtitle">点击卡片直达详情；卡片右上角标明所属主线</p>
       </div>
       <div class="project-grid">
-        <div v-for="(project, i) in projects" :key="project.name" class="reveal" :class="'reveal-delay-' + (i % 3 + 1)">
+        <div v-for="(project, i) in projects" :key="project.slug" class="reveal" :class="'reveal-delay-' + (i % 3 + 1)">
           <ProjectCard :project="project" />
         </div>
       </div>
@@ -115,7 +115,7 @@
       <div class="section-header reveal">
         <div class="section-label">CORE VALUE</div>
         <h2 class="section-title">我的求职亮点</h2>
-        <p class="section-subtitle">不是只会写页面，而是能把后端接口、实时通信、缓存优化和设备数据接入串成完整系统</p>
+        <p class="section-subtitle">后端主业清晰，实时与 AI 是加分项——按项目边界诚实表达</p>
       </div>
       <div class="value-grid">
         <div v-for="(value, i) in coreValues" :key="value.title" class="value-card reveal" :class="'reveal-delay-' + (i + 1)">
@@ -130,7 +130,7 @@
       <div class="section-header reveal">
         <div class="section-label">TECH STACK</div>
         <h2 class="section-title">技术武器库</h2>
-        <p class="section-subtitle">支撑智慧养老、智能盲杖、家庭健康管理和车载安全监测等项目的后端、前端、通信与 AI 能力</p>
+        <p class="section-subtitle">覆盖企业后台、物联网实时链路与 AI API 接入的常用工具</p>
       </div>
       <div class="tech-showcase reveal">
         <div class="tech-category" v-for="cat in techCategories" :key="cat.name">
@@ -181,8 +181,8 @@
     <section class="cta-section">
       <div class="container cta-inner reveal">
         <div class="cta-glow"></div>
-        <h2 class="cta-title">正在寻找 Java 后端 / 物联网方向机会</h2>
-        <p class="cta-desc">如果你想了解我的项目、代码能力或实习求职信息，欢迎查看项目作品集或直接联系我。</p>
+        <h2 class="cta-title">正在寻找 Java 后端方向机会</h2>
+        <p class="cta-desc">也欢迎关注物联网实时系统与 AI 落地相关岗位。想了解项目细节，可先看作品集或直接联系我。</p>
         <div class="cta-actions">
           <router-link to="/about" class="btn btn-primary btn-glow" @click="ripple">了解更多</router-link>
           <router-link to="/blog" class="btn btn-secondary" @click="ripple">阅读博客</router-link>
@@ -212,24 +212,23 @@ function ripple(e) {
 
 const typedStrings = [
   '一个 Java 后端开发者',
-  '一个物联网探索者',
-  '一个智慧养老实践者',
-  '一个家庭健康管理构建者',
-  '一个 AI 落地实践者'
+  '一个业务系统构建者',
+  '一个实时告警实践者',
+  '一个 AI 接入落地者'
 ]
 
 const systemFlow = [
-  { name: '设备接入', desc: '传感器、GPS、三轴加速度通过 MQTT / HTTP 上报数据', icon: '📡' },
-  { name: '后端处理', desc: 'Spring Boot 负责解析、校验、落库和异常规则判断', icon: '⚙️' },
-  { name: '状态缓存', desc: 'Redis 缓存设备状态、告警统计和 Dashboard 数据', icon: '⚡' },
-  { name: '实时推送', desc: 'WebSocket 将告警和统计变化推送到前端页面', icon: '🚨' }
+  { name: '接口与鉴权', desc: 'Spring Boot + JWT / Security，把角色与数据权限落到接口层', icon: '🔐' },
+  { name: '业务落库', desc: 'MyBatis / JPA 建模，完成台账、告警、档案等核心业务', icon: '⚙️' },
+  { name: '状态与缓存', desc: 'Redis 维护异常状态、短时统计，降低热路径压力', icon: '⚡' },
+  { name: '实时与 AI', desc: 'WebSocket 推告警；SSE / 大模型 API 接入康养等场景', icon: '✨' }
 ]
 
 const coreValues = [
-  { title: 'Java 后端业务闭环', desc: '能完成从实体建模、接口设计、业务 Service 到数据库持久化的完整后端流程。' },
-  { title: '实时通信项目经验', desc: '在告警系统中使用 WebSocket 处理新告警、状态更新和统计数据实时刷新。' },
-  { title: '物联网设备接入', desc: '理解 MQTT Topic 设计、设备数据上报、指令下发、离线检测和异常告警链路。' },
-  { title: '可展示的作品集', desc: '有线上博客、GitHub 仓库和多个围绕智慧养老、智能硬件的项目案例。' }
+  { title: 'Java 后端业务闭环', desc: '从实体建模、接口设计、Service 到持久化，能独立完成后台主流程（青衿、安隅、安康）。' },
+  { title: '实时告警与状态机', desc: 'WebSocket 推送 + Redis 状态：守望的告警闭环与夜间离床规则是代表案例。' },
+  { title: 'AI 能力工程化接入', desc: '不是调戏一下 Chat，而是 SSE 流式、并发任务与档案上下文（颐康云 / 明眼助手）。' },
+  { title: '软硬件协同经验', desc: '引路项目打通 ESP32 HTTPS 上报、跌倒/围栏判断与多端监护；MQTT 在守望中为可插拔能力。' }
 ]
 
 const projects = PROJECTS.map(toHomeProject)
@@ -242,10 +241,10 @@ const techCategories = [
       { name: 'Java', color: '#f89820' },
       { name: 'Spring Boot', color: '#6db33f' },
       { name: 'MyBatis-Plus', color: '#e3342f' },
-      { name: 'MQTT', color: '#660066' },
       { name: 'Redis', color: '#dc382d' },
       { name: 'MySQL', color: '#4479a1' },
       { name: 'WebSocket', color: '#00897b' },
+      { name: 'JWT', color: '#000000' },
     ]
   },
   {
@@ -253,35 +252,32 @@ const techCategories = [
     icon: '🎨',
     items: [
       { name: 'Vue 2 / Vue 3', color: '#42b883' },
-      { name: 'TypeScript', color: '#3178c6' },
-      { name: 'Element UI', color: '#409eff' },
+      { name: 'Element Plus', color: '#409eff' },
       { name: 'uni-app', color: '#2b9939' },
       { name: '微信小程序', color: '#07c160' },
       { name: 'ECharts', color: '#aa344d' },
     ]
   },
   {
-    name: 'AI & 云服务',
+    name: 'IoT & AI',
     icon: '🤖',
     items: [
-      { name: 'AI 大模型 API', color: '#f59e0b' },
+      { name: 'MQTT（可插拔）', color: '#660066' },
+      { name: 'ESP32', color: '#e7352c' },
+      { name: '讯飞星火', color: '#f59e0b' },
+      { name: 'DeepSeek', color: '#4d6bfe' },
+      { name: 'MediaPipe', color: '#00a3a1' },
       { name: '高德地图', color: '#0090ff' },
-      { name: '百度语音', color: '#2932e1' },
-      { name: '若依框架', color: '#e74c3c' },
-      { name: 'Netlify', color: '#00c7b7' },
     ]
   }
 ]
 
 const timeline = [
-  { date: '2024', title: '初识编程', desc: '第一次接触 Java，写下了 Hello World。从此打开了新世界的大门。', color: '#f59e0b' },
-  { date: '2025 上', title: '安隅 · 若依扩展', desc: '在 RuoYi 多模块工程上落地投诉、缴费、访客、公告等社区业务 CRUD，熟悉企业后台脚手架扩展方式。', color: '#06b6d4' },
-  { date: '2025 下', title: '守望 · 物联网闭环', desc: '搭建独居老人主动守护系统：告警落库、Redis 状态、WebSocket 大屏与夜间离床状态机。', color: '#f59e0b' },
-  { date: '2026 上', title: '引路 · 硬件到 AI', desc: '完成慧杖护行：ESP32 上报、跌倒/围栏判断、家属监护，并接入明眼助手语音对话。', color: '#06b6d4' },
-  { date: '2026 中', title: '安康 · 颐康云', desc: '做出子女 Web + 父母小程序双端，讯飞星火 SSE / 并发食谱与百度语音真正接到档案数据上。', color: '#10b981' },
-  { date: '2026 中', title: '醒驾 · SmartCar', desc: '完成 MediaPipe 疲劳/分心检测软件原型：自适应 EAR、PERCLOS 与本地 Web 仪表盘。', color: '#3b82f6' },
-  { date: '2026 中', title: '青衿 · 智慧校园', desc: 'Spring Security + JWT 多角色教务后台，跑通选课容量、成绩考勤与角色化 Dashboard。', color: '#6366f1' },
-  { date: '现在', title: '持续精进', desc: '深耕后端与物联网，继续打磨作品集表达与工程细节。目送每一个项目远去，也目送自己不断成长。', color: '#fbbf24' },
+  { date: '2024', title: '初识编程', desc: '第一次接触 Java，打开后端学习路径。', color: '#f59e0b' },
+  { date: '2025', title: '企业后台入门', desc: '安隅：在若依多模块上扩展社区业务 CRUD，熟悉权限与脚手架。', color: '#06b6d4' },
+  { date: '2025–2026', title: '实时与硬件', desc: '守望打通告警闭环；引路完成 ESP32 → 云端 → 小程序监护。', color: '#f59e0b' },
+  { date: '2026', title: 'AI 与业务深化', desc: '颐康云接入星火 SSE；青衿做多角色教务；SmartCar 完成视觉检测原型。', color: '#10b981' },
+  { date: '现在', title: '持续精进', desc: '深耕 Java 后端，诚实打磨作品集表达。目送项目远去，也目送自己成长。', color: '#fbbf24' },
 ]
 </script>
 

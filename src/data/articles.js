@@ -533,84 +533,67 @@ export default defineConfig({
   {
     id: 9,
     title: 'Spring Boot 如何接入 MQTT 实现设备数据上报',
-    excerpt: '结合智能盲杖和智慧养老项目，梳理 Spring Boot 接入 MQTT 的完整流程：Topic 设计、消息订阅、JSON 解析、数据入库和设备指令下发。',
+    excerpt: '以守望（独居守护）中的可插拔 MQTT 接入为背景，梳理 Topic 设计、消息订阅、JSON 解析与进入告警业务闭环的流程；并说明引路盲杖实际走 HTTPS 上报。',
     content: `## 为什么选择 MQTT
 
-在智能盲杖、独居老人守护这类物联网项目中，设备端通常存在网络不稳定、数据包小、上报频率高等特点。相比 HTTP 轮询，MQTT 更适合设备数据上报，因为它具备轻量、低功耗、发布订阅解耦和消息可靠性控制等优势。
+在独居守护这类物联网场景里，设备端常有网络不稳、包小、上报频的特点。相比纯轮询，MQTT 适合作为**可插拔的设备接入层**：轻量、发布订阅解耦、可设 QoS。
 
-## 通信架构
+> 作品集边界：守望仓库已实现 MQTT 订阅代码，默认配置可关闭，演示主路径仍是 HTTP 模拟告警；引路（慧杖护行）固件实际走 **HTTPS POST**，不要混写成「盲杖已用 MQTT」。
 
-系统整体链路可以设计为：
+## 通信架构（守望向）
 
-- 设备端发布传感器数据到 \`cane/{deviceId}/data\`
-- Spring Boot 后端订阅 \`cane/+/data\`
-- 后端解析 JSON 数据并保存到数据库
-- 后端根据数据判断跌倒、越界、低电量等异常
-- 后端通过 \`cane/{deviceId}/command\` 下发蜂鸣、震动、语音播报等指令
+可设计为：
 
-## Topic 设计
+- 设备 / 网关发布到 \`elder/sensor/{deviceId}/alarm\`
+- Spring Boot 在 \`mqtt.enabled=true\` 时订阅并解析
+- 复用已有 \`AlarmService\`：落库 → Redis 异常状态 → WebSocket 推送
+- HTTP mock / 心跳离线检测与 MQTT 入口汇合到同一业务闭环
+
+## Topic 设计示例
 
 | Topic | 方向 | 说明 |
 | --- | --- | --- |
-| \`cane/{deviceId}/data\` | 设备到后端 | 传感器数据上报 |
-| \`cane/{deviceId}/command\` | 后端到设备 | 控制指令下发 |
-| \`cane/{deviceId}/ack\` | 设备到后端 | 指令执行结果回执 |
+| \`elder/sensor/+/alarm\` | 设备到后端 | 告警 / 传感器事件 |
+| \`elder/device/{id}/command\` | 后端到设备 | 可选指令下发（扩展） |
 
-这种设计的好处是层级清晰，后端可以通过 \`+\` 通配符订阅所有设备数据，也可以精确向某一台设备下发指令。
+层级清晰时，后端可用 \`+\` 订阅多设备，再按 deviceId 路由到业务 Service。
 
 ## 后端处理流程
 
-Spring Boot 订阅到 MQTT 消息后，核心流程一般是：
-
-1. 获取消息 Topic 和 Payload
-2. 根据 Topic 判断消息类型
-3. 使用 Jackson 将 JSON 转成实体对象
-4. 调用业务 Service 复用原有处理逻辑
-5. 记录日志并处理异常消息
+1. 获取 Topic 与 Payload  
+2. JSON 反序列化为 DTO  
+3. 调用与 HTTP 入口相同的告警 / 行为 Service（避免两套逻辑）  
+4. 异常消息记日志，关键事件考虑幂等  
 
 \`\`\`java
 public void handleMessage(String topic, String payload) {
-    if (topic.endsWith("/data")) {
-        SensorData data = objectMapper.readValue(payload, SensorData.class);
-        sensorDataService.addSensorData(data);
-    }
+    AlarmEvent event = objectMapper.readValue(payload, AlarmEvent.class);
+    alarmService.ingest(event); // 与 HTTP mock 共用
 }
 \`\`\`
 
-## 数据上报示例
+## 与 HTTPS 上报如何选型
 
-\`\`\`json
-{
-  "deviceId": "ESP32_001",
-  "obstacleDistance": 0.8,
-  "accelX": 0.12,
-  "accelY": 0.34,
-  "accelZ": 1.85,
-  "latitude": 30.2741,
-  "longitude": 120.1551,
-  "temperature": 26.5,
-  "humidity": 61.2,
-  "dataTime": "2026-05-10 20:00:00"
-}
-\`\`\`
+| 方案 | 更合适的场景 |
+| --- | --- |
+| HTTPS POST | 设备已能直连云、协议简单（如引路 ESP32） |
+| MQTT | 多设备、需 Broker、要遗嘱离线与 QoS |
 
-## 可靠性设计
+同一后端可以**同时预留两种接入**，业务层只认「事件入站」。
 
-在真实项目中，需要重点关注：
+## 可靠性要点
 
-- 关键告警数据使用 QoS 1，避免消息丢失
-- 设备端增加重连机制，网络断开后自动恢复
-- 后端对重复消息做幂等处理，避免重复生成告警
-- 使用遗嘱消息感知设备异常离线
-- 对解析失败的消息记录日志，便于排查硬件端格式问题
+- 关键告警可用 QoS 1；后端对重复消息做幂等  
+- 设备重连与遗嘱消息感知异常离线  
+- 解析失败落日志，便于排查固件字段  
 
 ## 总结
 
-MQTT 接入的核心不是单纯“收到消息”，而是让设备数据进入后端现有业务闭环。对于智能盲杖和智慧养老系统来说，MQTT 负责设备通信，Spring Boot 负责业务判断，WebSocket 负责实时展示，三者组合才能形成完整的物联网应用链路。`,
-    tags: ['Spring Boot', 'MQTT', '物联网', '设备上报', 'Java'],
+MQTT 的价值不是「必须上」，而是让设备数据**干净地进入现有业务闭环**。守望：MQTT 可开关 + WebSocket 展示；引路：HTTPS 上报 + WebSocket 监护——按项目诚实选型即可。`,
+    tags: ['Spring Boot', 'MQTT', '物联网', '设备上报', '守望'],
     category: '物联网',
     createdAt: '2026-05-10',
-    updatedAt: '2026-05-10',
+    updatedAt: '2026-07-18',
     featured: true,
     status: 'published'
   },
@@ -866,26 +849,25 @@ double confidence = clamp((deviation - 0.35) / 1.35, 0.0, 1.0);
   },
   {
     id: 13,
-    title: '智能盲杖硬件与后端交互流程设计',
-    excerpt: '梳理智能盲杖从传感器采集、数据上传、后端异常判断到硬件响应和家属端通知的完整交互链路。',
+    title: '引路 · 慧杖护行：硬件与后端交互流程',
+    excerpt: '以仓库实现为准：ESP32 HTTPS 上报传感器数据，Spring Boot 做跌倒/圆形围栏判断，WebSocket 推送到管理端与小程序。',
     content: `## 系统整体链路
 
-智能盲杖项目不是单纯的后台管理系统，而是一个软硬件协同的物联网应用。硬件负责采集现实世界的数据，后端负责分析和处理，前端负责展示和告警。
+引路（慧杖护行）是软硬件协同项目：硬件采集，后端判断，多端监护。
 
-整体流程可以概括为：
+实际主链路：
 
-1. 硬件采集障碍物距离、三轴加速度、GPS、温湿度、电量等数据
-2. 主控模块将数据封装为 JSON
-3. 通过 HTTP 或 MQTT 上传到 Spring Boot 后端
-4. 后端保存传感器数据
-5. 后端进行跌倒、电子围栏、低电量、静止异常判断
-6. 生成告警记录
-7. WebSocket 推送到管理后台和小程序端
-8. 后端向硬件返回或下发控制指令
+1. ESP32 采集障碍物距离、三轴加速度、GPS 等  
+2. 封装 JSON，经 **HTTPS POST** 到 Spring Boot（\`/api/sensor-data\` 等）  
+3. 后端 MyBatis 落库  
+4. 跌倒置信度、圆形电子围栏越界等规则判断  
+5. 生成告警  
+6. WebSocket \`/ws/alarm\` 推送到 Vue 管理端与 uni-app 小程序  
+7. SOS / AI 唤醒等事件同样可走 HTTP + WS  
 
-## 硬件上报数据
+> 本仓库**未使用 MQTT/Redis**；MQTT 能力见守望项目的可插拔接入，勿混谈。
 
-硬件端可以周期性上传：
+## 硬件上报示例
 
 \`\`\`json
 {
@@ -895,65 +877,35 @@ double confidence = clamp((deviation - 0.35) / 1.35, 0.0, 1.0);
   "accelY": 0.2,
   "accelZ": 2.5,
   "latitude": 30.2741,
-  "longitude": 120.1551,
-  "temperature": 26.5,
-  "humidity": 60.0
+  "longitude": 120.1551
 }
 \`\`\`
 
-后端通过这些字段判断不同风险。
+温湿度、电量等字段可能存在，但固件侧未必始终有有效传感器值，展示时勿夸大「全传感器完备」。
 
 ## 后端异常判断
 
-后端主要判断：
+- 三轴加速度：跌倒置信度  
+- GPS + 圆心半径：圆形围栏越界（边沿触发）  
+- SOS 按键：紧急求助事件  
 
-- \`obstacleDistance\` 过小：前方障碍物风险
-- 三轴加速度异常：可能发生跌倒
-- GPS 超出安全区域：电子围栏越界
-- 电量过低：低电量提醒
-- 长时间位置无变化：静止异常提醒
+规则放在后端，便于改阈值；固件侧重采集与本地避障反馈（蜂鸣/震动）。
 
-这些判断不一定都在硬件端完成。更推荐让硬件负责采集，后端负责规则判断，这样后续修改阈值和策略更方便。
+## 多端协同
 
-## 响应给硬件
+- 管理端：高德地图监控、轨迹回放、围栏配置  
+- 小程序：告警、位置监护、明眼助手（DeepSeek + 百度语音）  
+- 按键 AI 唤醒：HTTP 触发后经 WebSocket 通知前端跳转助手  
 
-如果使用 HTTP 上传，后端可以在接口响应中返回控制字段：
-
-\`\`\`json
-{
-  "status": "FALL_ALARM",
-  "beep": true,
-  "vibrate": true,
-  "voiceText": "检测到跌倒，正在通知家属",
-  "uploadInterval": 2000
-}
-\`\`\`
-
-如果使用 MQTT，后端可以主动发布指令到：
-
-\`\`\`
-cane/{deviceId}/command
-\`\`\`
-
-硬件收到后执行蜂鸣、震动或语音播报，并通过 \`ack\` 主题返回执行结果。
-
-## 为什么要做双向通信
-
-单向上报只能让后端知道设备状态，而双向通信可以让平台控制设备：
-
-- 远程蜂鸣寻找设备
-- 异常时提高上传频率
-- 触发本地震动提醒
-- 下发语音播报内容
-- 家属端远程发起关怀提示
+家属安抚 / 目的地文本等也可经 WS 下发到用户侧，属于应用层协同，不是 MQTT 指令主题。
 
 ## 总结
 
-智能盲杖的核心是“硬件感知 + 后端判断 + 前端通知 + 硬件响应”。只有把这四个环节串起来，系统才不只是一个展示平台，而是真正具备安全辅助能力的智能硬件系统。`,
-    tags: ['智能盲杖', '硬件交互', 'Spring Boot', 'MQTT', 'WebSocket'],
+引路的闭环是 **HTTPS 感知上报 + 后端规则 + WebSocket 监护 + AI 语音助手**。把协议边界写清楚，比堆「MQTT / 导航 / 全传感器」更有说服力。`,
+    tags: ['智能盲杖', 'ESP32', 'HTTPS', 'Spring Boot', 'WebSocket'],
     category: '物联网',
     createdAt: '2026-05-06',
-    updatedAt: '2026-05-06',
+    updatedAt: '2026-07-18',
     featured: false,
     status: 'published'
   },

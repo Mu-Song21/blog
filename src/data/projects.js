@@ -1,8 +1,11 @@
 /** 项目作品集数据（首页与 /projects 共用） */
 export const PROJECTS = [
   {
+    slug: 'shouwang',
     name: '守望',
     subtitle: '独居老人非接触式居家主动守护系统',
+    track: 'IoT · 实时系统',
+    articleId: 1,
     category: '物联网 · 智慧养老',
     description: '面向独居场景的告警中枢：设备上报、实时推送与家属轻端处置打通。',
     detail:
@@ -28,8 +31,11 @@ export const PROJECTS = [
     ]
   },
   {
+    slug: 'anyu',
     name: '安隅',
     subtitle: '若依二次开发 · 智慧社区后台',
+    track: 'Java 后端 · 企业后台',
+    articleId: 2,
     category: '企业应用 · 智慧社区',
     description: '基于 RuoYi-Vue 扩展的物业社区管理后台，覆盖缴费、投诉、访客、公告等业务模块。',
     detail:
@@ -55,8 +61,11 @@ export const PROJECTS = [
     ]
   },
   {
+    slug: 'yinlu',
     name: '引路',
     subtitle: '慧杖护行 · 智能盲杖出行守护',
+    track: 'IoT · AI',
+    articleId: 3,
     category: 'AI + IoT · 无障碍',
     description: 'ESP32 盲杖感知 + 云端跌倒/围栏判断 + 家属监护与 AI 语音助手。',
     detail:
@@ -93,8 +102,11 @@ export const PROJECTS = [
     ]
   },
   {
+    slug: 'ankang',
     name: '安康',
     subtitle: '颐康云 · 家庭康养管理平台',
+    track: 'Java 后端 · AI',
+    articleId: 15,
     category: '企业应用 · 家庭健康',
     description: '产品「颐康云」：子女 Web + 父母小程序，档案驱动的 AI 康养双端。',
     detail:
@@ -120,8 +132,11 @@ export const PROJECTS = [
     ]
   },
   {
+    slug: 'xingjia',
     name: '醒驾',
     subtitle: 'SmartCar · 疲劳与分心监测软件原型',
+    track: 'AI · 视觉算法',
+    articleId: 16,
     category: 'AI · 行车安全',
     description: 'MediaPipe Face Mesh + OpenCV 的桌面端疲劳/分心检测演示，含本地 Web 仪表盘。',
     detail:
@@ -147,8 +162,11 @@ export const PROJECTS = [
     ]
   },
   {
+    slug: 'qingjin',
     name: '青衿',
     subtitle: '智慧校园 · 教务学工管理平台',
+    track: 'Java 后端 · 企业后台',
+    articleId: 14,
     category: '企业应用 · 校园教务',
     description: 'UI 品牌「智慧校园」：Spring Boot 3.2 + Vue 3 的多角色教务后台。',
     detail:
@@ -178,7 +196,10 @@ export const PROJECTS = [
 /** 首页卡片用精简字段 */
 export function toHomeProject(project) {
   return {
+    slug: project.slug,
     name: `${project.name} — ${project.subtitle}`,
+    track: project.track,
+    articleId: project.articleId,
     description: project.description,
     icon: project.icon,
     gradient: project.gradient,

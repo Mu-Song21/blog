@@ -4,13 +4,19 @@
       <div class="container">
         <div class="section-label reveal">PROJECTS</div>
         <h1 class="projects-hero-title reveal reveal-delay-1">项目展示</h1>
-        <p class="projects-hero-desc reveal reveal-delay-2">守望、安隅、引路、安康、醒驾、青衿——围绕 Java 后端、物联网、家庭健康与 AI 落地，记录从需求到上线的完整实践。</p>
+        <p class="projects-hero-desc reveal reveal-delay-2">三条主线：Java 后端业务系统、物联网实时链路、AI 落地实践。点击首页卡片可定位到对应项目。</p>
       </div>
     </section>
 
     <section class="section container">
       <div class="project-list">
-        <div class="project-item reveal" v-for="(project, index) in projects" :key="project.name" :class="'reveal-delay-' + (index % 3 + 1)">
+        <article
+          class="project-item reveal"
+          v-for="(project, index) in projects"
+          :id="project.slug"
+          :key="project.slug"
+          :class="'reveal-delay-' + (index % 3 + 1)"
+        >
           <div class="project-left">
             <div class="project-index">{{ String(index + 1).padStart(2, '0') }}</div>
             <div class="project-icon" :style="{ background: project.gradient }">
@@ -24,7 +30,7 @@
                 <span class="project-sep">—</span>
                 <span class="project-subtitle">{{ project.subtitle }}</span>
               </h3>
-              <span class="project-category">{{ project.category }}</span>
+              <span class="project-category">{{ project.track || project.category }}</span>
             </div>
             <p class="project-desc">{{ project.description }}</p>
             <p class="project-detail">{{ project.detail }}</p>
@@ -43,20 +49,33 @@
                 <span class="highlight-label">{{ h.label }}</span>
               </div>
             </div>
+            <div v-if="project.articleId" class="project-links">
+              <router-link :to="`/blog/${project.articleId}`" class="project-link">阅读配套文章 →</router-link>
+            </div>
           </div>
-        </div>
+        </article>
       </div>
     </section>
   </div>
 </template>
 
 <script setup>
+import { onMounted, nextTick } from 'vue'
+import { useRoute } from 'vue-router'
 import { useScrollReveal } from '../composables/useScrollReveal'
 import { PROJECTS } from '../data/projects'
 
 useScrollReveal()
-
+const route = useRoute()
 const projects = PROJECTS
+
+onMounted(async () => {
+  await nextTick()
+  if (route.hash) {
+    const el = document.querySelector(route.hash)
+    el?.scrollIntoView({ behavior: 'smooth', block: 'start' })
+  }
+})
 </script>
 
 <style scoped>
@@ -105,6 +124,7 @@ const projects = PROJECTS
   border-radius: var(--radius-lg);
   padding: 40px;
   transition: all var(--transition);
+  scroll-margin-top: 96px;
 }
 
 .project-item:hover {
@@ -248,6 +268,21 @@ const projects = PROJECTS
   color: var(--text-muted);
   font-family: var(--font-mono);
   letter-spacing: 1px;
+}
+
+.project-links {
+  padding-top: 8px;
+}
+
+.project-link {
+  font-size: 14px;
+  color: var(--accent);
+  text-decoration: none;
+  font-weight: 500;
+}
+
+.project-link:hover {
+  text-decoration: underline;
 }
 
 @media (max-width: 768px) {
