@@ -21,6 +21,22 @@
             <div class="article-tags">
               <span class="tag" v-for="tag in article.tags" :key="tag">{{ tag }}</span>
             </div>
+            <div v-if="relatedProjects.length" class="related-projects">
+              <span class="related-projects-label">相关项目</span>
+              <router-link
+                v-for="p in relatedProjects"
+                :key="p.slug"
+                :to="`/projects#${p.slug}`"
+                class="related-project-chip"
+                @click="ripple"
+              >
+                <span class="rp-icon" :style="{ background: p.gradient }">{{ p.icon }}</span>
+                <span class="rp-text">
+                  <span class="rp-name">{{ p.name }}</span>
+                  <span class="rp-sub">{{ p.subtitle }}</span>
+                </span>
+              </router-link>
+            </div>
           </header>
           <div class="article-body markdown-body" v-html="renderedHtml"></div>
           <ShareBar :title="article.title" :url="shareUrl" />
@@ -75,6 +91,7 @@ import { useScrollReveal } from '../composables/useScrollReveal'
 import { useRipple } from '../composables/useRipple'
 import { renderMarkdown } from '../utils/markdown'
 import hljs from '../utils/hljs'
+import { getProjectsForArticle, getProjectArticleIds } from '../data/projects'
 import ArticleToc from '../components/ArticleToc.vue'
 import Comment from '../components/Comment.vue'
 import ShareBar from '../components/ShareBar.vue'
@@ -87,6 +104,9 @@ const { createRipple } = useRipple()
 function ripple(e) { createRipple(e) }
 
 const article = computed(() => store.getArticle(route.params.id))
+const relatedProjects = computed(() =>
+  article.value ? getProjectsForArticle(article.value.id) : []
+)
 
 const publishedList = computed(() => store.publishedArticles)
 const currentIndex = computed(() => publishedList.value.findIndex(a => a.id === Number(route.params.id)))
@@ -108,11 +128,16 @@ const shareUrl = computed(() => `https://musong-blog.netlify.app/blog/${route.pa
 const relatedArticles = computed(() => {
   if (!article.value) return []
   const currentTags = article.value.tags
+  const projectArticleIds = new Set(
+    relatedProjects.value.flatMap((p) => getProjectArticleIds(p))
+  )
   return store.publishedArticles
     .filter(a => a.id !== article.value.id)
     .map(a => ({
       ...a,
-      score: a.tags.filter(t => currentTags.includes(t)).length
+      score:
+        a.tags.filter(t => currentTags.includes(t)).length +
+        (projectArticleIds.has(a.id) ? 2 : 0)
     }))
     .filter(a => a.score > 0)
     .sort((a, b) => b.score - a.score)
@@ -238,6 +263,73 @@ watch(renderedHtml, () => {
   display: flex;
   flex-wrap: wrap;
   gap: 8px;
+}
+
+.related-projects {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 10px;
+  margin-top: 20px;
+}
+
+.related-projects-label {
+  font-size: 12px;
+  color: var(--text-muted);
+  font-family: var(--font-mono);
+  letter-spacing: 0.04em;
+}
+
+.related-project-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  padding: 8px 14px 8px 8px;
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  text-decoration: none;
+  transition: border-color var(--transition), background var(--transition);
+  max-width: 100%;
+}
+
+.related-project-chip:hover {
+  border-color: var(--accent);
+  background: color-mix(in srgb, var(--accent) 8%, transparent);
+}
+
+.rp-icon {
+  width: 36px;
+  height: 36px;
+  border-radius: 8px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 18px;
+  flex-shrink: 0;
+}
+
+.rp-text {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  min-width: 0;
+}
+
+.rp-name {
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--text-primary);
+  line-height: 1.2;
+}
+
+.rp-sub {
+  font-size: 12px;
+  color: var(--text-muted);
+  line-height: 1.3;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  max-width: 260px;
 }
 
 .article-body {

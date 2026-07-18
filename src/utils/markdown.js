@@ -13,7 +13,12 @@ function escapeHtml(str) {
 function parseInline(text) {
   let result = escapeHtml(text)
   result = result.replace(/!\[([^\]]*)\]\(([^)]+)\)/g, '<img src="$2" alt="$1" loading="lazy" />')
-  result = result.replace(/\[([^\]]+)\]\(([^)]+)\)/g, '<a href="$2" target="_blank" rel="noopener">$1</a>')
+  result = result.replace(/\[([^\]]+)\]\(([^)]+)\)/g, (_, text, url) => {
+    const internal = url.startsWith('/') && !url.startsWith('//')
+    return internal
+      ? `<a href="${url}">${text}</a>`
+      : `<a href="${url}" target="_blank" rel="noopener">${text}</a>`
+  })
   result = result.replace(/`([^`]+)`/g, '<code class="inline-code">$1</code>')
   result = result.replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>')
   result = result.replace(/\*(.+?)\*/g, '<em>$1</em>')

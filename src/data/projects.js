@@ -6,6 +6,7 @@ export const PROJECTS = [
     subtitle: '独居老人非接触式居家主动守护系统',
     track: 'IoT · 实时系统',
     articleId: 1,
+    relatedArticleIds: [9, 10, 11],
     category: '物联网 · 智慧养老',
     description: '面向独居场景的告警中枢：设备上报、实时推送与家属轻端处置打通。',
     detail:
@@ -36,6 +37,7 @@ export const PROJECTS = [
     subtitle: '若依二次开发 · 智慧社区后台',
     track: 'Java 后端 · 企业后台',
     articleId: 2,
+    relatedArticleIds: [18],
     category: '企业应用 · 智慧社区',
     description: '基于 RuoYi-Vue 扩展的物业社区管理后台，覆盖缴费、投诉、访客、公告等业务模块。',
     detail:
@@ -66,6 +68,7 @@ export const PROJECTS = [
     subtitle: '慧杖护行 · 智能盲杖出行守护',
     track: 'IoT · AI',
     articleId: 3,
+    relatedArticleIds: [12, 13],
     category: 'AI + IoT · 无障碍',
     description: 'ESP32 盲杖感知 + 云端跌倒/围栏判断 + 家属监护与 AI 语音助手。',
     detail:
@@ -106,7 +109,8 @@ export const PROJECTS = [
     name: '安康',
     subtitle: '颐康云 · 家庭康养管理平台',
     track: 'Java 后端 · AI',
-    articleId: 15,
+    articleId: 19,
+    relatedArticleIds: [15, 17],
     category: '企业应用 · 家庭健康',
     description: '产品「颐康云」：子女 Web + 父母小程序，档案驱动的 AI 康养双端。',
     detail:
@@ -167,6 +171,7 @@ export const PROJECTS = [
     subtitle: '智慧校园 · 教务学工管理平台',
     track: 'Java 后端 · 企业后台',
     articleId: 14,
+    relatedArticleIds: [17, 18],
     category: '企业应用 · 校园教务',
     description: 'UI 品牌「智慧校园」：Spring Boot 3.2 + Vue 3 的多角色教务后台。',
     detail:
@@ -206,4 +211,24 @@ export function toHomeProject(project) {
     tech: project.tech.slice(0, 6),
     stats: project.stats
   }
+}
+
+/** 文章页：根据 articleId 反查关联项目（主文 + 专题文） */
+export function getProjectsForArticle(articleId) {
+  const id = Number(articleId)
+  if (!Number.isFinite(id)) return []
+  return PROJECTS.filter(
+    (p) => p.articleId === id || (p.relatedArticleIds || []).includes(id)
+  )
+}
+
+/** 项目页：主复盘 + 专题文 id 列表 */
+export function getProjectArticleIds(project) {
+  if (!project) return []
+  const ids = []
+  if (project.articleId != null) ids.push(project.articleId)
+  for (const id of project.relatedArticleIds || []) {
+    if (!ids.includes(id)) ids.push(id)
+  }
+  return ids
 }

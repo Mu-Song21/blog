@@ -49,8 +49,16 @@
                 <span class="highlight-label">{{ h.label }}</span>
               </div>
             </div>
-            <div v-if="project.articleId" class="project-links">
-              <router-link :to="`/blog/${project.articleId}`" class="project-link">阅读配套文章 →</router-link>
+            <div v-if="projectArticleIds(project).length" class="project-links">
+              <router-link
+                v-for="(id, idx) in projectArticleIds(project)"
+                :key="id"
+                :to="`/blog/${id}`"
+                class="project-link"
+                :class="{ 'is-secondary': idx > 0 }"
+              >
+                {{ articleLinkLabel(id, idx === 0) }}
+              </router-link>
             </div>
           </div>
         </article>
@@ -63,11 +71,26 @@
 import { onMounted, nextTick } from 'vue'
 import { useRoute } from 'vue-router'
 import { useScrollReveal } from '../composables/useScrollReveal'
-import { PROJECTS } from '../data/projects'
+import { useBlogStore } from '../stores/blog'
+import { PROJECTS, getProjectArticleIds } from '../data/projects'
 
 useScrollReveal()
 const route = useRoute()
+const store = useBlogStore()
 const projects = PROJECTS
+const projectArticleIds = getProjectArticleIds
+
+function articleLinkLabel(id, isPrimary) {
+  if (isPrimary) return '阅读项目复盘 →'
+  const article = store.getArticle(id)
+  if (!article) return '相关专题 →'
+  const title = article.title
+  const short =
+    title.length > 20
+      ? `${title.slice(0, 20)}…`
+      : title
+  return `${short} →`
+}
 
 onMounted(async () => {
   await nextTick()
@@ -272,6 +295,10 @@ onMounted(async () => {
 
 .project-links {
   padding-top: 8px;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 8px;
 }
 
 .project-link {
@@ -281,8 +308,15 @@ onMounted(async () => {
   font-weight: 500;
 }
 
+.project-link.is-secondary {
+  font-size: 13px;
+  font-weight: 400;
+  color: var(--text-secondary);
+}
+
 .project-link:hover {
   text-decoration: underline;
+  color: var(--accent);
 }
 
 @media (max-width: 768px) {
