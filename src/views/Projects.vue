@@ -4,7 +4,7 @@
       <div class="container">
         <div class="section-label reveal">PROJECTS</div>
         <h1 class="projects-hero-title reveal reveal-delay-1">项目展示</h1>
-        <p class="projects-hero-desc reveal reveal-delay-2">三条主线：Java 后端业务系统、物联网实时链路、AI 落地实践。点击首页卡片可定位到对应项目。</p>
+        <p class="projects-hero-desc reveal reveal-delay-2">Java 后端业务、物联网实时链路、AI 落地，以及国风 Web3D 互动展馆。点击首页卡片可定位到对应项目。</p>
       </div>
     </section>
 

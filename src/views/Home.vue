@@ -34,7 +34,7 @@
               </div>
               <div class="stat-divider"></div>
               <div class="stat-item">
-                <CountUp :end="6" suffix="" />
+                <CountUp :end="projects.length" suffix="" />
                 <span class="stat-text">代表项目</span>
               </div>
               <div class="stat-divider"></div>
@@ -252,6 +252,7 @@ const techCategories = [
     icon: '🎨',
     items: [
       { name: 'Vue 2 / Vue 3', color: '#42b883' },
+      { name: 'Three.js', color: '#049ef4' },
       { name: 'Element Plus', color: '#409eff' },
       { name: 'uni-app', color: '#2b9939' },
       { name: '微信小程序', color: '#07c160' },
@@ -276,7 +277,7 @@ const timeline = [
   { date: '2024', title: '初识编程', desc: '第一次接触 Java，打开后端学习路径。', color: '#f59e0b' },
   { date: '2025', title: '企业后台入门', desc: '安隅：在若依多模块上扩展社区业务 CRUD，熟悉权限与脚手架。', color: '#06b6d4' },
   { date: '2025–2026', title: '实时与硬件', desc: '守望打通告警闭环；引路完成 ESP32 → 云端 → 小程序监护。', color: '#f59e0b' },
-  { date: '2026', title: 'AI 与业务深化', desc: '颐康云接入星火 SSE；青衿做多角色教务；SmartCar 完成视觉检测原型。', color: '#10b981' },
+  { date: '2026', title: 'AI 与数字文化', desc: '颐康云接入星火 SSE；青衿做多角色教务；SmartCar 完成视觉检测原型；墨境落地国风 Web3D 展馆闭环。', color: '#10b981' },
   { date: '现在', title: '持续精进', desc: '深耕 Java 后端，诚实打磨作品集表达。目送项目远去，也目送自己成长。', color: '#fbbf24' },
 ]
 </script>
